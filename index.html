@@ -1,0 +1,1965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>The Menu Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FBFAF6; --panel:#F3F1E9; --card:#FFFFFF;
+    --ink:#262B22; --ink-soft:#6B7064; --line:#E2E0D5;
+    --pine:#3E5C4B; --pine-dark:#2D4638; --pine-ghost:#E8EEE9;
+    --butter:#DFAE3A; --butter-soft:#FBF3DC;
+    --tomato:#BC5B4B; --tomato-soft:#F7E6E2;
+    --tech-t:#BC5B4B; --tech-e:#DFAE3A; --tech-c:#4E7FA8; --tech-h:#3E5C4B;
+    --radius:10px;
+    --display:"Fraunces",Georgia,serif;
+    --body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  /* Author display rules outrank the UA's [hidden], so restate it with weight. */
+  [hidden]{display:none!important}
+  html,body{height:100%}
+  body{font-family:var(--body);background:var(--paper);color:var(--ink);font-size:14px;
+       display:flex;flex-direction:column;overflow:hidden}
+
+  /* ---------- header ---------- */
+  header{display:flex;align-items:center;gap:16px;padding:10px 18px;border-bottom:1px solid var(--line);background:var(--paper)}
+  header h1{font-family:var(--display);font-weight:700;font-size:22px;color:var(--pine-dark);letter-spacing:.2px;white-space:nowrap}
+  .week-nav{display:flex;align-items:center;gap:6px}
+  .week-label{font-family:var(--display);font-size:16px;font-weight:600;min-width:200px;text-align:center}
+  .spacer{flex:1}
+  button{font-family:var(--body);font-size:13px;border:1px solid var(--line);background:var(--card);
+         color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer}
+  button:hover{border-color:var(--pine);color:var(--pine-dark)}
+  button:focus-visible{outline:2px solid var(--pine);outline-offset:1px}
+  button.primary{background:var(--pine);border-color:var(--pine);color:#fff}
+  button.primary:hover{background:var(--pine-dark)}
+  button.subtle{border:none;background:none;color:var(--ink-soft);padding:4px 6px}
+  button.subtle:hover{color:var(--pine-dark)}
+
+  /* ---------- cloud sync ---------- */
+  .cloud-box{display:flex;flex-direction:column;align-items:flex-end;gap:2px;margin-left:2px}
+  .cloud-status{font-size:10px;color:var(--ink-soft);letter-spacing:.03em;white-space:nowrap}
+  .cloud-status.ok{color:var(--pine)}
+  .cloud-status.warn{color:var(--tomato)}
+  #cloudAuthBtn:disabled{opacity:.5;cursor:default;border-color:var(--line);color:var(--ink-soft)}
+
+  /* ---------- goals strip ---------- */
+  .goals-strip{display:flex;align-items:center;gap:10px;padding:8px 18px;border-bottom:1px solid var(--line);
+               background:var(--panel);overflow-x:auto;flex-wrap:wrap}
+  .goal-chip{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);
+             border-radius:20px;padding:4px 12px;white-space:nowrap;font-size:12.5px;cursor:default}
+  .goal-chip .dots{display:flex;gap:3px}
+  .goal-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
+  .goal-chip .dot.filled{background:var(--pine)}
+  .goal-chip .dot.over{background:var(--tomato)}
+  .goal-chip.met{border-color:var(--pine);background:var(--pine-ghost)}
+  .goal-chip.broken{border-color:var(--tomato);background:var(--tomato-soft)}
+  .goal-chip .status{font-weight:600}
+
+  /* ---------- layout ---------- */
+  .layout{display:flex;flex:1;min-height:0}
+
+  /* ---------- sidebar / meals bank ---------- */
+  aside{width:300px;min-width:300px;border-right:1px solid var(--line);background:var(--panel);
+        display:flex;flex-direction:column;min-height:0}
+  .bank-head{padding:12px 14px 8px}
+  .bank-head h2{font-family:var(--display);font-size:16px;font-weight:600;color:var(--pine-dark);margin-bottom:8px}
+  .bank-actions{display:flex;gap:6px;margin-bottom:8px}
+  .bank-actions button{flex:1}
+  #search{width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:var(--card)}
+  #search:focus{outline:2px solid var(--pine);outline-offset:0;border-color:transparent}
+  .tag-filter{display:flex;flex-wrap:wrap;gap:5px;padding:9px 0 2px}
+  .tag-filter button{font-size:11px;padding:2px 9px;border-radius:12px}
+  .tag-filter button.on{background:var(--pine);border-color:var(--pine);color:#fff}
+  .bank-list{flex:1;overflow-y:auto;padding:6px 14px 20px;display:flex;flex-direction:column;gap:7px}
+
+  /* ---------- meal card ---------- */
+  .meal-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+             padding:8px 10px 8px 12px;cursor:grab;position:relative;border-left:4px solid var(--tagc,#B9B6A8);
+             transition:box-shadow .12s, transform .12s}
+  .meal-card:hover{box-shadow:0 2px 8px rgba(38,43,34,.12);transform:translateY(-1px)}
+  .meal-card:active{cursor:grabbing}
+  .meal-card .name{font-weight:600;font-size:13.5px;line-height:1.25;padding-right:14px}
+  .meal-card .meta{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:11px;color:var(--ink-soft);flex-wrap:wrap}
+  .badge{border-radius:10px;padding:1px 7px;background:var(--panel);border:1px solid var(--line)}
+  .badge.due{background:var(--butter-soft);border-color:var(--butter);color:#8A6510;font-weight:600}
+  .badge.recipe{background:var(--pine-ghost);border-color:transparent;color:var(--pine-dark)}
+  .due-dot{position:absolute;top:8px;right:8px;width:9px;height:9px;border-radius:50%;background:var(--butter)}
+
+  /* ---------- calendar ---------- */
+  main{flex:1;display:flex;flex-direction:column;min-height:0;overflow:auto;background:var(--paper)}
+  .week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0}
+  .week-grid+.week-grid{border-top:3px solid var(--line)}
+  .day{border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:150px}
+  .day:last-child{border-right:none}
+  .day.today .day-head{background:var(--pine);color:#fff}
+  .day.today .day-head .date{color:#DCE8DF}
+  .day-head{padding:8px 10px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0;z-index:2}
+  .day-head .dow{font-family:var(--display);font-weight:600;font-size:14px}
+  .day-head .date{font-size:11px;color:var(--ink-soft)}
+  .slots{flex:1;display:flex;flex-direction:column;gap:2px;padding:8px 8px 4px}
+  .slot{border:1.5px dashed transparent;border-radius:8px;padding:4px;min-height:52px}
+  .slot.dragover{border-color:var(--pine);background:var(--pine-ghost)}
+  .slot-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);margin:0 0 3px 4px;
+              display:flex;justify-content:space-between;align-items:center}
+  .planned{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--tagc,#B9B6A8);
+           border-radius:8px;padding:5px 8px;margin-bottom:5px;font-size:12.5px;font-weight:600;
+           cursor:grab;position:relative;line-height:1.25}
+  .planned:active{cursor:grabbing}
+  .planned .x{position:absolute;top:2px;right:5px;border:none;background:none;color:var(--ink-soft);
+              cursor:pointer;font-size:13px;padding:0;visibility:hidden}
+  .planned:hover .x{visibility:visible}
+  .planned .x:hover{color:var(--tomato)}
+  .slot-toggles{display:flex;flex-wrap:wrap;gap:3px 8px;padding:6px 8px 8px;border-top:1px dashed var(--line)}
+  .slot-toggle{display:flex;align-items:center;gap:4px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;
+               color:var(--ink-soft);cursor:pointer}
+  .slot-toggle:hover{color:var(--pine-dark)}
+  .slot-toggle input{margin:0;cursor:pointer}
+
+  /* ---------- daily nutrition strip (below goals) ---------- */
+  .daytotals-strip{display:flex;border-bottom:1px solid var(--line);background:var(--paper)}
+  .dt-spacer{width:300px;min-width:300px;border-right:1px solid var(--line);display:flex;align-items:center;
+             padding:0 14px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)}
+  .dt-weeks{flex:1;display:flex;flex-direction:column}
+  .dt-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+  .dt-weeks .dt-grid+.dt-grid{border-top:1px solid var(--line)}
+  .dt-cell{padding:6px 10px;font-size:11.5px;color:var(--ink-soft);border-right:1px solid var(--line);min-width:150px}
+  .dt-cell:last-child{border-right:none}
+  .dt-cell b{color:var(--ink)}
+  .dt-cell.empty{color:var(--line)}
+  .protein-bar{margin-top:4px;height:5px;border-radius:3px;background:var(--panel);overflow:hidden;border:1px solid var(--line)}
+  .protein-bar .protein-fill{height:100%;background:var(--tomato)}
+  .protein-bar.warn .protein-fill{background:var(--butter)}
+  .protein-bar.good .protein-fill{background:var(--pine)}
+
+  /* ---------- modals ---------- */
+  dialog{border:none;border-radius:14px;padding:0;max-width:560px;width:92vw;box-shadow:0 12px 40px rgba(38,43,34,.25)}
+  dialog::backdrop{background:rgba(38,43,34,.35)}
+  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
+  .modal-head h3{font-family:var(--display);font-size:18px;font-weight:600;color:var(--pine-dark)}
+  .modal-body{padding:16px 18px;max-height:65vh;overflow-y:auto}
+  .modal-foot{display:flex;justify-content:space-between;gap:8px;padding:12px 18px;border-top:1px solid var(--line)}
+  .modal-foot .right{display:flex;gap:8px;margin-left:auto}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:4px}
+  .field input,.field textarea,.field select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-family:var(--body);background:var(--card)}
+  .field textarea{min-height:110px;resize:vertical}
+  .field input:focus,.field textarea:focus,.field select:focus{outline:2px solid var(--pine);outline-offset:0}
+  .row{display:flex;gap:10px}
+  .row .field{flex:1}
+  .hint{font-size:11px;color:var(--ink-soft);margin-top:3px}
+  .suggest-item{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--line);cursor:grab}
+  .suggest-item:last-child{border-bottom:none}
+  .suggest-item .sname{font-weight:600;flex:1}
+  .suggest-item .swhen{font-size:12px;color:var(--ink-soft);text-align:right}
+  .suggest-item .swhen b{color:#8A6510}
+  .empty{color:var(--ink-soft);font-size:13px;padding:12px 4px}
+  .detail-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+  pre.recipe{white-space:pre-wrap;font-family:var(--body);font-size:13px;line-height:1.5;background:var(--panel);
+             border-radius:8px;padding:12px;border:1px solid var(--line)}
+  .goal-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+  .goal-row select,.goal-row input{padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:13px}
+  .goal-row input[type=number]{width:56px}
+  .goal-row input[type=text]{flex:1}
+  .goal-row .del{border:none;background:none;color:var(--ink-soft);cursor:pointer;font-size:15px}
+  .goal-row .del:hover{color:var(--tomato)}
+
+  /* ---------- Food TECH: magnitudes shown as position, never as a filled score ---------- */
+  .tech-glyph{display:inline-flex;align-items:center;gap:3px;vertical-align:-1px;cursor:help}
+  .tech-glyph .tm{position:relative;display:block;width:14px;height:3px;border-radius:2px;background:var(--line)}
+  .tech-glyph .tm b{position:absolute;top:-2px;width:5px;height:7px;border-radius:2px;background:var(--tc);
+                    left:calc((var(--tv,3) - 1) / 4 * 9px)}
+  .tech-readout{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;font-size:12px}
+  .tech-readout .ax{display:flex;align-items:center;gap:6px}
+  .tech-readout .swatch{width:8px;height:8px;border-radius:2px;background:var(--tc);flex:none}
+  .tech-readout .axval{font-weight:600}
+  .tech-readout .axmuted{color:var(--ink-soft);font-weight:400;font-size:11.5px}
+  .axkind{font-size:9px;letter-spacing:.04em;padding:1px 5px;border-radius:8px;text-transform:uppercase;margin-left:4px}
+  .axkind.offer{background:var(--pine-ghost);color:var(--pine-dark)}
+  .axkind.demand{background:var(--butter-soft);color:#8A6510}
+
+  /* ---------- on deck ---------- */
+  .ondeck{padding:7px 14px 9px;border-bottom:1px solid var(--line);border-top:1px solid var(--line);
+          background:var(--paper);max-height:200px;overflow-y:auto}
+  .ondeck.dragover{background:var(--pine-ghost);box-shadow:inset 0 0 0 2px var(--pine)}
+  .ondeck>summary{display:flex;align-items:center;gap:7px;font-size:10px;text-transform:uppercase;
+                  letter-spacing:.07em;color:var(--ink-soft);cursor:pointer;list-style:none;
+                  padding:1px 0;user-select:none}
+  .ondeck>summary::-webkit-details-marker{display:none}
+  .ondeck>summary::before{content:"\25B8";font-size:9px;transition:transform .12s;display:inline-block}
+  .ondeck[open]>summary::before{transform:rotate(90deg)}
+  .ondeck>summary:hover{color:var(--pine-dark)}
+  .ondeck>summary .deck-count{margin-left:auto}
+  .ondeck[open]>div{margin-top:7px}
+  .deck-count{font-size:10px;font-weight:700;color:#fff;background:var(--pine);border-radius:9px;
+              min-width:16px;padding:0 5px;text-align:center;line-height:15px}
+  .deck-count:empty{display:none}
+  .deck-empty{font-size:11px;color:var(--ink-soft);line-height:1.45;padding:2px 0 2px}
+  .deck-item{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--tagc,#B9B6A8);
+             border-radius:8px;padding:5px 7px;margin-bottom:5px;cursor:grab}
+  .deck-item:active{cursor:grabbing}
+  .deck-top{display:flex;align-items:center;gap:6px}
+  .deck-name{flex:1;font-size:12.5px;font-weight:600;line-height:1.25;cursor:pointer}
+  .deck-name:hover{color:var(--pine-dark)}
+  .deck-x{border:none;background:none;color:var(--ink-soft);cursor:pointer;font-size:12px;padding:0 2px;flex:none}
+  .deck-x:hover{color:var(--tomato)}
+  .deck-note{width:100%;border:1px solid transparent;background:none;font-family:var(--body);
+             font-size:11px;color:var(--ink-soft);padding:1px 3px;margin-top:2px;border-radius:5px}
+  .deck-note:hover{border-color:var(--line)}
+  .deck-note:focus{outline:none;border-color:var(--pine);background:var(--paper);color:var(--ink)}
+  .suggest-item .sdeck{font-size:11px;padding:2px 9px;border-radius:12px;flex:none;margin-left:8px}
+  .suggest-item .sdeck:disabled{color:var(--ink-soft);border-color:var(--line);cursor:default;background:var(--panel)}
+
+  /* ---------- search row, filters, and the ordering note ---------- */
+  .search-row{display:flex;gap:6px;align-items:center}
+  .search-row #search{flex:1;min-width:0}
+  #filterToggle{flex:none;font-size:11.5px;padding:6px 10px;white-space:nowrap}
+  #filterToggle.on{background:var(--pine);border-color:var(--pine);color:#fff}
+  .sortnote{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:11px;color:var(--ink-soft);
+            background:var(--pine-ghost);border-radius:7px;padding:5px 9px}
+  .sortnote #sortLabel{flex:1;min-width:0;color:var(--pine-dark);font-weight:600}
+  .linkish{border:none;background:none;padding:0;font-size:11px;color:var(--ink-soft);
+           text-decoration:underline;cursor:pointer;flex:none}
+  .linkish:hover{color:var(--pine-dark)}
+  .weights{display:flex;flex-direction:column;gap:3px;margin-top:8px}
+  .wrow{display:grid;grid-template-columns:74px 1fr 30px;align-items:center;gap:6px;font-size:11px;cursor:pointer}
+  .wlab{display:flex;align-items:center;gap:5px;color:var(--ink-soft)}
+  .wsw{width:7px;height:7px;border-radius:2px;background:var(--tc);flex:none}
+  .wrow input[type=range]{width:100%;accent-color:var(--pine);height:14px;cursor:pointer}
+  .wval{font-size:10px;color:var(--ink-soft);text-align:right;font-variant-numeric:tabular-nums}
+  .wval.hi{color:var(--pine-dark);font-weight:700}
+  .wval.lo{color:var(--line)}
+  .fitbar{margin-top:5px;height:3px;border-radius:2px;background:var(--line);overflow:hidden}
+  .fitbar div{height:100%;background:var(--pine)}
+
+  /* ---------- occasion on a day ---------- */
+  .occ-pick{padding:4px 8px 0}
+  .occ-pick select{width:100%;font-size:10px;font-family:var(--body);color:var(--ink-soft);
+                   border:1px solid transparent;background:none;border-radius:6px;padding:2px 4px;cursor:pointer}
+  .occ-pick select:hover{border-color:var(--line);background:var(--card)}
+  .occ-pick.set select{color:var(--pine-dark);font-weight:600;background:var(--pine-ghost);border-color:var(--pine-ghost)}
+
+  /* ---------- repertoire map ---------- */
+  dialog.wide{max-width:760px}
+  .repmap{display:block;max-width:100%}
+  .repmap .mq{opacity:.5}
+  .repmap .mq-hero{fill:var(--pine-ghost)}
+  .repmap .mq-worth{fill:var(--butter-soft)}
+  .repmap .mq-filler{fill:var(--panel)}
+  .repmap .mq-recon{fill:var(--tomato-soft)}
+  .repmap .mqlab{font-size:10px;letter-spacing:.06em;text-transform:uppercase;fill:var(--ink-soft)}
+  .repmap .max{stroke:var(--line);stroke-dasharray:3 3}
+  .repmap .maxis{stroke:var(--ink-soft);stroke-width:1}
+  .repmap .mtitle{font-size:11px;fill:var(--ink-soft);letter-spacing:.04em}
+  .repmap .mdot{fill:var(--tagc);stroke:var(--paper);stroke-width:1.5;cursor:pointer}
+  .repmap .mdot:hover{stroke:var(--ink);stroke-width:2;r:8}
+
+  /* ---------- radar ---------- */
+  .detail-profile{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
+  .detail-profile-side{flex:1;min-width:180px}
+  .radar{flex:none;overflow:visible}
+  .radar .rr{fill:none;stroke:var(--line);stroke-width:.8}
+  .radar .rs{stroke:var(--line);stroke-width:.8}
+  .radar .rshape{fill:rgba(62,92,75,.16);stroke:var(--pine);stroke-width:2;stroke-linejoin:round}
+  .radar .rd{fill:var(--pine)}
+  .radar .rl{font-size:10.5px;font-weight:600;fill:var(--ink)}
+  .radar .rl .rv{fill:var(--pine-dark)}
+  .radar .rk{font-size:9.5px;fill:var(--ink-soft)}
+  .radar .rzone{font-size:9px;letter-spacing:.1em;text-transform:uppercase;fill:var(--ink-soft)}
+
+  /* ---------- ratings & per-day instance marks ---------- */
+  .stars{display:flex;align-items:center;gap:2px}
+  .stars .star{border:none;background:none;padding:0 2px;font-size:22px;line-height:1;color:var(--butter);cursor:pointer}
+  .stars .star:hover{color:#B8860B}
+  .stars .star-label{font-size:11px;color:var(--ink-soft);margin-left:8px}
+  .inline-check{display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer}
+  .inline-check input{margin:0;cursor:pointer}
+  .planned .pname{display:block}
+  .planned .marks{display:flex;align-items:center;gap:5px;margin-top:3px;font-size:10px;color:var(--ink-soft);font-weight:400}
+  .planned .marks .rate{color:#8A6510;font-weight:600}
+  .planned.leftover{border-left-style:dashed;background:repeating-linear-gradient(135deg,var(--card),var(--card) 6px,var(--panel) 6px,var(--panel) 12px)}
+  .history-item{border-bottom:1px solid var(--line);padding:8px 2px}
+  .history-item:last-child{border-bottom:none}
+  .history-head{display:flex;align-items:baseline;gap:8px;font-size:12px}
+  .history-head .hdate{font-weight:600}
+  .history-head .hrate{color:var(--butter);letter-spacing:1px}
+  .history-item .hnote{font-size:12.5px;color:var(--ink-soft);margin-top:3px;white-space:pre-wrap;line-height:1.45}
+
+  .estimate-panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12.5px;line-height:1.5}
+  .estimate-panel input[type=number]{width:56px;padding:4px 6px;border:1px solid var(--line);border-radius:6px}
+  @media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>The Menu Board</h1>
+  <div class="week-nav">
+    <button id="prevWeek" title="Previous week">&#8592;</button>
+    <span class="week-label" id="weekLabel"></span>
+    <button id="nextWeek" title="Next week">&#8594;</button>
+    <button id="todayBtn">Today</button>
+    <button id="weeksToggleBtn" title="Toggle between showing one or two weeks">2 weeks</button>
+  </div>
+  <div class="spacer"></div>
+  <button id="mapBtn">Map</button>
+  <button id="goalsBtn">Edit goals</button>
+  <button id="exportBtn">Export</button>
+  <button id="importBtn">Import</button>
+  <input type="file" id="importFile" accept=".json" hidden>
+  <span class="cloud-box">
+    <button id="cloudAuthBtn">Sign in to sync</button>
+    <span class="cloud-status" id="cloudStatus">On this device only</span>
+  </span>
+</header>
+
+<div class="goals-strip" id="goalsStrip"></div>
+
+<div class="daytotals-strip">
+  <div class="dt-spacer">Daily totals</div>
+  <div class="dt-weeks" id="dtGrid"></div>
+</div>
+
+<div class="layout">
+  <aside>
+    <div class="bank-head">
+      <h2>Meals bank</h2>
+      <div class="bank-actions">
+        <button class="primary" id="addMealBtn">+ New meal</button>
+        <button id="suggestBtn">What&rsquo;s due?</button>
+      </div>
+      <div class="search-row">
+        <input id="search" type="search" placeholder="Search meals&hellip;">
+        <button id="filterToggle" aria-expanded="false" title="Filter by tag">Filter</button>
+      </div>
+      <div class="tag-filter" id="tagFilter" hidden></div>
+      <!-- Only appears once a night's occasion is actually driving the order. -->
+      <div class="sortnote" id="sortNote" hidden>
+        <span id="sortLabel"></span>
+        <button class="linkish" id="sortAdjust" title="Fine-tune the weighting">adjust</button>
+        <button class="linkish" id="sortClear" title="Back to an even weighting">clear</button>
+      </div>
+      <div class="weights" id="weightSliders" hidden></div>
+    </div>
+    <details class="ondeck" id="onDeck" open>
+      <summary><span>On deck</span><span class="deck-count" id="deckCount"></span></summary>
+      <div id="deckList"></div>
+    </details>
+    <div class="bank-list" id="bankList"></div>
+  </aside>
+  <main id="calendar"></main>
+</div>
+
+<!-- meal editor -->
+<dialog id="editDlg">
+  <div class="modal-head"><h3 id="editTitle">New meal</h3><button class="subtle" data-close>&#10005;</button></div>
+  <div class="modal-body">
+    <div class="field"><label for="fName">Name</label><input id="fName" placeholder="e.g., Pasta bolognese"></div>
+    <div class="field"><label for="fTags">Tags</label><input id="fTags" placeholder="comma-separated, e.g., beef, pasta">
+      <div class="hint">Tags drive the goal tracking (fish, beef, chicken, beans, salad&hellip;) and card colors.</div></div>
+    <div class="row">
+      <div class="field"><label for="fTaste">Taste <span class="axkind offer">offers</span></label>
+        <select id="fTaste">
+          <option value="5">5 &middot; sublime</option><option value="4">4 &middot; very good</option>
+          <option value="3">3 &middot; good</option><option value="2">2 &middot; simple</option>
+          <option value="1">1 &middot; plain</option></select></div>
+      <div class="field"><label for="fNourish">Nourish <span class="axkind offer">offers</span></label>
+        <select id="fNourish">
+          <option value="5">5 &middot; nourishing</option><option value="4">4 &middot; solid</option>
+          <option value="3">3 &middot; middling</option><option value="2">2 &middot; heavy</option>
+          <option value="1">1 &middot; indulgent</option></select></div>
+      <div class="field"><label for="fEffort">Effort <span class="axkind demand">asks</span></label>
+        <select id="fEffort">
+          <option value="5">5 &middot; a project</option><option value="4">4 &middot; involved</option>
+          <option value="3">3 &middot; moderate</option><option value="2">2 &middot; quick</option>
+          <option value="1">1 &middot; no work</option></select></div>
+      <div class="field"><label for="fCost">Cost <span class="axkind demand">asks</span></label>
+        <select id="fCost">
+          <option value="5">5 &middot; splurge</option><option value="4">4 &middot; pricey</option>
+          <option value="3">3 &middot; normal</option><option value="2">2 &middot; thrifty</option>
+          <option value="1">1 &middot; pennies</option></select></div>
+    </div>
+    <div class="hint" style="margin-top:-6px;margin-bottom:12px">Food TECH, as plain magnitudes: what this dish <b>offers</b> and what it <b>asks</b>. Higher isn&rsquo;t better &mdash; a four-hour bolognese asking a 5 for effort isn&rsquo;t a flaw, it just needs a night that warrants it. Defaults are guessed from the tags.</div>
+    <div class="row">
+      <div class="field"><label for="fPer">Target frequency</label>
+        <select id="fPer"><option value="">None</option><option value="week">Per week</option><option value="month">Per month</option><option value="quarter">Per quarter</option></select></div>
+      <div class="field"><label for="fTimes">Times</label><input id="fTimes" type="number" min="1" max="7" value="1"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label for="fCal">Calories / serving</label><input id="fCal" type="number" min="0" placeholder="&mdash;"></div>
+      <div class="field"><label for="fP">Protein g</label><input id="fP" type="number" min="0" placeholder="&mdash;"></div>
+      <div class="field"><label for="fF">Fat g</label><input id="fF" type="number" min="0" placeholder="&mdash;"></div>
+      <div class="field"><label for="fC">Carbs g</label><input id="fC" type="number" min="0" placeholder="&mdash;"></div>
+    </div>
+    <div class="field"><label for="fRecipe">Recipe (paste from a website or type from a cookbook)</label><textarea id="fRecipe"></textarea>
+      <div style="margin-top:6px"><button type="button" id="estimateBtn">Estimate macros from recipe</button></div>
+      <div class="hint">Rough estimate only &mdash; scans ingredient lines like &ldquo;2 cups rice&rdquo; against a built-in list of ~100 common foods (including fruits, plant milks, nut butters, and sweeteners) and adds them up. Won&rsquo;t catch everything; review before using.</div>
+      <div id="estimatePanel" class="estimate-panel" hidden></div>
+    </div>
+    <div class="field"><label for="fNotes">Notes</label><input id="fNotes" placeholder="e.g., kids prefer without mushrooms"></div>
+  </div>
+  <div class="modal-foot">
+    <button id="deleteMealBtn" style="color:var(--tomato);border-color:var(--tomato-soft)">Delete</button>
+    <div class="right"><button data-close>Cancel</button><button class="primary" id="saveMealBtn">Save meal</button></div>
+  </div>
+</dialog>
+
+<!-- meal detail -->
+<dialog id="detailDlg">
+  <div class="modal-head"><h3 id="dName"></h3><button class="subtle" data-close>&#10005;</button></div>
+  <div class="modal-body" id="dBody"></div>
+  <div class="modal-foot">
+    <button id="dDeckBtn">Put on deck</button>
+    <div class="right"><button data-close>Close</button><button class="primary" id="dEditBtn">Edit</button></div>
+  </div>
+</dialog>
+
+<!-- planned-instance editor: notes/rating for one meal on one day -->
+<dialog id="instDlg">
+  <div class="modal-head">
+    <div><h3 id="iName"></h3><div class="hint" id="iWhen" style="margin-top:2px"></div></div>
+    <button class="subtle" data-close>&#10005;</button>
+  </div>
+  <div class="modal-body">
+    <div class="field"><label>How did it turn out?</label><div id="iStars" class="stars"></div></div>
+    <div class="field"><label for="iNote">Notes for this day</label>
+      <textarea id="iNote" placeholder="e.g., broiled at 400&deg;F for 12 min, skin down &mdash; better than the sous vide version"></textarea>
+      <div class="hint">Specific to this day only. The meal&rsquo;s own notes and recipe stay unchanged.</div></div>
+    <label class="inline-check"><input type="checkbox" id="iLeftover"> Leftovers (cooked another day)</label>
+    <div class="hint">Leftovers still count toward goals, but don&rsquo;t reset the rotation clock for &ldquo;what&rsquo;s due&rdquo;.</div>
+  </div>
+  <div class="modal-foot">
+    <button id="iRemoveBtn" style="color:var(--tomato);border-color:var(--tomato-soft)">Remove from this day</button>
+    <div class="right"><button id="iRecipeBtn">View recipe</button><button data-close>Cancel</button><button class="primary" id="iSaveBtn">Save</button></div>
+  </div>
+</dialog>
+
+<!-- suggestions -->
+<dialog id="suggestDlg">
+  <div class="modal-head"><h3>What&rsquo;s due?</h3><button class="subtle" data-close>&#10005;</button></div>
+  <div class="modal-body" id="suggestBody"></div>
+  <div class="modal-foot"><div class="right"><button data-close>Close</button></div></div>
+</dialog>
+
+<!-- repertoire map -->
+<dialog id="mapDlg" class="wide">
+  <div class="modal-head">
+    <div><h3>The repertoire</h3><div class="hint" id="mapSub" style="margin-top:2px"></div></div>
+    <button class="subtle" data-close>&#10005;</button>
+  </div>
+  <div class="modal-body" id="mapBody"></div>
+  <div class="modal-foot"><div class="right"><button data-close>Close</button></div></div>
+</dialog>
+
+<!-- goals editor -->
+<dialog id="goalsDlg">
+  <div class="modal-head"><h3>Goals</h3><button class="subtle" data-close>&#10005;</button></div>
+  <div class="modal-body">
+    <div class="field"><label for="proteinTargetInput">Daily protein target (g)</label>
+      <input id="proteinTargetInput" type="number" min="0" placeholder="e.g., 150">
+      <div class="hint">Optional. When set, shows progress toward this on the daily totals strip and as a weekly summary chip.</div></div>
+    <div id="goalRows"></div>
+    <button id="addGoalBtn">+ Add goal</button>
+    <div class="hint" style="margin-top:8px">A goal counts every planned meal (any slot) whose tags include the goal&rsquo;s tag, within its period. Week goals track the week you&rsquo;re currently viewing; month/quarter goals always track the current calendar month/quarter.</div>
+  </div>
+  <div class="modal-foot"><div class="right"><button data-close>Cancel</button><button class="primary" id="saveGoalsBtn">Save goals</button></div></div>
+</dialog>
+
+<script>
+"use strict";
+/* ============================== state & storage ============================== */
+const KEY = "menu-board-v1";
+const BACKUP_PREV = KEY + "-backup-prev";   // last session's data, refreshed once per load
+const BACKUP_PREFIX = KEY + "-backup-v";    // snapshot taken before a schema upgrade, keyed by the version upgraded FROM
+const SCHEMA_VERSION = 5;
+let memoryFallback = null;
+
+function stash(key, raw){
+  try{ localStorage.setItem(key, raw); }
+  catch(e){ console.warn("Could not write backup to "+key+".", e); }
+}
+
+// A planned meal used to be a bare meal-id string. It is now an object so that
+// notes, ratings and the leftovers flag can live on the *instance* (this salmon,
+// broiled, on Jul 19) rather than on the meal (salmon, in general).
+function normalizePlanEntry(e){
+  if(typeof e === "string") return {mealId:e};
+  if(e && typeof e === "object" && typeof e.mealId === "string") return e;
+  return null;
+}
+function migrate(data, raw){
+  if(!data || typeof data !== "object") return null;
+  const from = data.schemaVersion || 1;
+  if(from >= SCHEMA_VERSION){ data.schemaVersion = SCHEMA_VERSION; return data; }
+  const backupKey = BACKUP_PREFIX + from;
+  if(raw) stash(backupKey, raw);
+
+  // v1 -> v2: planned meals became objects so notes/ratings can live on the instance.
+  if(from < 2){
+    for(const date in (data.plan||{})){
+      const rec = data.plan[date];
+      if(!rec || typeof rec !== "object") continue;
+      for(const slot in rec){
+        if(!Array.isArray(rec[slot])) continue;
+        rec[slot] = rec[slot].map(normalizePlanEntry).filter(Boolean);
+      }
+    }
+  }
+  // v2 -> v3: every meal gets a Food TECH baseline, guessed from its tags.
+  if(from < 3){
+    for(const m of (data.meals||[])) if(!m.tech) m.tech = deriveTech(m.tags);
+  }
+  // v3 -> v4: TECH stopped being scored as virtue ("5 = easiest, 5 = cheapest")
+  // and became neutral magnitude ("5 = most effort, 5 = priciest"), so the E and
+  // C poles invert. Taste potential joins them as a stored property of the dish.
+  if(from < 4){
+    for(const m of (data.meals||[])){
+      const old = m.tech || {};
+      const fallback = deriveTech(m.tags);
+      const flip = v => (v==null ? null : clamp5(6 - v));
+      m.tech = {
+        t: old.t!=null ? clamp5(old.t) : fallback.t,
+        e: flip(old.e) ?? fallback.e,
+        c: flip(old.c) ?? fallback.c,
+        h: old.h!=null ? clamp5(old.h) : fallback.h
+      };
+    }
+  }
+
+  // v4 -> v5: the on-deck queue -- meals you mean to cook soon but have not
+  // yet pinned to a day.
+  if(from < 5){
+    if(!Array.isArray(data.onDeck)) data.onDeck = [];
+  }
+
+  data.schemaVersion = SCHEMA_VERSION;
+  console.info("Menu Board: upgraded saved data from schema v"+from+" to v"+SCHEMA_VERSION+
+               ". Pre-upgrade copy kept in localStorage under \""+backupKey+"\".");
+  return data;
+}
+
+function loadState(){
+  let raw = null;
+  try{ raw = localStorage.getItem(KEY); }
+  catch(e){ console.warn("localStorage unavailable; using in-memory data.", e); return null; }
+  if(!raw) return null;
+  let data;
+  try{ data = JSON.parse(raw); }
+  catch(e){
+    // Never overwrite data we merely failed to read -- park it under a dated key
+    // so it can be recovered by hand instead of being clobbered by fresh seed data.
+    const rescue = KEY+"-unreadable-"+Date.now();
+    stash(rescue, raw);
+    console.error("Menu Board: saved data could not be parsed. It has been preserved under \""+rescue+"\" and NOT overwritten.", e);
+    return null;
+  }
+  stash(BACKUP_PREV, raw);   // keep the previous good state recoverable for one generation
+  return migrate(data, raw);
+}
+// Anything that wants to know when the data changed -- currently the cloud
+// sync in cloud.js, which may or may not be loaded.
+const changeListeners = [];
+function saveState(){
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+  catch(e){ memoryFallback = JSON.parse(JSON.stringify(state)); }
+  for(const fn of changeListeners){
+    try{ fn(); }catch(e){ console.error("A change listener threw.", e); }
+  }
+}
+
+const TAG_COLORS = {
+  fish:"#4E7FA8", seafood:"#57969B", chicken:"#C9973F", beef:"#A65A4C", pork:"#B77E6A",
+  vegetarian:"#6F9A5D", beans:"#7A8A4A", salad:"#8FAE5D", soup:"#5F8D7B", pasta:"#C2A45A",
+  grain:"#A8934F", pizza:"#C46A55", grill:"#6E6A62", takeout:"#8B6FA8", breakfast:"#D9A441",
+  brunch:"#D9A441", dessert:"#B76A8E"
+};
+const SLOT_ORDER = ["breakfast","lunch","dinner","snack"];
+const DEFAULT_OPEN_SLOTS = ["breakfast","lunch","dinner"];
+function defaultDayRec(){ const r={}; for(const s of DEFAULT_OPEN_SLOTS) r[s]=[]; return r; }
+
+/* ============================== Food TECH ==============================
+   Tasty, Easy, Cheap, Healthy name the four FIELDS in which a cook's judgment
+   operates. They are virtues, and a virtue is a mean relative to a situation,
+   held by a person, shown over time -- so none of them is stored on a recipe.
+
+   What a recipe carries is neutral MAGNITUDE: what it ASKS of you (effort,
+   cost) and what it OFFERS back (taste potential, nourishment). Higher is
+   never "better" here, only "more". Whether a magnitude was excess, deficiency
+   or the mean depends on the occasion, which is recorded on the day; and
+   virtue proper appears only in the aggregate. One swallow, one summer.      */
+const TECH_AXES = [
+  {k:"t", virtue:"Tasty",   label:"Taste",  kind:"offer",  varName:"--tech-t",
+   scale:{1:"plain",1.5:"",2:"simple",3:"good",4:"very good",5:"sublime"}},
+  {k:"e", virtue:"Easy",    label:"Effort", kind:"demand", varName:"--tech-e",
+   scale:{1:"no work",2:"quick",3:"moderate",4:"involved",5:"a project"}},
+  {k:"c", virtue:"Cheap",   label:"Cost",   kind:"demand", varName:"--tech-c",
+   scale:{1:"pennies",2:"thrifty",3:"normal",4:"pricey",5:"splurge"}},
+  {k:"h", virtue:"Healthy", label:"Nourish",kind:"offer",  varName:"--tech-h",
+   scale:{1:"indulgent",2:"heavy",3:"middling",4:"solid",5:"nourishing"}}
+];
+const AXIS = Object.fromEntries(TECH_AXES.map(a=>[a.k,a]));
+// Defaults in magnitude terms: e/c = what it asks, t/h = what it gives back.
+const TECH_TAG_DEFAULTS = {
+  takeout:{t:3,e:1,c:4,h:2},   grill:{t:4,e:3,c:3,h:4},      fish:{t:4,e:2,c:4,h:5},
+  seafood:{t:4,e:3,c:5,h:5},   chicken:{t:3,e:2,c:2,h:4},    beef:{t:4,e:3,c:4,h:3},
+  pork:{t:4,e:3,c:3,h:3},      beans:{t:3,e:2,c:1,h:5},      vegetarian:{t:3,e:2,c:2,h:5},
+  salad:{t:3,e:1,c:3,h:5},     soup:{t:3,e:3,c:1,h:4},       pasta:{t:4,e:2,c:1,h:3},
+  grain:{t:3,e:2,c:1,h:4},     pizza:{t:4,e:2,c:3,h:2},      breakfast:{t:3,e:2,c:1,h:3},
+  brunch:{t:4,e:3,c:2,h:3},    dessert:{t:5,e:3,c:2,h:1}
+};
+function clamp5(n){ return Math.max(1, Math.min(5, Math.round(n))); }
+function deriveTech(tags){
+  const hits = (tags||[]).map(t=>TECH_TAG_DEFAULTS[t]).filter(Boolean);
+  if(!hits.length) return {t:3,e:3,c:3,h:3};
+  const avg = k => hits.reduce((s,x)=>s+x[k],0)/hits.length;
+  return {t:clamp5(avg("t")), e:clamp5(avg("e")), c:clamp5(avg("c")), h:clamp5(avg("h"))};
+}
+function techMagnitudes(m){
+  const base = m.tech || deriveTech(m.tags);
+  return {t:clamp5(base.t??3), e:clamp5(base.e??3), c:clamp5(base.c??3), h:clamp5(base.h??3)};
+}
+// How the dish has actually turned out, as opposed to what it could be.
+// best = its demonstrated ceiling; mean = typical; the gap is your headroom.
+function realizedTaste(m){
+  const rated = mealHistory(m.id).filter(h=>h.entry.rating).map(h=>h.entry.rating);
+  if(!rated.length) return {mean:null, best:null, n:0};
+  return {mean: rated.reduce((s,r)=>s+r,0)/rated.length, best: Math.max(...rated), n:rated.length};
+}
+
+/* --- occasions: the situation a mean is relative to, expressed as weights --- */
+const OCCASIONS = {
+  ordinary:     {label:"Ordinary",     hint:"a normal night",              w:{t:1,   e:1,   c:1,   h:1}},
+  depleted:     {label:"Depleted",     hint:"low time or energy",          w:{t:0.7, e:2.6, c:1,   h:0.8}},
+  lean:         {label:"Lean week",    hint:"watching the budget",         w:{t:0.8, e:1,   c:2.6, h:1}},
+  nourishing:   {label:"Nourishing",   hint:"eating well on purpose",      w:{t:0.9, e:1,   c:1,   h:2.6}},
+  entertaining: {label:"Entertaining", hint:"cooking for others",          w:{t:2.2, e:0.6, c:0.7, h:0.7}},
+  celebration:  {label:"Celebration",  hint:"the occasion carries it",     w:{t:2.6, e:0.3, c:0.3, h:0.5}}
+};
+const DEFAULT_OCCASION = "ordinary";
+
+// 0..1 desirability of one magnitude, given that offers are wanted high and
+// demands wanted low. Weight says how much this field matters tonight.
+function axisDesirability(k, v){ return AXIS[k].kind==="offer" ? (v-1)/4 : (5-v)/4; }
+function fitScore(m, w){
+  const mag = techMagnitudes(m);
+  let num=0, den=0;
+  for(const ax of TECH_AXES){
+    const weight = (w && w[ax.k]!=null) ? w[ax.k] : 1;
+    num += weight * axisDesirability(ax.k, mag[ax.k]);
+    den += weight;
+  }
+  return den ? num/den : 0;
+}
+
+function techReadout(m){
+  const mag = techMagnitudes(m);
+  const real = realizedTaste(m);
+  const cells = TECH_AXES.map(ax=>{
+    const v = mag[ax.k];
+    const extra = ax.k==="t" && real.n
+      ? '<span class="axmuted">made '+real.mean.toFixed(1)+'★, best '+real.best+'★</span>' : "";
+    return '<span class="ax"><span class="swatch" style="--tc:var('+ax.varName+')"></span>'+
+           ax.label+' <span class="axval">'+v+'</span><span class="axmuted">'+ax.scale[v]+'</span>'+extra+'</span>';
+  }).join("");
+  return '<div class="tech-readout">'+cells+'</div>'+
+         '<div class="hint" style="margin:-4px 0 10px">'+
+         'What it asks: effort, cost. What it offers: taste, nourishment. Whether that was the right call depends on the night.</div>';
+}
+/* --- radar: offers occupy the top half, demands the bottom, so a generous
+       dish reads top-heavy and a costly one bottom-heavy at a glance. ---   */
+const RADAR_ORDER = [
+  {k:"t", deg:-135}, {k:"h", deg:-45}, {k:"e", deg:45}, {k:"c", deg:135}
+];
+function radarSVG(m, size){
+  const cx=size/2, cy=size/2, R=size*0.30;
+  const mag = techMagnitudes(m);
+  const pt = (deg, r) => {
+    const a = deg*Math.PI/180;
+    return [cx + Math.cos(a)*r, cy + Math.sin(a)*r];
+  };
+  let rings = "";
+  for(let lvl=1; lvl<=5; lvl++){
+    const pts = RADAR_ORDER.map(o=>pt(o.deg, R*lvl/5).map(n=>n.toFixed(1)).join(",")).join(" ");
+    rings += '<polygon class="rr" points="'+pts+'"'+(lvl===5?' stroke-width="1.2"':'')+'/>';
+  }
+  let spokes = "", labels = "", dots = "";
+  const shape = RADAR_ORDER.map(o=>{
+    const v = mag[o.k];
+    const [x,y] = pt(o.deg, R*v/5);
+    const [ex,ey] = pt(o.deg, R);
+    const [lx,ly] = pt(o.deg, R*1.33);
+    const ax = AXIS[o.k];
+    spokes += '<line class="rs" x1="'+cx+'" y1="'+cy+'" x2="'+ex.toFixed(1)+'" y2="'+ey.toFixed(1)+'"/>';
+    dots += '<circle class="rd" cx="'+x.toFixed(1)+'" cy="'+y.toFixed(1)+'" r="3.2"/>';
+    const anchor = Math.cos(o.deg*Math.PI/180) < -0.1 ? "end" : Math.cos(o.deg*Math.PI/180) > 0.1 ? "start" : "middle";
+    labels += '<text class="rl" x="'+lx.toFixed(1)+'" y="'+ly.toFixed(1)+'" text-anchor="'+anchor+'">'+
+              esc(ax.label)+' <tspan class="rv">'+v+'</tspan></text>'+
+              '<text class="rk" x="'+lx.toFixed(1)+'" y="'+(ly+11).toFixed(1)+'" text-anchor="'+anchor+'">'+esc(ax.scale[v])+'</text>';
+    return x.toFixed(1)+","+y.toFixed(1);
+  }).join(" ");
+  return '<svg class="radar" viewBox="0 0 '+size+' '+size+'" width="'+size+'" height="'+size+'" role="img" aria-label="Food TECH profile">'+
+    rings + spokes +
+    '<polygon class="rshape" points="'+shape+'"/>' + dots +
+    '<text class="rzone" x="'+cx+'" y="'+(cy-R*1.18).toFixed(1)+'" text-anchor="middle">offers</text>'+
+    '<text class="rzone" x="'+cx+'" y="'+(cy+R*1.28).toFixed(1)+'" text-anchor="middle">asks</text>'+
+    labels +
+  '</svg>';
+}
+
+// A marker on a spectrum, not a filled bar: "more" is not "better" here.
+function techGlyph(m){
+  const mag = techMagnitudes(m);
+  let marks = "", title = [];
+  for(const ax of TECH_AXES){
+    const v = mag[ax.k];
+    marks += '<i class="tm" style="--tc:var('+ax.varName+');--tv:'+v+'"><b></b></i>';
+    title.push(ax.label+" "+v+" ("+ax.scale[v]+")");
+  }
+  return '<span class="tech-glyph" title="'+title.join(" · ")+'">'+marks+'</span>';
+}
+
+function uid(){ return Math.random().toString(36).slice(2,10); }
+
+/* ============================== seed data ============================== */
+function seed(){
+  const M = (name,tags,per,times,nut,recipe,notes)=>({id:uid(),name,tags,freq:per?{per,times:times||1}:null,nut:nut||null,recipe:recipe||"",notes:notes||"",tech:deriveTech(tags)});
+  const meals = [
+    // fish & seafood
+    M("Fresh salmon",["fish"],"week",1,{cal:450,p:38,f:24,c:14},"","Fish Day staple; roast or pan-sear"),
+    M("Tuna tacos",["fish"],"month",2,{cal:520,p:32,f:22,c:48},"Tuna tacos with corn, avocado, and aioli.\n\nAioli: garlic, maple, smoked paprika, mayo.\nSear tuna rare, slice thin. Warm tortillas, add corn, avocado, cabbage, aioli.",""),
+    M("Salmon rice",["fish","grain"],"month",1,{cal:560,p:30,f:18,c:65},"",""),
+    M("Shrimp scampi",["seafood","pasta"],"month",1,{cal:610,p:28,f:26,c:62},"",""),
+    M("Paella",["seafood","grain"],"month",1,{cal:650,p:32,f:20,c:80},"","Weekend project"),
+    M("Seafood boil",["seafood"],"quarter",1,null,"","Quarterly event"),
+    M("Risotto",["grain","vegetarian"],"month",1,{cal:520,p:12,f:18,c:74},"","Mushroom or seafood"),
+    // chicken
+    M("M.C. chicken soup",["chicken","soup"],"month",1,{cal:380,p:30,f:12,c:34},"",""),
+    M("Chicken Florentine",["chicken"],null,0,{cal:540,p:42,f:30,c:16},"",""),
+    M("Chicken Marsala",["chicken"],null,0,{cal:520,p:40,f:26,c:20},"",""),
+    M("Naked fried chicken",["chicken"],null,0,null,"",""),
+    M("Garlic chicken thighs",["chicken"],"month",1,{cal:480,p:38,f:32,c:6},"",""),
+    M("Chicken mole",["chicken"],"month",1,null,"","Counts toward monthly curry/mole"),
+    M("Chicken fried rice",["chicken","grain"],"week",1,{cal:560,p:28,f:18,c:70},"","Grain Day"),
+    M("Chicken salad",["chicken","salad"],null,0,{cal:420,p:32,f:26,c:10},"",""),
+    // beef
+    M("Burgers",["beef","grill"],"month",2,{cal:650,p:35,f:38,c:40},"","Reg, salmon, or bean/mushroom variants"),
+    M("Steak night",["beef","grill"],"month",1,{cal:620,p:48,f:42,c:6},"","When steak is on sale"),
+    M("Goulash",["beef","soup"],"quarter",1,null,"",""),
+    M("Seasonal bolognese",["beef","pasta"],"quarter",1,{cal:680,p:34,f:28,c:70},"","The quarterly ritual"),
+    // salads
+    M("Caesar salad",["salad"],"week",1,{cal:380,p:18,f:26,c:20},"",""),
+    M("Kale salad",["salad","vegetarian"],null,0,{cal:320,p:10,f:22,c:24},"",""),
+    M("Caprese salad",["salad","vegetarian"],null,0,{cal:340,p:14,f:26,c:12},"","Summer only"),
+    M("Chef's salad",["salad"],null,0,null,"",""),
+    // soups & beans
+    M("Tuscan bean soup",["beans","soup","vegetarian"],"month",1,{cal:340,p:16,f:8,c:52},"",""),
+    M("Lentil soup",["beans","soup","vegetarian"],"month",1,{cal:320,p:18,f:6,c:50},"",""),
+    M("Kale &amp; sausage soup",["pork","soup"],"month",1,{cal:420,p:22,f:26,c:24},"",""),
+    M("Cauliflower soup",["soup","vegetarian"],null,0,{cal:260,p:8,f:14,c:26},"",""),
+    M("Beans &amp; greens",["beans","vegetarian"],"week",1,{cal:360,p:18,f:10,c:52},"","Lunch or dinner"),
+    // pasta & pizza
+    M("Pasta carbonara",["pasta","pork"],"month",1,{cal:640,p:24,f:28,c:72},"",""),
+    M("Pesto on protein",["pasta"],null,0,null,"",""),
+    M("Lasagna",["pasta","beef"],"quarter",1,{cal:620,p:32,f:30,c:54},"",""),
+    M("Pizza night",["pizza"],"week",1,{cal:600,p:24,f:26,c:68},"","Homemade or ordered; 2-3x/mo in summer"),
+    // grain / other
+    M("Fried rice / stir fry",["grain","vegetarian"],"week",1,{cal:520,p:16,f:16,c:76},"","Grain Day"),
+    M("Thai curry",["grain"],"month",1,{cal:580,p:22,f:30,c:56},"",""),
+    M("Tikka masala (jar)",["chicken","grain"],null,0,{cal:560,p:34,f:24,c:50},"","Easy weeknight"),
+    M("Tacos",["beef"],null,0,{cal:540,p:28,f:26,c:48},"",""),
+    M("Quesadillas",["chicken"],null,0,{cal:520,p:26,f:26,c:44},"",""),
+    M("H4P takeout night",["takeout"],"week",1,null,"","Malaysia Cafe, Chipotle, shawarma, Pokemoto, or grocery premade"),
+    M("Grill night",["grill"],"month",3,null,"","3-4x/month in summer"),
+    M("Ugly food",["vegetarian"],"week",1,null,"","E's or J's ugly food"),
+    M("Sunday waffles",["breakfast"],"week",1,{cal:480,p:10,f:16,c:74},"","Sunday tradition"),
+  ];
+  // unescape the two names that contain &
+  meals.forEach(m=>{ m.name = m.name.replace(/&amp;/g,"&"); });
+  const goals = [
+    {id:uid(), label:"Fish", tag:"fish", op:">=", count:2},
+    {id:uid(), label:"Beef", tag:"beef", op:"<=", count:1},
+    {id:uid(), label:"Salad", tag:"salad", op:">=", count:2},
+    {id:uid(), label:"Beans/lentils", tag:"beans", op:">=", count:2},
+    {id:uid(), label:"Chicken", tag:"chicken", op:">=", count:1},
+  ];
+  return { meals, goals, plan:{}, onDeck:[], schemaVersion:SCHEMA_VERSION };
+}
+
+let state = loadState() || seed();
+saveState();
+
+/* ============================== dates ============================== */
+const DOW = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+function iso(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function fromISO(s){ const [y,m,dd]=s.split("-").map(Number); return new Date(y,m-1,dd); }
+function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
+function weekStartOf(d){ return addDays(d,-d.getDay()); }
+let weekStart = weekStartOf(new Date());
+const todayISO = iso(new Date());
+let weeksToShow = 1;
+
+function fmtShort(d){ return d.toLocaleDateString(undefined,{month:"short",day:"numeric"}); }
+function weekLabel(){
+  const end = addDays(weekStart,weeksToShow*7-1);
+  return fmtShort(weekStart)+" \u2013 "+fmtShort(end)+", "+end.getFullYear();
+}
+
+/* ============================== helpers ============================== */
+function mealById(id){ return state.meals.find(m=>m.id===id); }
+function tagColor(m){ for(const t of (m.tags||[])) if(TAG_COLORS[t]) return TAG_COLORS[t]; return "#B9B6A8"; }
+function intervalDays(freq){
+  if(!freq||!freq.per) return null;
+  const t = Math.max(1, freq.times||1);
+  return {week:7, month:30.4, quarter:91.3}[freq.per]/t;
+}
+function lastMade(mealId){
+  let best = null;
+  for(const dateISO in state.plan){
+    if(dateISO > todayISO) continue;
+    const day = state.plan[dateISO];
+    for(const slot in day){
+      if(Array.isArray(day[slot]) && day[slot].some(e=>e.mealId===mealId && !e.leftover)){
+        if(!best || dateISO > best) best = dateISO;
+      }
+    }
+  }
+  return best;
+}
+function daysSince(dateISO){ return Math.floor((fromISO(todayISO)-fromISO(dateISO))/86400000); }
+function dueInfo(m){
+  const interval = intervalDays(m.freq);
+  if(!interval) return null;
+  const last = lastMade(m.id);
+  if(!last) return {due:true, never:true, ratio:0, last:null, interval};
+  const ds = daysSince(last);
+  return {due: ds >= 0.83*interval, never:false, ratio: ds/interval, last, days:ds, interval};
+}
+function freqLabel(freq){
+  if(!freq||!freq.per) return "";
+  const t = freq.times||1;
+  const per = {week:"wk", month:"mo", quarter:"qtr"}[freq.per];
+  return (t>1? t+"\u00d7/" : "1\u00d7/")+per;
+}
+function ensureDay(dateISO){ if(!state.plan[dateISO]) state.plan[dateISO]=defaultDayRec(); return state.plan[dateISO]; }
+function cleanDay(dateISO){
+  const d = state.plan[dateISO]; if(!d) return;
+  const hasSlots = SLOT_ORDER.some(s=>Array.isArray(d[s]));
+  if(!hasSlots && !d.occasion) delete state.plan[dateISO];
+}
+// The occasion is the situation a mean is relative to. Stored only when it
+// differs from ordinary, so untouched days stay absent from the plan.
+function dayOccasion(dISO){
+  const rec = state.plan[dISO];
+  return (rec && rec.occasion) || DEFAULT_OCCASION;
+}
+function setDayOccasion(dISO, occ){
+  const day = ensureDay(dISO);
+  if(occ===DEFAULT_OCCASION) delete day.occasion; else day.occasion = occ;
+  cleanDay(dISO);
+}
+
+/* ============================== rendering ============================== */
+const bankList = document.getElementById("bankList");
+const tagFilter = document.getElementById("tagFilter");
+const calendar = document.getElementById("calendar");
+const goalsStrip = document.getElementById("goalsStrip");
+let activeTags = new Set();
+let matchAllTags = false;
+// The weighting currently governing selection. An occasion just IS a weight
+// profile, so picking a preset and moving the sliders are the same gesture.
+let activeOccasion = DEFAULT_OCCASION;
+let activeWeights = Object.assign({}, OCCASIONS[DEFAULT_OCCASION].w);
+function weightsAreEven(){ return TECH_AXES.every(ax=>Math.abs(activeWeights[ax.k]-1) < 0.001); }
+
+/* ============================== on deck ==============================
+   Meals you have committed to cooking soon, before you know which night.
+   "What's due?" is the app's suggestion, computed from rotation; this is your
+   own intention, usually arriving as a request from someone at the table.   */
+function deckList(){
+  if(!Array.isArray(state.onDeck)) state.onDeck = [];
+  return state.onDeck;
+}
+function addToDeck(mealId, note){
+  const deck = deckList();
+  if(deck.some(d=>d.mealId===mealId)) return false;   // already queued
+  deck.push({id:uid(), mealId, note:note||"", added:todayISO});
+  return true;
+}
+function removeFromDeck(deckId){
+  const deck = deckList();
+  const i = deck.findIndex(d=>d.id===deckId);
+  if(i>=0) deck.splice(i,1);
+}
+// Planning a meal satisfies the intention, so it comes off the deck.
+function clearDeckFor(mealId){
+  const deck = deckList();
+  for(let i=deck.length-1; i>=0; i--) if(deck[i].mealId===mealId) deck.splice(i,1);
+}
+
+function renderOnDeck(){
+  const deck = deckList();
+  const holder = document.getElementById("deckList");
+  const count = document.getElementById("deckCount");
+  holder.innerHTML = "";
+  count.textContent = deck.length ? deck.length : "";
+  if(!deck.length){
+    holder.innerHTML = '<div class="deck-empty">Nothing queued. Drag a meal here, or use &ldquo;Put on deck&rdquo; when a dish gets requested.</div>';
+    return;
+  }
+  deck.forEach(item=>{
+    const m = mealById(item.mealId);
+    if(!m){ return; }
+    const row = document.createElement("div");
+    row.className = "deck-item"; row.draggable = true;
+    row.style.setProperty("--tagc", tagColor(m));
+    row.innerHTML = '<div class="deck-top"><span class="deck-name">'+esc(m.name)+'</span>'+
+                    '<button class="deck-x" title="Take off deck">&#10005;</button></div>';
+    const note = document.createElement("input");
+    note.className = "deck-note"; note.type = "text";
+    note.placeholder = "why? (optional)"; note.value = item.note || "";
+    note.title = "e.g. Ellen asked for this";
+    note.onchange = ()=>{ item.note = note.value.trim(); saveState(); };
+    note.onclick = ev=>ev.stopPropagation();
+    row.appendChild(note);
+    row.querySelector(".deck-x").onclick = ev=>{ ev.stopPropagation(); removeFromDeck(item.id); render(); };
+    row.querySelector(".deck-name").onclick = ()=>openDetail(item.mealId);
+    row.addEventListener("dragstart", ev=>{
+      ev.dataTransfer.setData("text/plain", JSON.stringify({mealId:item.mealId, fromDeck:item.id}));
+      ev.dataTransfer.effectAllowed = "move";
+    });
+    holder.appendChild(row);
+  });
+}
+
+// The whole panel accepts drops from the meal bank.
+(function wireDeckDropTarget(){
+  const panel = document.getElementById("onDeck");
+  panel.addEventListener("dragover", ev=>{ ev.preventDefault(); panel.classList.add("dragover"); });
+  panel.addEventListener("dragleave", ()=>panel.classList.remove("dragover"));
+  panel.addEventListener("drop", ev=>{
+    ev.preventDefault(); panel.classList.remove("dragover");
+    let data; try{ data = JSON.parse(ev.dataTransfer.getData("text/plain")); }catch(e){ return; }
+    if(!data || !data.mealId || !mealById(data.mealId)) return;
+    if(data.fromDeck) return;                    // already here
+    if(data.from){                               // pulled off a day: unschedule it
+      const src = state.plan[data.from.date] && state.plan[data.from.date][data.from.slot];
+      if(src && src[data.from.idx] && src[data.from.idx].mealId===data.mealId) src.splice(data.from.idx,1);
+      cleanDay(data.from.date);
+    }
+    addToDeck(data.mealId);
+    render();
+  });
+})();
+
+// The occasion picker on each day is the only control that names a night.
+// The sidebar just reports which night is currently ordering the bank.
+function renderTonight(){
+  const note = document.getElementById("sortNote");
+  const panel = document.getElementById("weightSliders");
+  const even = weightsAreEven();
+  note.hidden = even;
+  if(even) panel.hidden = true;
+  if(!even){
+    document.getElementById("sortLabel").textContent =
+      activeOccasion ? "Ordered for "+OCCASIONS[activeOccasion].label.toLowerCase() : "Ordered by a custom weighting";
+  }
+  // Built once and then only updated: rebuilding on every render would replace
+  // the slider under the cursor mid-drag.
+  if(!panel.dataset.built){
+    for(const ax of TECH_AXES){
+      const row = document.createElement("label"); row.className = "wrow";
+      row.innerHTML = '<span class="wlab"><i class="wsw" style="--tc:var('+ax.varName+')"></i>'+ax.virtue+'</span>';
+      const input = document.createElement("input");
+      input.type = "range"; input.min = "0"; input.max = "3"; input.step = "0.1";
+      input.id = "w_"+ax.k;
+      input.title = ax.kind==="offer" ? "How much "+ax.label.toLowerCase()+" matters tonight"
+                                      : "How much avoiding "+ax.label.toLowerCase()+" matters tonight";
+      input.oninput = ()=>{
+        activeWeights[ax.k] = parseFloat(input.value);
+        activeOccasion = null;   // hand-tuned: no longer any named occasion
+        render();
+      };
+      const val = document.createElement("span");
+      val.className = "wval"; val.id = "wv_"+ax.k;
+      row.appendChild(input); row.appendChild(val);
+      panel.appendChild(row);
+    }
+    panel.dataset.built = "1";
+  }
+  for(const ax of TECH_AXES){
+    const w = activeWeights[ax.k];
+    const input = document.getElementById("w_"+ax.k);
+    if(document.activeElement !== input) input.value = w;
+    const val = document.getElementById("wv_"+ax.k);
+    val.textContent = w.toFixed(1)+"×";
+    val.className = "wval"+(w>1.4?" hi":w<0.6?" lo":"");
+  }
+}
+
+function render(){
+  document.getElementById("weekLabel").textContent = weekLabel();
+  renderOnDeck(); renderTonight(); renderTagFilter(); renderBank(); renderCalendar(); renderGoals(); renderDayTotals();
+  saveState();
+}
+
+function renderTagFilter(){
+  const tags = [...new Set(state.meals.flatMap(m=>m.tags||[]))].sort();
+  tagFilter.innerHTML = "";
+  const all = document.createElement("button");
+  all.textContent = "all"; all.className = activeTags.size===0?"on":"";
+  all.onclick = ()=>{ activeTags.clear(); render(); };
+  tagFilter.appendChild(all);
+  for(const t of tags){
+    const b = document.createElement("button");
+    b.textContent = t; b.className = activeTags.has(t)?"on":"";
+    b.onclick = ()=>{ activeTags.has(t)? activeTags.delete(t) : activeTags.add(t); render(); };
+    tagFilter.appendChild(b);
+  }
+  if(activeTags.size>1){
+    const mode = document.createElement("button");
+    mode.textContent = matchAllTags? "match: all" : "match: any";
+    mode.title = "Toggle between meals matching any selected tag, or all selected tags";
+    mode.className = matchAllTags?"on":"";
+    mode.onclick = ()=>{ matchAllTags = !matchAllTags; render(); };
+    tagFilter.appendChild(mode);
+  }
+  // The button carries the filter count, so a collapsed panel still reports itself.
+  const toggle = document.getElementById("filterToggle");
+  toggle.textContent = activeTags.size ? "Filter · "+activeTags.size : "Filter";
+  toggle.classList.toggle("on", activeTags.size>0);
+  if(activeTags.size && tagFilter.hidden) showFilterPanel(true);
+}
+function showFilterPanel(open){
+  tagFilter.hidden = !open;
+  document.getElementById("filterToggle").setAttribute("aria-expanded", open ? "true" : "false");
+}
+
+function cardMeta(m){
+  const bits = [techGlyph(m)];
+  if(m.freq && m.freq.per) bits.push('<span class="badge">'+freqLabel(m.freq)+'</span>');
+  const di = dueInfo(m);
+  if(di && di.due) bits.push('<span class="badge due">'+(di.never?"never made":"due")+'</span>');
+  if(m.recipe) bits.push('<span class="badge recipe">recipe</span>');
+  if(m.nut && m.nut.cal) bits.push('<span>~'+m.nut.cal+' kcal</span>');
+  return bits.join("");
+}
+
+function renderBank(){
+  const q = document.getElementById("search").value.trim().toLowerCase();
+  bankList.innerHTML = "";
+  // Even weighting means no occasion is pressing, so stay alphabetical and
+  // predictable. Once a night has a shape, sort by how well each dish fits it.
+  const byFit = !weightsAreEven();
+  const meals = [...state.meals].sort((a,b)=>
+    byFit ? fitScore(b,activeWeights)-fitScore(a,activeWeights) || a.name.localeCompare(b.name)
+          : a.name.localeCompare(b.name));
+  let shown = 0;
+  for(const m of meals){
+    if(activeTags.size){
+      const mealTags = m.tags||[];
+      const matches = matchAllTags ? [...activeTags].every(t=>mealTags.includes(t)) : mealTags.some(t=>activeTags.has(t));
+      if(!matches) continue;
+    }
+    if(q && !m.name.toLowerCase().includes(q) && !(m.tags||[]).some(t=>t.includes(q))) continue;
+    shown++;
+    const el = document.createElement("div");
+    el.className = "meal-card"; el.draggable = true;
+    el.style.setProperty("--tagc", tagColor(m));
+    const di = dueInfo(m);
+    const fitBar = byFit ? '<div class="fitbar" title="How well this suits the weighting you have set"><div style="width:'+
+                           Math.round(fitScore(m,activeWeights)*100)+'%"></div></div>' : '';
+    el.innerHTML = '<div class="name">'+esc(m.name)+'</div><div class="meta">'+cardMeta(m)+'</div>'+fitBar+
+                   (di && di.due ? '<div class="due-dot" title="Due for a repeat"></div>' : '');
+    el.addEventListener("dragstart", ev=>{
+      ev.dataTransfer.setData("text/plain", JSON.stringify({mealId:m.id}));
+      ev.dataTransfer.effectAllowed = "copyMove";
+    });
+    el.addEventListener("click", ()=>openDetail(m.id));
+    bankList.appendChild(el);
+  }
+  if(!shown) bankList.innerHTML = '<div class="empty">No meals match. Try clearing the search or filter.</div>';
+}
+
+function renderCalendar(){
+  calendar.innerHTML = "";
+  for(let w=0; w<weeksToShow; w++){
+    const weekGrid = document.createElement("div"); weekGrid.className = "week-grid";
+    for(let i=0;i<7;i++){
+      const d = addDays(weekStart,w*7+i), dISO = iso(d);
+      const dayEl = document.createElement("div");
+      dayEl.className = "day"+(dISO===todayISO?" today":"");
+      const head = document.createElement("div");
+      head.className = "day-head";
+      head.innerHTML = '<div class="dow">'+DOW[i]+'</div><div class="date">'+fmtShort(d)+'</div>';
+      dayEl.appendChild(head);
+      dayEl.appendChild(renderOccasionPicker(dISO));
+
+      const slotsEl = document.createElement("div"); slotsEl.className = "slots";
+      const rec = state.plan[dISO] || defaultDayRec();
+      const openSlots = SLOT_ORDER.filter(s => Array.isArray(rec[s]));
+      for(const slot of openSlots) slotsEl.appendChild(renderSlot(dISO, slot, rec[slot]||[]));
+      dayEl.appendChild(slotsEl);
+
+      dayEl.appendChild(renderSlotToggles(dISO, openSlots));
+
+      weekGrid.appendChild(dayEl);
+    }
+    calendar.appendChild(weekGrid);
+  }
+}
+
+function renderOccasionPicker(dISO){
+  const cur = dayOccasion(dISO);
+  const wrap = document.createElement("div");
+  wrap.className = "occ-pick"+(cur!==DEFAULT_OCCASION?" set":"");
+  const sel = document.createElement("select");
+  sel.title = "What kind of night is this? It decides what counts as the right amount of effort, cost and richness.";
+  for(const key in OCCASIONS){
+    const o = document.createElement("option");
+    o.value = key; o.textContent = OCCASIONS[key].label; o.selected = key===cur;
+    sel.appendChild(o);
+  }
+  sel.onchange = ()=>{
+    setDayOccasion(dISO, sel.value);
+    // Naming the night also aims the picker at it -- same concept, one gesture.
+    activeOccasion = sel.value;
+    activeWeights = Object.assign({}, OCCASIONS[sel.value].w);
+    render();
+  };
+  wrap.appendChild(sel);
+  return wrap;
+}
+
+function renderSlotToggles(dISO, openSlots){
+  const row = document.createElement("div"); row.className = "slot-toggles";
+  for(const slot of SLOT_ORDER){
+    const label = document.createElement("label"); label.className = "slot-toggle";
+    const cb = document.createElement("input");
+    cb.type = "checkbox"; cb.checked = openSlots.includes(slot);
+    cb.onchange = ()=>{
+      const day = ensureDay(dISO);
+      if(cb.checked){
+        if(!Array.isArray(day[slot])) day[slot] = [];
+      } else {
+        const ids = day[slot];
+        if(ids && ids.length && !confirm("Remove "+slot+" and its "+ids.length+" planned meal(s) for this day?")){
+          cb.checked = true; return;
+        }
+        delete day[slot]; cleanDay(dISO);
+      }
+      render();
+    };
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(slot));
+    row.appendChild(label);
+  }
+  return row;
+}
+
+function renderSlot(dISO, slot, ids){
+  const wrap = document.createElement("div");
+  wrap.className = "slot"; wrap.dataset.date = dISO; wrap.dataset.slot = slot;
+  const label = document.createElement("div"); label.className = "slot-label";
+  label.innerHTML = "<span>"+slot+"</span>";
+  wrap.appendChild(label);
+  ids.forEach((entry, idx)=>{
+    const m = mealById(entry.mealId); if(!m) return;
+    const p = document.createElement("div");
+    p.className = "planned"+(entry.leftover?" leftover":""); p.draggable = true;
+    p.style.setProperty("--tagc", tagColor(m));
+    p.innerHTML = '<span class="pname">'+esc(m.name)+'</span>'+instanceMarks(entry)+
+                  '<button class="x" title="Remove">&#10005;</button>';
+    p.querySelector(".x").onclick = (ev)=>{ ev.stopPropagation(); ids.splice(idx,1); cleanDay(dISO); render(); };
+    p.addEventListener("click", ()=>openInstance(dISO, slot, idx));
+    p.addEventListener("dragstart", ev=>{
+      ev.dataTransfer.setData("text/plain", JSON.stringify({mealId:entry.mealId, from:{date:dISO, slot, idx}}));
+      ev.dataTransfer.effectAllowed = "move";
+      ev.stopPropagation();
+    });
+    wrap.appendChild(p);
+  });
+  wrap.addEventListener("dragover", ev=>{ ev.preventDefault(); wrap.classList.add("dragover"); });
+  wrap.addEventListener("dragleave", ()=>wrap.classList.remove("dragover"));
+  wrap.addEventListener("drop", ev=>{
+    ev.preventDefault(); wrap.classList.remove("dragover");
+    let data; try{ data = JSON.parse(ev.dataTransfer.getData("text/plain")); }catch(e){ return; }
+    if(!data || !data.mealId || !mealById(data.mealId)) return;
+    let moved = null;
+    if(data.from){
+      const src = state.plan[data.from.date] && state.plan[data.from.date][data.from.slot];
+      // Move the whole entry so its note/rating/leftover flag travel with it.
+      if(src && src[data.from.idx] && src[data.from.idx].mealId===data.mealId) moved = src.splice(data.from.idx,1)[0];
+      cleanDay(data.from.date);
+    }
+    const day = ensureDay(dISO);
+    if(!Array.isArray(day[slot])) day[slot] = [];
+    day[slot].push(moved || {mealId:data.mealId});
+    // Giving a meal a night satisfies the intention, however it got queued.
+    clearDeckFor(data.mealId);
+    render();
+  });
+  return wrap;
+}
+
+function dayTotals(dISO){
+  const rec = state.plan[dISO]; if(!rec) return null;
+  let cal=0,p=0,f=0,c=0,any=false;
+  for(const slot in rec){
+    if(!Array.isArray(rec[slot])) continue;
+    for(const entry of rec[slot]){
+      const m = mealById(entry.mealId);
+      if(m && m.nut && m.nut.cal){ any=true; cal+=m.nut.cal; p+=m.nut.p||0; f+=m.nut.f||0; c+=m.nut.c||0; }
+    }
+  }
+  return any ? {cal,p,f,c} : null;
+}
+
+function proteinBar(pGrams, target){
+  if(!target) return "";
+  const pct = Math.max(0, Math.min(100, Math.round(pGrams/target*100)));
+  const cls = pGrams>=target ? "good" : pct>=70 ? "warn" : "low";
+  return '<div class="protein-bar '+cls+'" title="'+Math.round(pGrams)+'g protein of '+target+'g target"><div class="protein-fill" style="width:'+pct+'%"></div></div>';
+}
+
+function renderDayTotals(){
+  const grid = document.getElementById("dtGrid");
+  grid.innerHTML = "";
+  for(let w=0; w<weeksToShow; w++){
+    const row = document.createElement("div"); row.className = "dt-grid";
+    for(let i=0;i<7;i++){
+      const dISO = iso(addDays(weekStart,w*7+i));
+      const cell = document.createElement("div");
+      cell.className = "dt-cell";
+      const t = dayTotals(dISO);
+      if(!t){ cell.innerHTML = '<span class="empty">&mdash;</span>'; }
+      else{
+        cell.innerHTML = "~<b>"+Math.round(t.cal)+"</b> kcal &middot; "+Math.round(t.p)+"P / "+Math.round(t.f)+"F / "+Math.round(t.c)+"C"
+          + proteinBar(t.p, state.proteinTarget);
+      }
+      row.appendChild(cell);
+    }
+    grid.appendChild(row);
+  }
+}
+
+function monthRange(d){
+  return [iso(new Date(d.getFullYear(), d.getMonth(), 1)), iso(new Date(d.getFullYear(), d.getMonth()+1, 0))];
+}
+function quarterRange(d){
+  const q = Math.floor(d.getMonth()/3);
+  return [iso(new Date(d.getFullYear(), q*3, 1)), iso(new Date(d.getFullYear(), q*3+3, 0))];
+}
+function countTagInRange(tag, startISO, endISO){
+  let n = 0;
+  for(const dateISO in state.plan){
+    if(dateISO<startISO || dateISO>endISO) continue;
+    const rec = state.plan[dateISO];
+    for(const slot in rec){
+      if(!Array.isArray(rec[slot])) continue;
+      for(const entry of rec[slot]){
+        const m = mealById(entry.mealId); if(!m) continue;
+        if((m.tags||[]).includes(tag)) n++;
+      }
+    }
+  }
+  return n;
+}
+function renderProteinGoalChip(){
+  if(!state.proteinTarget) return;
+  let totalP=0, daysWithData=0, daysMet=0;
+  for(let i=0;i<7;i++){
+    const t = dayTotals(iso(addDays(weekStart,i)));
+    if(t){ daysWithData++; totalP+=t.p; if(t.p>=state.proteinTarget) daysMet++; }
+  }
+  const avg = daysWithData? Math.round(totalP/daysWithData) : 0;
+  const chip = document.createElement("div");
+  chip.className = "goal-chip protein-chip"+(daysWithData && daysMet===daysWithData?" met": daysWithData && daysMet===0?" broken":"");
+  chip.innerHTML = '<span>Protein avg '+avg+'g/day (target '+state.proteinTarget+'g)</span><span class="status">'+daysMet+'/7 days met</span>';
+  chip.title = daysWithData
+    ? (daysMet+" of "+daysWithData+" day(s) with nutrition data met the "+state.proteinTarget+"g target this week.")
+    : "No meals with nutrition data planned this week yet.";
+  goalsStrip.appendChild(chip);
+}
+const PERIOD_LABEL = {week:"/wk", month:"/mo", quarter:"/qtr"};
+const PERIOD_RANGE_DESC = {week:"this week", month:"this month", quarter:"this quarter"};
+function renderGoals(){
+  goalsStrip.innerHTML = "";
+  const today = new Date();
+  const [wStart,wEnd] = [iso(weekStart), iso(addDays(weekStart,6))];
+  const [mStart,mEnd] = monthRange(today);
+  const [qStart,qEnd] = quarterRange(today);
+  for(const g of state.goals){
+    const period = g.period || "week";
+    const [rStart,rEnd] = period==="month" ? [mStart,mEnd] : period==="quarter" ? [qStart,qEnd] : [wStart,wEnd];
+    const n = countTagInRange(g.tag, rStart, rEnd);
+    const chip = document.createElement("div"); chip.className = "goal-chip";
+    let status;
+    if(g.op===">="){
+      if(n>=g.count){ chip.classList.add("met"); status = "\u2713"; }
+      else status = n+"/"+g.count;
+    } else {
+      if(n>g.count){ chip.classList.add("broken"); status = n+"/"+g.count+" over"; }
+      else status = n+"/"+g.count;
+    }
+    const dots = Array.from({length:Math.max(g.count,n)},(_,i)=>{
+      const over = g.op==="<=" && i>=g.count;
+      return '<span class="dot'+(i<n?(over?" filled over":" filled"):"")+'"></span>';
+    }).join("");
+    chip.innerHTML = '<span>'+esc(g.label)+' '+(g.op===">="?"\u2265":"\u2264")+g.count+PERIOD_LABEL[period]+'</span><span class="dots">'+dots+'</span><span class="status">'+status+'</span>';
+    chip.title = n+" planned "+PERIOD_RANGE_DESC[period];
+    goalsStrip.appendChild(chip);
+  }
+  renderProteinGoalChip();
+  if(!state.goals.length && !state.proteinTarget) goalsStrip.innerHTML = '<span class="empty">No goals yet &mdash; add some with &ldquo;Edit goals&rdquo;.</span>';
+}
+
+function esc(s){ return String(s).replace(/[&<>"]/g, ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch])); }
+
+/* ============================== rough macro estimator ============================== */
+// Approximate per-100g macros for common ingredients. This is a rough, offline
+// heuristic (no external lookups) -- good enough for "roughly how many calories"
+// but not a substitute for a real nutrition database.
+const FOOD_DB = {
+  "chicken breast":{per100:{cal:165,p:31,f:3.6,c:0}},
+  "chicken thigh":{per100:{cal:209,p:26,f:10.9,c:0}},
+  "chicken":{per100:{cal:165,p:31,f:3.6,c:0}},
+  "ground beef":{per100:{cal:254,p:17,f:20,c:0}},
+  "steak":{per100:{cal:271,p:26,f:18,c:0}},
+  "beef":{per100:{cal:254,p:17,f:20,c:0}},
+  "salmon":{per100:{cal:208,p:20,f:13,c:0}},
+  "tuna":{per100:{cal:144,p:23,f:5,c:0}},
+  "shrimp":{per100:{cal:99,p:24,f:0.3,c:0.2}},
+  "bacon":{per100:{cal:541,p:37,f:42,c:1.4}},
+  "sausage":{per100:{cal:301,p:12,f:27,c:1}},
+  "pork chop":{per100:{cal:231,p:25,f:14,c:0}},
+  "pork":{per100:{cal:242,p:27,f:14,c:0}},
+  "tofu":{per100:{cal:76,p:8,f:4.8,c:1.9}},
+  "black beans":{per100:{cal:132,p:8.9,f:0.5,c:24},units:{can:240}},
+  "kidney beans":{per100:{cal:127,p:8.7,f:0.5,c:22.8},units:{can:240}},
+  "chickpeas":{per100:{cal:164,p:8.9,f:2.6,c:27},units:{can:240}},
+  "lentils":{per100:{cal:116,p:9,f:0.4,c:20}},
+  "beans":{per100:{cal:132,p:8.9,f:0.5,c:24},units:{can:240}},
+  "egg":{per100:{cal:155,p:13,f:11,c:1.1},each:50},
+  "cheddar":{per100:{cal:403,p:25,f:33,c:1.3},units:{cup:110}},
+  "parmesan":{per100:{cal:431,p:38,f:29,c:4.1},units:{cup:100}},
+  "mozzarella":{per100:{cal:280,p:28,f:17,c:3.1},units:{cup:110}},
+  "cheese":{per100:{cal:403,p:25,f:33,c:1.3},units:{cup:110}},
+  "butter":{per100:{cal:717,p:0.9,f:81,c:0.1},units:{cup:227,tbsp:14,tsp:4.7}},
+  "olive oil":{per100:{cal:884,p:0,f:100,c:0},units:{cup:216,tbsp:13.5,tsp:4.5}},
+  "oil":{per100:{cal:884,p:0,f:100,c:0},units:{cup:216,tbsp:13.5,tsp:4.5}},
+  "milk":{per100:{cal:61,p:3.2,f:3.3,c:4.8},units:{cup:240}},
+  "heavy cream":{per100:{cal:340,p:2.1,f:36,c:2.8},units:{cup:238,tbsp:15}},
+  "cream":{per100:{cal:340,p:2.1,f:36,c:2.8},units:{cup:238,tbsp:15}},
+  "yogurt":{per100:{cal:61,p:3.5,f:3.3,c:4.7},units:{cup:245}},
+  "mayo":{per100:{cal:680,p:1,f:75,c:0.6},units:{tbsp:13,tsp:4.3}},
+  "flour":{per100:{cal:364,p:10,f:1,c:76},units:{cup:125,tbsp:8}},
+  "sugar":{per100:{cal:387,p:0,f:0,c:100},units:{cup:200,tbsp:12.5}},
+  "rice":{per100:{cal:130,p:2.7,f:0.3,c:28},units:{cup:195}},
+  "pasta":{per100:{cal:131,p:5,f:1.1,c:25},units:{cup:140}},
+  "bread":{per100:{cal:265,p:9,f:3.2,c:49},each:30},
+  "tortilla":{per100:{cal:218,p:6,f:5,c:36},each:45},
+  "potato":{per100:{cal:77,p:2,f:0.1,c:17},each:170},
+  "sweet potato":{per100:{cal:86,p:1.6,f:0.1,c:20},each:180},
+  "onion":{per100:{cal:40,p:1.1,f:0.1,c:9.3},each:110},
+  "garlic":{per100:{cal:149,p:6.4,f:0.5,c:33},each:3,units:{clove:3}},
+  "tomato":{per100:{cal:18,p:0.9,f:0.2,c:3.9},each:120},
+  "bell pepper":{per100:{cal:31,p:1,f:0.3,c:6},each:120},
+  "spinach":{per100:{cal:23,p:2.9,f:0.4,c:3.6},units:{cup:30}},
+  "kale":{per100:{cal:49,p:4.3,f:0.9,c:8.8},units:{cup:67}},
+  "lettuce":{per100:{cal:15,p:1.4,f:0.2,c:2.9},units:{cup:47}},
+  "cucumber":{per100:{cal:15,p:0.7,f:0.1,c:3.6},each:300},
+  "carrot":{per100:{cal:41,p:0.9,f:0.2,c:10},each:60},
+  "celery":{per100:{cal:16,p:0.7,f:0.2,c:3},each:40},
+  "corn":{per100:{cal:96,p:3.4,f:1.5,c:21},units:{cup:150},each:90},
+  "avocado":{per100:{cal:160,p:2,f:15,c:9},each:150},
+  "mushroom":{per100:{cal:22,p:3.1,f:0.3,c:3.3},units:{cup:70}},
+  "broccoli":{per100:{cal:34,p:2.8,f:0.4,c:7},units:{cup:90}},
+  "cabbage":{per100:{cal:25,p:1.3,f:0.1,c:6},units:{cup:70}},
+  "lime":{per100:{cal:30,p:0.7,f:0.2,c:11},each:67},
+  "lemon":{per100:{cal:29,p:1.1,f:0.3,c:9},each:58},
+  "salsa":{per100:{cal:36,p:1.5,f:0.2,c:7},units:{cup:230}},
+  // fruits
+  "banana":{per100:{cal:89,p:1.1,f:0.3,c:23},each:118},
+  "apple":{per100:{cal:52,p:0.3,f:0.2,c:14},each:182},
+  "orange":{per100:{cal:47,p:0.9,f:0.1,c:12},each:131},
+  "strawberries":{per100:{cal:32,p:0.7,f:0.3,c:7.7},units:{cup:152}},
+  "strawberry":{per100:{cal:32,p:0.7,f:0.3,c:7.7},units:{cup:152}},
+  "blueberries":{per100:{cal:57,p:0.7,f:0.3,c:14.5},units:{cup:148}},
+  "raspberries":{per100:{cal:52,p:1.2,f:0.7,c:12},units:{cup:123}},
+  "blackberries":{per100:{cal:43,p:1.4,f:0.5,c:9.6},units:{cup:144}},
+  "cherries":{per100:{cal:50,p:1,f:0.3,c:12},units:{cup:154}},
+  "mixed berries":{per100:{cal:50,p:0.9,f:0.4,c:12},units:{cup:145}},
+  "berries":{per100:{cal:50,p:0.9,f:0.4,c:12},units:{cup:145}},
+  "mango":{per100:{cal:60,p:0.8,f:0.4,c:15},each:200},
+  "pineapple":{per100:{cal:50,p:0.5,f:0.1,c:13},units:{cup:165}},
+  "grapes":{per100:{cal:69,p:0.7,f:0.2,c:18},units:{cup:151}},
+  "watermelon":{per100:{cal:30,p:0.6,f:0.2,c:8},units:{cup:152}},
+  "peach":{per100:{cal:39,p:0.9,f:0.3,c:10},each:150},
+  "pear":{per100:{cal:57,p:0.4,f:0.1,c:15},each:178},
+  "kiwi":{per100:{cal:61,p:1.1,f:0.5,c:15},each:69},
+  // plant milks & non-dairy liquids
+  "almond milk":{per100:{cal:13,p:0.4,f:1.1,c:0.3},units:{cup:240}},
+  "oat milk":{per100:{cal:47,p:1,f:1.5,c:7.5},units:{cup:240}},
+  "soy milk":{per100:{cal:33,p:3.3,f:1.8,c:1.8},units:{cup:240}},
+  "coconut milk":{per100:{cal:230,p:2.3,f:24,c:3.3},units:{cup:240,can:400}},
+  "coconut water":{per100:{cal:19,p:0.7,f:0.2,c:3.7},units:{cup:240}},
+  // nut butters, nuts & seeds
+  "peanut butter":{per100:{cal:588,p:25,f:50,c:20},units:{tbsp:16,cup:258}},
+  "almond butter":{per100:{cal:614,p:21,f:56,c:19},units:{tbsp:16,cup:256}},
+  "almonds":{per100:{cal:579,p:21,f:50,c:22},units:{cup:143}},
+  "walnuts":{per100:{cal:654,p:15,f:65,c:14},units:{cup:117}},
+  "cashews":{per100:{cal:553,p:18,f:44,c:30},units:{cup:137}},
+  "peanuts":{per100:{cal:567,p:26,f:49,c:16},units:{cup:146}},
+  "chia seeds":{per100:{cal:486,p:17,f:31,c:42},units:{tbsp:12,cup:170}},
+  "flax seed":{per100:{cal:534,p:18,f:42,c:29},units:{tbsp:10,cup:168}},
+  "flaxseed":{per100:{cal:534,p:18,f:42,c:29},units:{tbsp:10,cup:168}},
+  "pumpkin seeds":{per100:{cal:559,p:30,f:49,c:11},units:{cup:129}},
+  "sunflower seeds":{per100:{cal:584,p:21,f:51,c:20},units:{cup:140}},
+  "tahini":{per100:{cal:595,p:17,f:53,c:21},units:{tbsp:15,cup:240}},
+  "coconut oil":{per100:{cal:862,p:0,f:100,c:0},units:{tbsp:13.6,tsp:4.5,cup:218}},
+  "coconut":{per100:{cal:354,p:3.3,f:33,c:15},units:{cup:80}},
+  // sweeteners
+  "honey":{per100:{cal:304,p:0.3,f:0,c:82},units:{tbsp:21,cup:340}},
+  "maple syrup":{per100:{cal:260,p:0,f:0.1,c:67},units:{tbsp:20,cup:322}},
+  "agave":{per100:{cal:310,p:0,f:0.5,c:76},units:{tbsp:21,cup:336}},
+  "brown sugar":{per100:{cal:380,p:0,f:0,c:98},units:{cup:220,tbsp:14}},
+  // oats, grains & protein powder
+  "oats":{per100:{cal:389,p:17,f:7,c:66},units:{cup:81}},
+  "granola":{per100:{cal:471,p:10,f:20,c:64},units:{cup:122}},
+  "quinoa":{per100:{cal:120,p:4.4,f:1.9,c:21},units:{cup:185}},
+  "protein powder":{per100:{cal:400,p:80,f:5,c:10},units:{scoop:30,cup:120}},
+  // dairy & other
+  "greek yogurt":{per100:{cal:97,p:9,f:5,c:4},units:{cup:245}},
+  "cottage cheese":{per100:{cal:98,p:11,f:4.3,c:3.4},units:{cup:226}},
+  "ice":{per100:{cal:0,p:0,f:0,c:0}},
+  // more vegetables
+  "zucchini":{per100:{cal:17,p:1.2,f:0.3,c:3.1},each:196},
+  "cauliflower":{per100:{cal:25,p:1.9,f:0.3,c:5},units:{cup:107}},
+  "green beans":{per100:{cal:31,p:1.8,f:0.2,c:7},units:{cup:100}},
+  "peas":{per100:{cal:81,p:5.4,f:0.4,c:14},units:{cup:145}},
+  // more proteins
+  "ground turkey":{per100:{cal:203,p:27,f:10,c:0}},
+  "turkey":{per100:{cal:189,p:29,f:7,c:0}},
+  "ham":{per100:{cal:145,p:21,f:5.5,c:1.5}},
+  // condiments & pantry
+  "soy sauce":{per100:{cal:53,p:8,f:0.1,c:4.9},units:{tbsp:16,tsp:5.3}},
+  "vinegar":{per100:{cal:18,p:0,f:0,c:0.4},units:{tbsp:15,tsp:5}},
+  "ketchup":{per100:{cal:101,p:1.3,f:0.1,c:25.8},units:{tbsp:17}},
+  "mustard":{per100:{cal:66,p:4.4,f:4,c:5.3},units:{tbsp:16}},
+  "hummus":{per100:{cal:166,p:7.9,f:9.6,c:14.3},units:{cup:246,tbsp:15}},
+};
+const UNIT_G = {cup:240,tbsp:15,tsp:5,oz:28.35,lb:453.6,g:1,kg:1000,ml:1,l:1000,can:400,clove:3,slice:25,whole:100,scoop:30,handful:30};
+const UNIT_PATTERN = "cups?|tablespoons?|tbsp|teaspoons?|tsp|ounces?|oz|pounds?|lbs?|lb|grams?|g|kilograms?|kg|milliliters?|ml|liters?|l|cloves?|slices?|cans?|whole|scoops?|handfuls?|T|t";
+const STOPWORDS = /\b(minute|minutes|hour|hours|degree|degrees|preheat|bake|baking|simmer|boil|boiling|stir|whisk|fold|season|serve|serving|garnish|cool|cooling|heat|heated|cook|cooking|marinate|rest|resting|chill|drain|rinse|until|about|toss|combine|reduce|reduces)\b/i;
+
+function parseAmount(str){
+  str = str.trim();
+  if(str.includes("/")){ const parts = str.split("/").map(Number); return parts[1]? parts[0]/parts[1] : parts[0]; }
+  return Number(str);
+}
+
+function estimateMacros(){
+  const text = document.getElementById("fRecipe").value;
+  if(!text.trim()){ alert("Paste or type a recipe first."); return; }
+  const re = new RegExp("^[\\s\\-\\*\\u2022]*(\\d+\\s*/\\s*\\d+|\\d+(?:\\.\\d+)?)\\s*("+UNIT_PATTERN+")?\\s+(?:of\\s+)?(.+)$","i");
+  const dbKeys = Object.keys(FOOD_DB).sort((a,b)=>b.length-a.length);
+  let totals = {cal:0,p:0,f:0,c:0};
+  let matched = [], unmatched = [];
+  for(const raw of text.split(/\n+/)){
+    const line = raw.trim();
+    if(!line) continue;
+    const m = line.match(re);
+    if(!m) continue;
+    const amt = parseAmount(m[1]);
+    if(!amt || isNaN(amt)) continue;
+    const rawUnit = m[2]||"";
+    let unit = rawUnit==="T" ? "tbsp" : rawUnit==="t" ? "tsp" : rawUnit.toLowerCase();
+    unit = unit.replace(/^tablespoons?$/,"tbsp").replace(/^teaspoons?$/,"tsp").replace(/^ounces?$/,"oz")
+                .replace(/^pounds?$/,"lb").replace(/^lbs$/,"lb").replace(/^grams?$/,"g").replace(/^kilograms?$/,"kg")
+                .replace(/^milliliters?$/,"ml").replace(/^liters?$/,"l").replace(/s$/,"");
+    let rest = m[3].split(/[,;(]/)[0].trim().toLowerCase();
+    if(STOPWORDS.test(rest)) continue;
+    rest = rest.replace(/^(fresh|chopped|diced|minced|large|small|medium|boneless|skinless|ripe|raw|cooked|shredded|grated|of)\s+/,"");
+    const key = dbKeys.find(k=>rest.includes(k));
+    if(!key){ unmatched.push(line); continue; }
+    const entry = FOOD_DB[key];
+    let grams;
+    if(unit && ["g","kg","oz","lb"].includes(unit)){
+      grams = amt * (unit==="g"?1: unit==="kg"?1000: unit==="oz"?28.35:453.6);
+    } else if(unit && entry.units && entry.units[unit]){
+      grams = amt * entry.units[unit];
+    } else if(unit && UNIT_G[unit]){
+      grams = amt * UNIT_G[unit];
+    } else {
+      grams = amt * (entry.each || 100);
+    }
+    const factor = grams/100;
+    totals.cal += entry.per100.cal*factor; totals.p += entry.per100.p*factor;
+    totals.f += entry.per100.f*factor; totals.c += entry.per100.c*factor;
+    matched.push({line, key, grams:Math.round(grams)});
+  }
+  const panel = document.getElementById("estimatePanel");
+  panel.hidden = false;
+  if(!matched.length){
+    panel.innerHTML = '<div class="empty">Couldn&rsquo;t recognize any ingredient lines with amounts. Try listing ingredients like &ldquo;2 cups rice&rdquo; or &ldquo;1 lb chicken breast,&rdquo; one per line.</div>';
+    return;
+  }
+  const servMatch = text.match(/serves?\s*:?\s*(\d{1,2})/i) || text.match(/yields?\s*:?\s*(\d{1,2})/i) || text.match(/makes?\s*(?:about\s*)?(\d{1,2})/i);
+  const servings = servMatch? parseInt(servMatch[1]) : 4;
+  renderEstimatePanel(totals, matched, unmatched, servings);
+}
+
+function renderEstimatePanel(totals, matched, unmatched, servings){
+  const panel = document.getElementById("estimatePanel");
+  const per = s => ({cal:totals.cal/s, p:totals.p/s, f:totals.f/s, c:totals.c/s});
+  let html = '<div><b>Whole recipe (estimated):</b> ~'+Math.round(totals.cal)+' kcal &middot; '+Math.round(totals.p)+'P / '+Math.round(totals.f)+'F / '+Math.round(totals.c)+'C</div>';
+  html += '<div style="margin:6px 0;display:flex;align-items:center;gap:6px">Servings: <input type="number" id="estServings" min="1" max="20" value="'+servings+'"> <span id="estPerServing"></span></div>';
+  html += '<div class="hint">Counted: '+matched.map(m=>esc(m.key)+" ("+m.grams+"g)").join(", ")+'</div>';
+  if(unmatched.length){
+    html += '<div class="hint">Not recognized (not counted): '+unmatched.slice(0,6).map(esc).join(" &middot; ")+(unmatched.length>6?" &hellip;":"")+'</div>';
+  }
+  html += '<button type="button" class="primary" id="applyEstimateBtn" style="margin-top:8px">Use these per-serving numbers</button>';
+  panel.innerHTML = html;
+  const updatePerServing = ()=>{
+    const s = Math.max(1, parseInt(document.getElementById("estServings").value)||1);
+    const pv = per(s);
+    document.getElementById("estPerServing").innerHTML = '&rarr; <b>'+Math.round(pv.cal)+'</b> kcal/serving ('+Math.round(pv.p)+'P/'+Math.round(pv.f)+'F/'+Math.round(pv.c)+'C)';
+  };
+  document.getElementById("estServings").addEventListener("input", updatePerServing);
+  updatePerServing();
+  document.getElementById("applyEstimateBtn").onclick = ()=>{
+    const s = Math.max(1, parseInt(document.getElementById("estServings").value)||1);
+    const pv = per(s);
+    document.getElementById("fCal").value = Math.round(pv.cal);
+    document.getElementById("fP").value = Math.round(pv.p);
+    document.getElementById("fF").value = Math.round(pv.f);
+    document.getElementById("fC").value = Math.round(pv.c);
+    panel.hidden = true;
+  };
+}
+
+/* ============================== meal editor ============================== */
+const editDlg = document.getElementById("editDlg");
+let editingId = null;
+function openEditor(id){
+  editingId = id || null;
+  const m = id ? mealById(id) : null;
+  document.getElementById("editTitle").textContent = m ? "Edit meal" : "New meal";
+  document.getElementById("fName").value = m?m.name:"";
+  document.getElementById("fTags").value = m?(m.tags||[]).join(", "):"";
+  document.getElementById("fPer").value = m&&m.freq?m.freq.per:"";
+  document.getElementById("fTimes").value = m&&m.freq?(m.freq.times||1):1;
+  document.getElementById("fCal").value = m&&m.nut?m.nut.cal??"":"";
+  document.getElementById("fP").value = m&&m.nut?m.nut.p??"":"";
+  document.getElementById("fF").value = m&&m.nut?m.nut.f??"":"";
+  document.getElementById("fC").value = m&&m.nut?m.nut.c??"":"";
+  document.getElementById("fRecipe").value = m?m.recipe:"";
+  document.getElementById("fNotes").value = m?m.notes:"";
+  const tech = (m && m.tech) || deriveTech(m ? m.tags : []);
+  setTechFields(tech);
+  techTouched = !!(m && m.tech);   // an existing meal's saved values are never auto-overwritten
+  document.getElementById("deleteMealBtn").style.visibility = m?"visible":"hidden";
+  const panel = document.getElementById("estimatePanel"); panel.hidden = true; panel.innerHTML = "";
+  editDlg.showModal();
+}
+function setTechFields(t){
+  document.getElementById("fTaste").value = clamp5(t.t??3);
+  document.getElementById("fNourish").value = clamp5(t.h??3);
+  document.getElementById("fEffort").value = clamp5(t.e??3);
+  document.getElementById("fCost").value = clamp5(t.c??3);
+}
+// While TECH is still at its guessed-from-tags default, keep it in sync as tags
+// are typed. Once the cook overrides a value, stop second-guessing them.
+let techTouched = false;
+["fTaste","fNourish","fEffort","fCost"].forEach(id=>{
+  document.getElementById(id).addEventListener("change", ()=>{ techTouched = true; });
+});
+document.getElementById("fTags").addEventListener("input", ()=>{
+  if(techTouched) return;
+  const tags = document.getElementById("fTags").value.split(",").map(s=>s.trim().toLowerCase()).filter(Boolean);
+  setTechFields(deriveTech(tags));
+});
+document.getElementById("addMealBtn").onclick = ()=>openEditor(null);
+document.getElementById("estimateBtn").onclick = estimateMacros;
+document.getElementById("saveMealBtn").onclick = ()=>{
+  const name = document.getElementById("fName").value.trim();
+  if(!name){ document.getElementById("fName").focus(); return; }
+  const tags = document.getElementById("fTags").value.split(",").map(s=>s.trim().toLowerCase()).filter(Boolean);
+  const per = document.getElementById("fPer").value;
+  const times = parseInt(document.getElementById("fTimes").value)||1;
+  const num = id=>{ const v=document.getElementById(id).value; return v===""?null:Math.max(0,Number(v)); };
+  const cal=num("fCal"), p=num("fP"), f=num("fF"), c=num("fC");
+  const nut = (cal!==null||p!==null||f!==null||c!==null)?{cal:cal||0,p:p||0,f:f||0,c:c||0}:null;
+  const tech = { t: clamp5(+document.getElementById("fTaste").value),
+                 e: clamp5(+document.getElementById("fEffort").value),
+                 c: clamp5(+document.getElementById("fCost").value),
+                 h: clamp5(+document.getElementById("fNourish").value) };
+  const data = { name, tags, freq: per?{per,times}:null, nut, tech,
+                 recipe: document.getElementById("fRecipe").value, notes: document.getElementById("fNotes").value.trim() };
+  if(editingId){ Object.assign(mealById(editingId), data); }
+  else state.meals.push(Object.assign({id:uid()}, data));
+  editDlg.close(); render();
+};
+document.getElementById("deleteMealBtn").onclick = ()=>{
+  if(!editingId) return;
+  const m = mealById(editingId);
+  if(!confirm('Delete "'+m.name+'"? It will also be removed from the calendar and the on-deck list.')) return;
+  state.meals = state.meals.filter(x=>x.id!==editingId);
+  for(const d in state.plan) for(const s in state.plan[d])
+    if(Array.isArray(state.plan[d][s])) state.plan[d][s] = state.plan[d][s].filter(e=>e.mealId!==editingId);
+  clearDeckFor(editingId);
+  editDlg.close(); render();
+};
+
+/* ============================== detail modal ============================== */
+const detailDlg = document.getElementById("detailDlg");
+let detailId = null;
+function openDetail(id){
+  const m = mealById(id); if(!m) return;
+  detailId = id;
+  document.getElementById("dName").textContent = m.name;
+  const di = dueInfo(m);
+  const last = lastMade(id);
+  const bits = [];
+  for(const t of (m.tags||[])) bits.push('<span class="badge">'+esc(t)+'</span>');
+  if(m.freq&&m.freq.per) bits.push('<span class="badge">target '+freqLabel(m.freq)+'</span>');
+  bits.push('<span class="badge">'+(last? "last made "+daysSince(last)+"d ago ("+last+")" : "never planned")+'</span>');
+  if(di&&di.due) bits.push('<span class="badge due">due for a repeat</span>');
+  if(m.nut) bits.push('<span class="badge">~'+(m.nut.cal||0)+' kcal &middot; '+(m.nut.p||0)+'P/'+(m.nut.f||0)+'F/'+(m.nut.c||0)+'C per serving</span>');
+  const hist = mealHistory(id);
+  const rated = hist.filter(h=>h.entry.rating);
+  if(rated.length){
+    const avg = rated.reduce((s,h)=>s+h.entry.rating,0)/rated.length;
+    bits.push('<span class="badge">avg '+avg.toFixed(1)+'★ over '+rated.length+' rating'+(rated.length>1?"s":"")+'</span>');
+  }
+  let html = '<div class="detail-meta">'+bits.join("")+'</div>' +
+             '<div class="detail-profile">'+radarSVG(m,230)+'<div class="detail-profile-side">'+techReadout(m)+'</div></div>';
+  if(m.notes) html += '<p style="margin-bottom:10px;color:var(--ink-soft)">'+esc(m.notes)+'</p>';
+  html += m.recipe ? '<pre class="recipe">'+esc(m.recipe)+'</pre>' : '<div class="empty">No recipe saved. Click Edit to paste one in.</div>';
+  const logged = hist.filter(h=>h.entry.rating || h.entry.note);
+  if(logged.length){
+    html += '<h4 style="font-family:var(--display);font-size:14px;color:var(--pine-dark);margin:14px 0 4px">Cooking log</h4>';
+    for(const h of logged){
+      html += '<div class="history-item"><div class="history-head">'+
+        '<span class="hdate">'+fmtLong(h.date)+'</span>'+
+        (h.entry.rating? '<span class="hrate">'+starString(h.entry.rating)+'</span>' : '')+
+        (h.entry.leftover? '<span class="badge">leftovers</span>' : '')+
+        '</div>'+
+        (h.entry.note? '<div class="hnote">'+esc(h.entry.note)+'</div>' : '')+
+        '</div>';
+    }
+  }
+  document.getElementById("dBody").innerHTML = html;
+  const deckBtn = document.getElementById("dDeckBtn");
+  const queued = deckList().some(d=>d.mealId===id);
+  deckBtn.textContent = queued ? "Already on deck" : "Put on deck";
+  deckBtn.disabled = queued;
+  detailDlg.showModal();
+}
+document.getElementById("dEditBtn").onclick = ()=>{ detailDlg.close(); openEditor(detailId); };
+document.getElementById("dDeckBtn").onclick = ()=>{
+  if(!detailId) return;
+  const onDeckAlready = !addToDeck(detailId);
+  detailDlg.close(); render();
+  if(onDeckAlready) return;
+  // Land the caret in the new item's note so the "why" can be typed straight away.
+  const last = document.querySelector("#deckList .deck-item:last-child .deck-note");
+  if(last) last.focus();
+};
+
+/* ============================== the repertoire map ==============================
+   Four axes will not fit on a plane, but they collapse naturally along the seam
+   the framework already has: what a dish ASKS (effort, cost) against what it
+   OFFERS (taste, nourishment). The quadrants that fall out are the ones a cook
+   actually reasons with.                                                      */
+const mapDlg = document.getElementById("mapDlg");
+function demandOf(m){ const g=techMagnitudes(m); return ((g.e+g.c)/2 - 1)/4; }
+function offerOf(m){ const g=techMagnitudes(m); return ((g.t+g.h)/2 - 1)/4; }
+// Stable per-meal jitter: magnitudes are integers, so dishes collide on a
+// coarse grid. Derived from the id so a dish never moves between renders.
+function jitter(id, salt){
+  let h = salt;
+  for(let i=0;i<id.length;i++) h = (h*31 + id.charCodeAt(i)) % 1000;
+  return (h/1000 - 0.5) * 0.055;
+}
+function renderMap(){
+  const W=620, H=470, pad={l:64,r:26,t:26,b:56};
+  const x = v => pad.l + v*(W-pad.l-pad.r);
+  const y = v => H-pad.b - v*(H-pad.t-pad.b);
+  const mx = x(0.5), my = y(0.5);
+  let svg = '<svg class="repmap" viewBox="0 0 '+W+' '+H+'" width="100%" role="img" aria-label="Repertoire map">';
+  svg += '<rect class="mq mq-hero" x="'+pad.l+'" y="'+pad.t+'" width="'+(mx-pad.l)+'" height="'+(my-pad.t)+'"/>';
+  svg += '<rect class="mq mq-worth" x="'+mx+'" y="'+pad.t+'" width="'+(W-pad.r-mx)+'" height="'+(my-pad.t)+'"/>';
+  svg += '<rect class="mq mq-filler" x="'+pad.l+'" y="'+my+'" width="'+(mx-pad.l)+'" height="'+(H-pad.b-my)+'"/>';
+  svg += '<rect class="mq mq-recon" x="'+mx+'" y="'+my+'" width="'+(W-pad.r-mx)+'" height="'+(H-pad.b-my)+'"/>';
+  svg += '<text class="mqlab" x="'+(pad.l+10)+'" y="'+(pad.t+16)+'">weeknight heroes</text>';
+  svg += '<text class="mqlab" x="'+(W-pad.r-10)+'" y="'+(pad.t+16)+'" text-anchor="end">worth the work</text>';
+  svg += '<text class="mqlab" x="'+(pad.l+10)+'" y="'+(H-pad.b-8)+'">filler</text>';
+  svg += '<text class="mqlab" x="'+(W-pad.r-10)+'" y="'+(H-pad.b-8)+'" text-anchor="end">reconsider these</text>';
+  svg += '<line class="max" x1="'+pad.l+'" y1="'+my+'" x2="'+(W-pad.r)+'" y2="'+my+'"/>';
+  svg += '<line class="max" x1="'+mx+'" y1="'+pad.t+'" x2="'+mx+'" y2="'+(H-pad.b)+'"/>';
+  svg += '<line class="maxis" x1="'+pad.l+'" y1="'+(H-pad.b)+'" x2="'+(W-pad.r)+'" y2="'+(H-pad.b)+'"/>';
+  svg += '<line class="maxis" x1="'+pad.l+'" y1="'+pad.t+'" x2="'+pad.l+'" y2="'+(H-pad.b)+'"/>';
+  svg += '<text class="mtitle" x="'+((pad.l+W-pad.r)/2)+'" y="'+(H-14)+'" text-anchor="middle">what it asks &rarr;</text>';
+  svg += '<text class="mtitle" transform="translate(16,'+((pad.t+H-pad.b)/2)+') rotate(-90)" text-anchor="middle">what it offers &rarr;</text>';
+  for(const m of state.meals){
+    const px = x(Math.max(0,Math.min(1, demandOf(m)+jitter(m.id,7))));
+    const py = y(Math.max(0,Math.min(1, offerOf(m)+jitter(m.id,13))));
+    const g = techMagnitudes(m);
+    svg += '<circle class="mdot" data-id="'+m.id+'" cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="6" '+
+           'style="--tagc:'+tagColor(m)+'"><title>'+esc(m.name)+
+           ' — asks: effort '+g.e+', cost '+g.c+' · offers: taste '+g.t+', nourish '+g.h+'</title></circle>';
+  }
+  svg += '</svg>';
+  const body = document.getElementById("mapBody");
+  body.innerHTML = svg + '<div class="hint" style="margin-top:8px">Each dot is a meal; hover for its profile, click to open it. '+
+    'Position is the dish&rsquo;s own magnitudes &mdash; not a verdict. A demanding dish in the bottom-right may still be exactly right for a birthday.</div>';
+  body.querySelectorAll(".mdot").forEach(dot=>{
+    dot.addEventListener("click", ()=>{ mapDlg.close(); openDetail(dot.dataset.id); });
+  });
+  document.getElementById("mapSub").textContent =
+    state.meals.length+" meals, placed by what they ask against what they give back";
+}
+document.getElementById("mapBtn").onclick = ()=>{ renderMap(); mapDlg.showModal(); };
+
+/* ============================== planned-instance editor ============================== */
+// Notes and ratings attach to one meal on one day, so "salmon, broiled, Jul 19"
+// can be judged separately from "salmon, sous vide, Jun 2".
+const instDlg = document.getElementById("instDlg");
+let instanceRef = null, pendingRating = 0;
+
+function starString(n){ return "★★★★★".slice(0,n) + "☆☆☆☆☆".slice(0,5-n); }
+function fmtLong(dISO){ return fromISO(dISO).toLocaleDateString(undefined,{weekday:"short", month:"short", day:"numeric", year:"numeric"}); }
+
+function instanceMarks(entry){
+  const bits = [];
+  if(entry.rating) bits.push('<span class="rate" title="'+entry.rating+' of 5">'+"★".repeat(entry.rating)+'</span>');
+  if(entry.note) bits.push('<span title="Has notes for this day">✎</span>');
+  if(entry.leftover) bits.push('<span title="Leftovers">↻</span>');
+  return bits.length ? '<span class="marks">'+bits.join("")+'</span>' : "";
+}
+
+function mealHistory(mealId){
+  const out = [];
+  for(const date in state.plan){
+    const rec = state.plan[date];
+    for(const slot in rec){
+      if(!Array.isArray(rec[slot])) continue;
+      rec[slot].forEach(entry=>{ if(entry.mealId===mealId) out.push({date, slot, entry}); });
+    }
+  }
+  return out.sort((a,b)=> b.date.localeCompare(a.date));
+}
+
+function renderStarPicker(r){
+  pendingRating = r;
+  const holder = document.getElementById("iStars");
+  holder.innerHTML = "";
+  for(let s=1;s<=5;s++){
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "star";
+    b.textContent = s<=r ? "★" : "☆";
+    b.title = s+(s>1?" stars":" star")+(s===r? " (click again to clear)" : "");
+    b.onclick = ()=>renderStarPicker(r===s ? 0 : s);
+    holder.appendChild(b);
+  }
+  const lbl = document.createElement("span");
+  lbl.className = "star-label";
+  lbl.textContent = r ? "" : "not rated";
+  holder.appendChild(lbl);
+}
+
+function currentEntry(){
+  if(!instanceRef) return null;
+  const arr = state.plan[instanceRef.dISO] && state.plan[instanceRef.dISO][instanceRef.slot];
+  return arr ? arr[instanceRef.idx] : null;
+}
+
+function openInstance(dISO, slot, idx){
+  const arr = state.plan[dISO] && state.plan[dISO][slot];
+  const entry = arr && arr[idx];
+  if(!entry) return;
+  const m = mealById(entry.mealId); if(!m) return;
+  instanceRef = {dISO, slot, idx};
+  document.getElementById("iName").textContent = m.name;
+  document.getElementById("iWhen").textContent = fmtLong(dISO)+" · "+slot;
+  document.getElementById("iNote").value = entry.note || "";
+  document.getElementById("iLeftover").checked = !!entry.leftover;
+  renderStarPicker(entry.rating || 0);
+  instDlg.showModal();
+}
+
+document.getElementById("iSaveBtn").onclick = ()=>{
+  const entry = currentEntry();
+  if(entry){
+    const note = document.getElementById("iNote").value.trim();
+    const leftover = document.getElementById("iLeftover").checked;
+    if(note) entry.note = note; else delete entry.note;
+    if(pendingRating) entry.rating = pendingRating; else delete entry.rating;
+    if(leftover) entry.leftover = true; else delete entry.leftover;
+  }
+  instDlg.close(); render();
+};
+document.getElementById("iRemoveBtn").onclick = ()=>{
+  if(!instanceRef) return;
+  const arr = state.plan[instanceRef.dISO] && state.plan[instanceRef.dISO][instanceRef.slot];
+  if(arr) arr.splice(instanceRef.idx,1);
+  cleanDay(instanceRef.dISO);
+  instDlg.close(); render();
+};
+document.getElementById("iRecipeBtn").onclick = ()=>{
+  const entry = currentEntry();
+  instDlg.close();
+  if(entry) openDetail(entry.mealId);
+};
+
+/* ============================== suggestions ============================== */
+const suggestDlg = document.getElementById("suggestDlg");
+document.getElementById("suggestBtn").onclick = ()=>{
+  const rows = [];
+  for(const m of state.meals){
+    const di = dueInfo(m);
+    if(di && di.due) rows.push({m, di});
+  }
+  rows.sort((a,b)=>{
+    if(a.di.never!==b.di.never) return a.di.never?1:-1;   // overdue first, never-made after
+    return b.di.ratio-a.di.ratio;
+  });
+  const body = document.getElementById("suggestBody");
+  if(!rows.length){ body.innerHTML = '<div class="empty">Nothing is due &mdash; the rotation is fresh.</div>'; }
+  else{
+    body.innerHTML = '<div class="hint" style="margin-bottom:6px">Drag a row straight onto a calendar day, or put it on deck to decide the night later.</div>';
+    for(const {m,di} of rows){
+      const row = document.createElement("div");
+      row.className = "suggest-item"; row.draggable = true;
+      row.style.borderLeft = "4px solid "+tagColor(m); row.style.paddingLeft = "8px";
+      row.innerHTML = '<span class="sname">'+esc(m.name)+'</span>'+
+        '<span class="swhen">'+(di.never? 'never made &middot; target '+freqLabel(m.freq)
+          : '<b>'+di.days+'d</b> since last &middot; target '+freqLabel(m.freq))+'</span>';
+      const deckBtn = document.createElement("button");
+      const queued = deckList().some(d=>d.mealId===m.id);
+      deckBtn.className = "sdeck"; deckBtn.textContent = queued ? "on deck" : "+ deck";
+      deckBtn.disabled = queued;
+      deckBtn.title = "Queue this without choosing a night yet";
+      deckBtn.onclick = ev=>{ ev.stopPropagation(); addToDeck(m.id); render(); deckBtn.textContent = "on deck"; deckBtn.disabled = true; };
+      row.appendChild(deckBtn);
+      row.addEventListener("dragstart", ev=>{
+        ev.dataTransfer.setData("text/plain", JSON.stringify({mealId:m.id}));
+        suggestDlg.close();
+      });
+      row.addEventListener("click", ()=>{ suggestDlg.close(); openDetail(m.id); });
+      body.appendChild(row);
+    }
+  }
+  suggestDlg.showModal();
+};
+
+/* ============================== goals editor ============================== */
+const goalsDlg = document.getElementById("goalsDlg");
+function goalRow(g){
+  const row = document.createElement("div"); row.className = "goal-row";
+  const period = g.period || "week";
+  row.innerHTML =
+    '<input type="text" class="gLabel" placeholder="Label" value="'+esc(g.label||"")+'">'+
+    '<input type="text" class="gTag" placeholder="tag" value="'+esc(g.tag||"")+'" style="width:90px">'+
+    '<select class="gOp"><option value=">=" '+(g.op===">="?"selected":"")+'>at least</option>'+
+    '<option value="<=" '+(g.op==="<="?"selected":"")+'>at most</option></select>'+
+    '<input type="number" class="gCount" min="0" max="90" value="'+(g.count??1)+'">'+
+    '<select class="gPeriod"><option value="week" '+(period==="week"?"selected":"")+'>per week</option>'+
+    '<option value="month" '+(period==="month"?"selected":"")+'>per month</option>'+
+    '<option value="quarter" '+(period==="quarter"?"selected":"")+'>per quarter</option></select>'+
+    '<button class="del" title="Remove goal">&#10005;</button>';
+  row.querySelector(".del").onclick = ()=>row.remove();
+  return row;
+}
+document.getElementById("goalsBtn").onclick = ()=>{
+  document.getElementById("proteinTargetInput").value = state.proteinTarget || "";
+  const holder = document.getElementById("goalRows");
+  holder.innerHTML = "";
+  for(const g of state.goals) holder.appendChild(goalRow(g));
+  goalsDlg.showModal();
+};
+document.getElementById("addGoalBtn").onclick = ()=>document.getElementById("goalRows").appendChild(goalRow({op:">=",count:1,period:"week"}));
+document.getElementById("saveGoalsBtn").onclick = ()=>{
+  const rows = [...document.querySelectorAll("#goalRows .goal-row")];
+  state.goals = rows.map(r=>({
+    id: uid(),
+    label: r.querySelector(".gLabel").value.trim() || r.querySelector(".gTag").value.trim(),
+    tag: r.querySelector(".gTag").value.trim().toLowerCase(),
+    op: r.querySelector(".gOp").value,
+    period: r.querySelector(".gPeriod").value,
+    count: parseInt(r.querySelector(".gCount").value)||0
+  })).filter(g=>g.tag);
+  state.proteinTarget = parseInt(document.getElementById("proteinTargetInput").value)||0;
+  goalsDlg.close(); render();
+};
+
+/* ============================== import / export ============================== */
+document.getElementById("exportBtn").onclick = ()=>{
+  const blob = new Blob([JSON.stringify(state,null,2)],{type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "menu-board-backup-"+todayISO+".json";
+  a.click(); URL.revokeObjectURL(a.href);
+};
+document.getElementById("importBtn").onclick = ()=>document.getElementById("importFile").click();
+document.getElementById("importFile").onchange = ev=>{
+  const file = ev.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const data = JSON.parse(reader.result);
+      if(!data.meals || !data.plan) throw new Error("Not a Menu Board backup");
+      if(confirm("Replace all current data with this backup?")){
+        // Back up what we are about to replace, and upgrade the incoming file if it is an older export.
+        try{ stash(BACKUP_PREV, JSON.stringify(state)); }catch(e){}
+        state = migrate(data, null); render();
+      }
+    }catch(e){ alert("Could not import: "+e.message); }
+    ev.target.value = "";
+  };
+  reader.readAsText(file);
+};
+
+/* ============================== wiring ============================== */
+document.getElementById("prevWeek").onclick = ()=>{ weekStart = addDays(weekStart,-7); render(); };
+document.getElementById("nextWeek").onclick = ()=>{ weekStart = addDays(weekStart, 7); render(); };
+document.getElementById("todayBtn").onclick = ()=>{ weekStart = weekStartOf(new Date()); render(); };
+document.getElementById("weeksToggleBtn").onclick = ()=>{
+  weeksToShow = weeksToShow===1 ? 2 : 1;
+  document.getElementById("weeksToggleBtn").textContent = weeksToShow===2 ? "1 week" : "2 weeks";
+  render();
+};
+document.getElementById("search").addEventListener("input", renderBank);
+document.getElementById("filterToggle").onclick = ()=>{
+  showFilterPanel(tagFilter.hidden);
+};
+document.getElementById("sortAdjust").onclick = ()=>{
+  const panel = document.getElementById("weightSliders");
+  panel.hidden = !panel.hidden;
+};
+document.getElementById("sortClear").onclick = ()=>{
+  activeOccasion = DEFAULT_OCCASION;
+  activeWeights = Object.assign({}, OCCASIONS[DEFAULT_OCCASION].w);
+  document.getElementById("weightSliders").hidden = true;
+  render();
+};
+document.querySelectorAll("dialog [data-close]").forEach(b=>b.onclick = ()=>b.closest("dialog").close());
+
+render();
+
+/* The whole surface cloud.js is allowed to touch. Keeping it this small means
+   the sync layer can be replaced without the app noticing. */
+window.MenuBoard = {
+  getState: ()=>state,
+  setState: (next)=>{ state = migrate(next, null) || next; render(); },
+  render,
+  onLocalChange: (fn)=>changeListeners.push(fn)
+};
+</script>
+<script type="module" src="cloud.js"></script>
+</body>
+</html>
