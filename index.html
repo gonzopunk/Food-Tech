@@ -2,360 +2,443 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>The Menu Board</title>
+<title>FoodTech</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F4F2EC">
 <style>
+  /* ===================== FoodTech — "Service" =====================
+     The kitchen's own paperwork: prep lists, ticket rails, the board above
+     the pass. Structure comes from rules and type, not boxes. There are no
+     cards and no shadows anywhere.
+
+     Colour appears in exactly one place — the Food TECH marks and the Tasty
+     stars, which are the same axis. Everything else is ink on paper, so the
+     only coloured thing on screen is the only real measurement.
+  ================================================================= */
   :root{
-    --paper:#FBFAF6; --panel:#F3F1E9; --card:#FFFFFF;
-    --ink:#262B22; --ink-soft:#6B7064; --line:#E2E0D5;
-    --pine:#3E5C4B; --pine-dark:#2D4638; --pine-ghost:#E8EEE9;
-    --butter:#DFAE3A; --butter-soft:#FBF3DC;
-    --tomato:#BC5B4B; --tomato-soft:#F7E6E2;
-    --tech-t:#BC5B4B; --tech-e:#DFAE3A; --tech-c:#4E7FA8; --tech-h:#3E5C4B;
-    --radius:10px;
+    --paper:#F4F2EC; --paper-2:#EDEBE3; --ink:#1E1F1C; --ink-2:#5E6057; --ink-3:#8C8E84;
+    --rule:#DBD8CE; --rule-2:#C8C5B8;
+    --tech-t:#A6503F; --tech-e:#B4852C; --tech-c:#4A6E8C; --tech-h:#3F6148;
     --display:"Fraunces",Georgia,serif;
+    --label:"Barlow Condensed","Arial Narrow",sans-serif;
     --body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --tap:44px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
-  /* Author display rules outrank the UA's [hidden], so restate it with weight. */
   [hidden]{display:none!important}
   html,body{height:100%}
-  body{font-family:var(--body);background:var(--paper);color:var(--ink);font-size:14px;
-       display:flex;flex-direction:column;overflow:hidden}
+  body{font-family:var(--body);background:var(--paper);color:var(--ink);font-size:15px;
+       display:flex;flex-direction:column;overflow:hidden;-webkit-font-smoothing:antialiased;
+       -webkit-tap-highlight-color:transparent}
+  button,input,select,textarea{font-family:inherit;font-size:inherit;color:inherit}
+  button{background:none;border:none;cursor:pointer}
+  :focus-visible{outline:2px solid var(--ink);outline-offset:2px}
 
-  /* ---------- header ---------- */
-  header{display:flex;align-items:center;gap:16px;padding:10px 18px;border-bottom:1px solid var(--line);background:var(--paper)}
-  header h1{font-family:var(--display);font-weight:700;font-size:22px;color:var(--pine-dark);letter-spacing:.2px;white-space:nowrap}
-  .week-nav{display:flex;align-items:center;gap:6px}
-  .week-label{font-family:var(--display);font-size:16px;font-weight:600;min-width:200px;text-align:center}
-  .spacer{flex:1}
-  button{font-family:var(--body);font-size:13px;border:1px solid var(--line);background:var(--card);
-         color:var(--ink);border-radius:8px;padding:6px 12px;cursor:pointer}
-  button:hover{border-color:var(--pine);color:var(--pine-dark)}
-  button:focus-visible{outline:2px solid var(--pine);outline-offset:1px}
-  button.primary{background:var(--pine);border-color:var(--pine);color:#fff}
-  button.primary:hover{background:var(--pine-dark)}
-  button.subtle{border:none;background:none;color:var(--ink-soft);padding:4px 6px}
-  button.subtle:hover{color:var(--pine-dark)}
+  .lab{font-family:var(--label);text-transform:uppercase;letter-spacing:.11em;font-weight:500}
 
-  /* ---------- cloud sync ---------- */
-  .cloud-box{display:flex;flex-direction:column;align-items:flex-end;gap:2px;margin-left:2px}
-  .cloud-status{font-size:10px;color:var(--ink-soft);letter-spacing:.03em;white-space:nowrap}
-  .cloud-status.ok{color:var(--pine)}
-  .cloud-status.warn{color:var(--tomato)}
-  #cloudAuthBtn:disabled{opacity:.5;cursor:default;border-color:var(--line);color:var(--ink-soft)}
+  /* ---------------------------- header ---------------------------- */
+  header{display:flex;align-items:center;gap:12px;padding:10px 16px 8px;
+         padding-top:calc(10px + env(safe-area-inset-top,0px));
+         border-bottom:1px solid var(--ink);background:var(--paper);flex:none}
+  .wordmark{display:flex;flex-direction:column;line-height:.86;flex:none}
+  .wordmark .wm-food{font-family:var(--display);font-style:italic;font-weight:500;font-size:19px;letter-spacing:.01em}
+  .wordmark .wm-tech{font-family:var(--label);font-weight:600;font-size:14px;letter-spacing:.34em;
+                     color:var(--tech-t);margin-left:1px}
+  .head-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .cloud-status{font-family:var(--label);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
+  .cloud-status.ok{color:var(--tech-h)}
+  .cloud-status.warn{color:var(--tech-t)}
+  .icon-btn{font-family:var(--label);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
+            color:var(--ink-2);padding:6px 2px;min-height:var(--tap);display:flex;align-items:center}
+  .icon-btn:hover{color:var(--ink)}
+  #cloudAuthBtn:disabled{color:var(--ink-3);cursor:default}
 
-  /* ---------- goals strip ---------- */
-  .goals-strip{display:flex;align-items:center;gap:10px;padding:8px 18px;border-bottom:1px solid var(--line);
-               background:var(--panel);overflow-x:auto;flex-wrap:wrap}
-  .goal-chip{display:flex;align-items:center;gap:7px;background:var(--card);border:1px solid var(--line);
-             border-radius:20px;padding:4px 12px;white-space:nowrap;font-size:12.5px;cursor:default}
-  .goal-chip .dots{display:flex;gap:3px}
-  .goal-chip .dot{width:8px;height:8px;border-radius:50%;background:var(--line)}
-  .goal-chip .dot.filled{background:var(--pine)}
-  .goal-chip .dot.over{background:var(--tomato)}
-  .goal-chip.met{border-color:var(--pine);background:var(--pine-ghost)}
-  .goal-chip.broken{border-color:var(--tomato);background:var(--tomato-soft)}
-  .goal-chip .status{font-weight:600}
+  /* ------------------------- goals ticker -------------------------- */
+  .goals-strip{display:flex;gap:18px;padding:7px 16px;border-bottom:1px solid var(--rule);
+               background:var(--paper);overflow-x:auto;flex:none;scrollbar-width:none}
+  .goals-strip::-webkit-scrollbar{display:none}
+  .goal-chip{display:flex;align-items:baseline;gap:6px;white-space:nowrap;
+             font-family:var(--label);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+  .goal-chip .status{font-weight:600;color:var(--ink)}
+  .goal-chip.met .status{color:var(--tech-h)}
+  .goal-chip.broken .status{color:var(--tech-t)}
+  .goals-strip .empty{font-family:var(--label);font-size:12px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em}
 
-  /* ---------- layout ---------- */
-  .layout{display:flex;flex:1;min-height:0}
+  /* --------------------------- views ------------------------------ */
+  .views{flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+         -webkit-overflow-scrolling:touch}
+  .view{padding:0 16px 28px}
+  .view-head{display:flex;align-items:baseline;gap:10px;padding:14px 0 8px;position:sticky;top:0;
+             background:var(--paper);z-index:3;border-bottom:1px solid var(--ink)}
+  .view-head h2{font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:-.01em}
+  .view-head .sub{font-family:var(--label);font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-3)}
+  .view-head .act{margin-left:auto;display:flex;gap:14px}
+  .view-head .act button{font-family:var(--label);font-size:12.5px;text-transform:uppercase;
+                         letter-spacing:.09em;color:var(--ink-2);min-height:36px}
+  .view-head .act button:hover{color:var(--ink)}
 
-  /* ---------- sidebar / meals bank ---------- */
-  aside{width:300px;min-width:300px;border-right:1px solid var(--line);background:var(--panel);
-        display:flex;flex-direction:column;min-height:0}
-  .bank-head{padding:12px 14px 8px}
-  .bank-head h2{font-family:var(--display);font-size:16px;font-weight:600;color:var(--pine-dark);margin-bottom:8px}
-  .bank-actions{display:flex;gap:6px;margin-bottom:8px}
-  .bank-actions button{flex:1}
-  #search{width:100%;padding:7px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;background:var(--card)}
-  #search:focus{outline:2px solid var(--pine);outline-offset:0;border-color:transparent}
-  .tag-filter{display:flex;flex-wrap:wrap;gap:5px;padding:9px 0 2px}
-  .tag-filter button{font-size:11px;padding:2px 9px;border-radius:12px}
-  .tag-filter button.on{background:var(--pine);border-color:var(--pine);color:#fff}
-  .bank-list{flex:1;overflow-y:auto;padding:6px 14px 20px;display:flex;flex-direction:column;gap:7px}
+  /* ---------------------------- days ------------------------------ */
+  .daylist{display:flex;flex-direction:column}
+  .day{border-bottom:1px solid var(--rule);padding:12px 0 10px}
+  .day.today{border-left:3px solid var(--tech-t);margin-left:-9px;padding-left:6px}
+  .day-head{display:flex;align-items:baseline;gap:8px;margin-bottom:7px}
+  .day-head .dw{font-family:var(--display);font-weight:600;font-size:16.5px}
+  .day.today .day-head .dw::after{content:"today";font-family:var(--label);font-size:10px;
+        letter-spacing:.1em;color:var(--tech-t);margin-left:7px;vertical-align:2px}
+  .day-head .dt{font-family:var(--label);font-size:12.5px;letter-spacing:.07em;color:var(--ink-3);text-transform:uppercase}
+  .occ-pick{margin-left:auto}
+  .occ-pick select{font-family:var(--label);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;
+                   color:var(--ink-3);background:none;border:none;padding:4px 0;cursor:pointer;
+                   -webkit-appearance:none;appearance:none;text-align:right;min-height:32px}
+  .occ-pick.set select{color:var(--tech-h);font-weight:600}
 
-  /* ---------- meal card ---------- */
-  .meal-card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
-             padding:8px 10px 8px 12px;cursor:grab;position:relative;border-left:4px solid var(--tagc,#B9B6A8);
-             transition:box-shadow .12s, transform .12s}
-  .meal-card:hover{box-shadow:0 2px 8px rgba(38,43,34,.12);transform:translateY(-1px)}
-  .meal-card:active{cursor:grabbing}
-  .meal-card .name{font-weight:600;font-size:13.5px;line-height:1.25;padding-right:14px}
-  .meal-card .meta{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:11px;color:var(--ink-soft);flex-wrap:wrap}
-  .badge{border-radius:10px;padding:1px 7px;background:var(--panel);border:1px solid var(--line)}
-  .badge.due{background:var(--butter-soft);border-color:var(--butter);color:#8A6510;font-weight:600}
-  .badge.recipe{background:var(--pine-ghost);border-color:transparent;color:var(--pine-dark)}
-  .due-dot{position:absolute;top:8px;right:8px;width:9px;height:9px;border-radius:50%;background:var(--butter)}
+  .slot{display:grid;grid-template-columns:58px 1fr;gap:8px;align-items:start;padding:3px 0}
+  .slot-label{font-family:var(--label);font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;
+              color:var(--ink-3);padding-top:7px}
+  .slot-body{min-width:0;border-bottom:1px dotted var(--rule);padding-bottom:3px}
+  .slot:last-child .slot-body{border-bottom:none}
+  .planned{display:flex;align-items:baseline;gap:8px;width:100%;text-align:left;
+           min-height:var(--tap);padding:5px 0;color:inherit}
+  .planned .pname{font-family:var(--display);font-weight:500;font-size:15.5px;line-height:1.2;flex:1;min-width:0}
+  .planned.leftover .pname{font-style:italic;color:var(--ink-2)}
+  .planned .marks{display:flex;align-items:center;gap:6px;flex:none;font-family:var(--label);
+                  font-size:11px;letter-spacing:.06em;color:var(--ink-3)}
+  .planned .marks .rate{color:var(--tech-t);letter-spacing:.5px}
+  .slot-add{font-family:var(--label);font-size:11.5px;text-transform:uppercase;letter-spacing:.09em;
+            color:var(--ink-3);min-height:var(--tap);display:flex;align-items:center;width:100%}
+  .slot-add:hover{color:var(--ink)}
+  .day-slots-toggle{font-family:var(--label);font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;
+                    color:var(--ink-3);margin-top:4px;min-height:32px}
+  .slot-toggles{display:flex;flex-wrap:wrap;gap:4px 14px;padding:6px 0 2px}
+  .slot-toggle{display:flex;align-items:center;gap:5px;font-family:var(--label);font-size:10.5px;
+               text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);cursor:pointer;min-height:32px}
+  .slot-toggle input{accent-color:var(--ink);margin:0}
+  .daytotal{font-family:var(--label);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+            color:var(--ink-3);margin-top:5px}
 
-  /* ---------- calendar ---------- */
-  main{flex:1;display:flex;flex-direction:column;min-height:0;overflow:auto;background:var(--paper)}
-  .week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:0}
-  .week-grid+.week-grid{border-top:3px solid var(--line)}
-  .day{border-right:1px solid var(--line);display:flex;flex-direction:column;min-width:150px}
-  .day:last-child{border-right:none}
-  .day.today .day-head{background:var(--pine);color:#fff}
-  .day.today .day-head .date{color:#DCE8DF}
-  .day-head{padding:8px 10px;border-bottom:1px solid var(--line);background:var(--panel);position:sticky;top:0;z-index:2}
-  .day-head .dow{font-family:var(--display);font-weight:600;font-size:14px}
-  .day-head .date{font-size:11px;color:var(--ink-soft)}
-  .slots{flex:1;display:flex;flex-direction:column;gap:2px;padding:8px 8px 4px}
-  .slot{border:1.5px dashed transparent;border-radius:8px;padding:4px;min-height:52px}
-  .slot.dragover{border-color:var(--pine);background:var(--pine-ghost)}
-  .slot-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);margin:0 0 3px 4px;
-              display:flex;justify-content:space-between;align-items:center}
-  .planned{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--tagc,#B9B6A8);
-           border-radius:8px;padding:5px 8px;margin-bottom:5px;font-size:12.5px;font-weight:600;
-           cursor:grab;position:relative;line-height:1.25}
-  .planned:active{cursor:grabbing}
-  .planned .x{position:absolute;top:2px;right:5px;border:none;background:none;color:var(--ink-soft);
-              cursor:pointer;font-size:13px;padding:0;visibility:hidden}
-  .planned:hover .x{visibility:visible}
-  .planned .x:hover{color:var(--tomato)}
-  .slot-toggles{display:flex;flex-wrap:wrap;gap:3px 8px;padding:6px 8px 8px;border-top:1px dashed var(--line)}
-  .slot-toggle{display:flex;align-items:center;gap:4px;font-size:10px;text-transform:uppercase;letter-spacing:.05em;
-               color:var(--ink-soft);cursor:pointer}
-  .slot-toggle:hover{color:var(--pine-dark)}
-  .slot-toggle input{margin:0;cursor:pointer}
+  /* --------------------------- meals ------------------------------ */
+  .search-row{display:flex;gap:10px;align-items:center;padding:10px 0 6px;border-bottom:1px dotted var(--rule)}
+  #search{flex:1;min-width:0;background:none;border:none;font-family:var(--label);font-size:15px;
+          letter-spacing:.05em;text-transform:uppercase;color:var(--ink);padding:8px 0;min-height:var(--tap)}
+  #search::placeholder{color:var(--ink-3)}
+  #filterToggle{font-family:var(--label);font-size:12px;text-transform:uppercase;letter-spacing:.09em;
+                color:var(--ink-3);flex:none;min-height:var(--tap);display:flex;align-items:center}
+  #filterToggle.on{color:var(--tech-h);font-weight:600}
+  .tag-filter{display:flex;flex-wrap:wrap;gap:3px 12px;padding:9px 0 4px;border-bottom:1px dotted var(--rule)}
+  .tag-filter button{font-family:var(--label);font-size:12px;text-transform:uppercase;letter-spacing:.07em;
+                     color:var(--ink-3);min-height:34px;display:flex;align-items:center}
+  .tag-filter button.on{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+  .sortnote{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px dotted var(--rule);
+            font-family:var(--label);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3)}
+  .sortnote #sortLabel{flex:1;min-width:0;color:var(--ink);font-weight:600}
+  .linkish{font-family:var(--label);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;
+           color:var(--ink-3);text-decoration:underline;text-underline-offset:2px;min-height:34px}
+  .weights{display:flex;flex-direction:column;gap:2px;padding:6px 0 8px;border-bottom:1px dotted var(--rule)}
+  .wrow{display:grid;grid-template-columns:70px 1fr 34px;align-items:center;gap:8px;min-height:34px}
+  .wlab{font-family:var(--label);font-size:11px;text-transform:uppercase;letter-spacing:.07em;
+        color:var(--ink-2);display:flex;align-items:center;gap:5px}
+  .wsw{width:6px;height:6px;background:var(--tc);flex:none}
+  .wrow input[type=range]{width:100%;accent-color:var(--ink-2)}
+  .wval{font-family:var(--label);font-size:11px;color:var(--ink-3);text-align:right;font-variant-numeric:tabular-nums}
+  .wval.hi{color:var(--ink);font-weight:700}
 
-  /* ---------- daily nutrition strip (below goals) ---------- */
-  .daytotals-strip{display:flex;border-bottom:1px solid var(--line);background:var(--paper)}
-  .dt-spacer{width:300px;min-width:300px;border-right:1px solid var(--line);display:flex;align-items:center;
-             padding:0 14px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft)}
-  .dt-weeks{flex:1;display:flex;flex-direction:column}
-  .dt-grid{display:grid;grid-template-columns:repeat(7,1fr)}
-  .dt-weeks .dt-grid+.dt-grid{border-top:1px solid var(--line)}
-  .dt-cell{padding:6px 10px;font-size:11.5px;color:var(--ink-soft);border-right:1px solid var(--line);min-width:150px}
-  .dt-cell:last-child{border-right:none}
-  .dt-cell b{color:var(--ink)}
-  .dt-cell.empty{color:var(--line)}
-  .protein-bar{margin-top:4px;height:5px;border-radius:3px;background:var(--panel);overflow:hidden;border:1px solid var(--line)}
-  .protein-bar .protein-fill{height:100%;background:var(--tomato)}
-  .protein-bar.warn .protein-fill{background:var(--butter)}
-  .protein-bar.good .protein-fill{background:var(--pine)}
+  .meal-list{display:flex;flex-direction:column}
+  .meal-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;color:inherit;
+            padding:9px 0;border-bottom:1px dotted var(--rule);min-height:var(--tap)}
+  .meal-row .mr-main{flex:1;min-width:0}
+  .meal-row .name{font-family:var(--display);font-weight:500;font-size:16px;line-height:1.2}
+  .meal-row .meta{display:flex;align-items:center;gap:9px;margin-top:3px;font-family:var(--label);
+                  font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);flex-wrap:wrap}
+  .meal-row .meta .due{color:var(--tech-e);font-weight:600}
+  .meal-row .mr-glyph{flex:none}
+  .fitbar{height:2px;background:var(--rule);margin-top:6px}
+  .fitbar div{height:100%;background:var(--ink-2)}
+  .empty{font-family:var(--label);font-size:13px;text-transform:uppercase;letter-spacing:.07em;
+         color:var(--ink-3);padding:20px 0;line-height:1.6}
 
-  /* ---------- modals ---------- */
-  dialog{border:none;border-radius:14px;padding:0;max-width:560px;width:92vw;box-shadow:0 12px 40px rgba(38,43,34,.25)}
-  dialog::backdrop{background:rgba(38,43,34,.35)}
-  .modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--line)}
-  .modal-head h3{font-family:var(--display);font-size:18px;font-weight:600;color:var(--pine-dark)}
-  .modal-body{padding:16px 18px;max-height:65vh;overflow-y:auto}
-  .modal-foot{display:flex;justify-content:space-between;gap:8px;padding:12px 18px;border-top:1px solid var(--line)}
-  .modal-foot .right{display:flex;gap:8px;margin-left:auto}
-  .field{margin-bottom:12px}
-  .field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);margin-bottom:4px}
-  .field input,.field textarea,.field select{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:8px;font-size:13px;font-family:var(--body);background:var(--card)}
-  .field textarea{min-height:110px;resize:vertical}
-  .field input:focus,.field textarea:focus,.field select:focus{outline:2px solid var(--pine);outline-offset:0}
-  .row{display:flex;gap:10px}
-  .row .field{flex:1}
-  .hint{font-size:11px;color:var(--ink-soft);margin-top:3px}
-  .suggest-item{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid var(--line);cursor:grab}
-  .suggest-item:last-child{border-bottom:none}
-  .suggest-item .sname{font-weight:600;flex:1}
-  .suggest-item .swhen{font-size:12px;color:var(--ink-soft);text-align:right}
-  .suggest-item .swhen b{color:#8A6510}
-  .empty{color:var(--ink-soft);font-size:13px;padding:12px 4px}
-  .detail-meta{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-  pre.recipe{white-space:pre-wrap;font-family:var(--body);font-size:13px;line-height:1.5;background:var(--panel);
-             border-radius:8px;padding:12px;border:1px solid var(--line)}
-  .goal-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
-  .goal-row select,.goal-row input{padding:6px 8px;border:1px solid var(--line);border-radius:8px;font-size:13px}
-  .goal-row input[type=number]{width:56px}
-  .goal-row input[type=text]{flex:1}
-  .goal-row .del{border:none;background:none;color:var(--ink-soft);cursor:pointer;font-size:15px}
-  .goal-row .del:hover{color:var(--tomato)}
+  /* ---------------------- TECH marks (the only colour) ------------- */
+  .tech-glyph{display:inline-flex;gap:3px;align-items:center;flex:none}
+  .tech-glyph i{position:relative;width:15px;height:2px;background:var(--rule-2);display:block}
+  .tech-glyph i::after{content:"";position:absolute;top:-3px;width:3px;height:8px;background:var(--tc);
+                       left:calc((var(--tv,3) - 1) / 4 * 12px)}
+  .tech-glyph i:nth-child(1){--tc:var(--tech-t)} .tech-glyph i:nth-child(2){--tc:var(--tech-e)}
+  .tech-glyph i:nth-child(3){--tc:var(--tech-c)} .tech-glyph i:nth-child(4){--tc:var(--tech-h)}
 
-  /* ---------- Food TECH: magnitudes shown as position, never as a filled score ---------- */
-  .tech-glyph{display:inline-flex;align-items:center;gap:3px;vertical-align:-1px;cursor:help}
-  .tech-glyph .tm{position:relative;display:block;width:14px;height:3px;border-radius:2px;background:var(--line)}
-  .tech-glyph .tm b{position:absolute;top:-2px;width:5px;height:7px;border-radius:2px;background:var(--tc);
-                    left:calc((var(--tv,3) - 1) / 4 * 9px)}
-  .tech-readout{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;font-size:12px}
-  .tech-readout .ax{display:flex;align-items:center;gap:6px}
-  .tech-readout .swatch{width:8px;height:8px;border-radius:2px;background:var(--tc);flex:none}
-  .tech-readout .axval{font-weight:600}
-  .tech-readout .axmuted{color:var(--ink-soft);font-weight:400;font-size:11.5px}
-  .axkind{font-size:9px;letter-spacing:.04em;padding:1px 5px;border-radius:8px;text-transform:uppercase;margin-left:4px}
-  .axkind.offer{background:var(--pine-ghost);color:var(--pine-dark)}
-  .axkind.demand{background:var(--butter-soft);color:#8A6510}
+  /* ---------------------------- deck ------------------------------ */
+  .deck-item{display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;color:inherit;
+             padding:10px 0;border-bottom:1px dotted var(--rule);min-height:var(--tap)}
+  .deck-item .nm{font-family:var(--display);font-weight:500;font-size:16px;flex:1;min-width:0;line-height:1.2}
+  .deck-item .why{font-family:var(--display);font-style:italic;font-size:13px;color:var(--ink-3);
+                  display:block;margin-top:2px;font-weight:400}
 
-  /* ---------- on deck ---------- */
-  .ondeck{padding:7px 14px 9px;border-bottom:1px solid var(--line);border-top:1px solid var(--line);
-          background:var(--paper);max-height:200px;overflow-y:auto}
-  .ondeck.dragover{background:var(--pine-ghost);box-shadow:inset 0 0 0 2px var(--pine)}
-  .ondeck>summary{display:flex;align-items:center;gap:7px;font-size:10px;text-transform:uppercase;
-                  letter-spacing:.07em;color:var(--ink-soft);cursor:pointer;list-style:none;
-                  padding:1px 0;user-select:none}
-  .ondeck>summary::-webkit-details-marker{display:none}
-  .ondeck>summary::before{content:"\25B8";font-size:9px;transition:transform .12s;display:inline-block}
-  .ondeck[open]>summary::before{transform:rotate(90deg)}
-  .ondeck>summary:hover{color:var(--pine-dark)}
-  .ondeck>summary .deck-count{margin-left:auto}
-  .ondeck[open]>div{margin-top:7px}
-  .deck-count{font-size:10px;font-weight:700;color:#fff;background:var(--pine);border-radius:9px;
-              min-width:16px;padding:0 5px;text-align:center;line-height:15px}
-  .deck-count:empty{display:none}
-  .deck-empty{font-size:11px;color:var(--ink-soft);line-height:1.45;padding:2px 0 2px}
-  .deck-item{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--tagc,#B9B6A8);
-             border-radius:8px;padding:5px 7px;margin-bottom:5px;cursor:grab}
-  .deck-item:active{cursor:grabbing}
-  .deck-top{display:flex;align-items:center;gap:6px}
-  .deck-name{flex:1;font-size:12.5px;font-weight:600;line-height:1.25;cursor:pointer}
-  .deck-name:hover{color:var(--pine-dark)}
-  .deck-x{border:none;background:none;color:var(--ink-soft);cursor:pointer;font-size:12px;padding:0 2px;flex:none}
-  .deck-x:hover{color:var(--tomato)}
-  .deck-note{width:100%;border:1px solid transparent;background:none;font-family:var(--body);
-             font-size:11px;color:var(--ink-soft);padding:1px 3px;margin-top:2px;border-radius:5px}
-  .deck-note:hover{border-color:var(--line)}
-  .deck-note:focus{outline:none;border-color:var(--pine);background:var(--paper);color:var(--ink)}
-  .suggest-item .sdeck{font-size:11px;padding:2px 9px;border-radius:12px;flex:none;margin-left:8px}
-  .suggest-item .sdeck:disabled{color:var(--ink-soft);border-color:var(--line);cursor:default;background:var(--panel)}
+  /* -------------------------- tab bar ----------------------------- */
+  .tabbar{display:flex;border-top:1px solid var(--ink);background:var(--paper);flex:none;
+          padding-bottom:env(safe-area-inset-bottom,0px)}
+  .tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+                 padding:9px 4px 8px;min-height:var(--tap);font-family:var(--label);font-size:12px;
+                 text-transform:uppercase;letter-spacing:.11em;color:var(--ink-3)}
+  .tabbar button.on{color:var(--ink);font-weight:600}
+  .tabbar button.on::before{content:"";position:absolute;margin-top:-9px;width:26px;height:2px;background:var(--tech-t)}
+  .tabbar .tcount{font-family:var(--label);font-size:10px;letter-spacing:.04em;color:var(--ink-3)}
 
-  /* ---------- search row, filters, and the ordering note ---------- */
-  .search-row{display:flex;gap:6px;align-items:center}
-  .search-row #search{flex:1;min-width:0}
-  #filterToggle{flex:none;font-size:11.5px;padding:6px 10px;white-space:nowrap}
-  #filterToggle.on{background:var(--pine);border-color:var(--pine);color:#fff}
-  .sortnote{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:11px;color:var(--ink-soft);
-            background:var(--pine-ghost);border-radius:7px;padding:5px 9px}
-  .sortnote #sortLabel{flex:1;min-width:0;color:var(--pine-dark);font-weight:600}
-  .linkish{border:none;background:none;padding:0;font-size:11px;color:var(--ink-soft);
-           text-decoration:underline;cursor:pointer;flex:none}
-  .linkish:hover{color:var(--pine-dark)}
-  .weights{display:flex;flex-direction:column;gap:3px;margin-top:8px}
-  .wrow{display:grid;grid-template-columns:74px 1fr 30px;align-items:center;gap:6px;font-size:11px;cursor:pointer}
-  .wlab{display:flex;align-items:center;gap:5px;color:var(--ink-soft)}
-  .wsw{width:7px;height:7px;border-radius:2px;background:var(--tc);flex:none}
-  .wrow input[type=range]{width:100%;accent-color:var(--pine);height:14px;cursor:pointer}
-  .wval{font-size:10px;color:var(--ink-soft);text-align:right;font-variant-numeric:tabular-nums}
-  .wval.hi{color:var(--pine-dark);font-weight:700}
-  .wval.lo{color:var(--line)}
-  .fitbar{margin-top:5px;height:3px;border-radius:2px;background:var(--line);overflow:hidden}
-  .fitbar div{height:100%;background:var(--pine)}
+  /* --------------------------- sheets ----------------------------- */
+  dialog{border:none;padding:0;background:var(--paper);color:var(--ink);width:100%;max-width:560px;
+         margin:auto auto 0;border-radius:0;max-height:92vh;overflow:hidden;
+         border-top:2px solid var(--ink)}
+  dialog::backdrop{background:rgba(30,31,28,.42)}
+  /* Only an open sheet lays out; a bare display:flex here would override the
+     browser's own rule that keeps closed dialogs hidden. */
+  dialog[open]{display:flex;flex-direction:column;animation:sheet-up .18s ease-out}
+  @keyframes sheet-up{from{transform:translateY(14px);opacity:.6}to{transform:none;opacity:1}}
+  .modal-head{display:flex;align-items:flex-start;gap:10px;padding:14px 16px 10px;border-bottom:1px solid var(--ink);flex:none}
+  .modal-head h3{font-family:var(--display);font-weight:600;font-size:19px;line-height:1.15;flex:1;min-width:0}
+  .modal-head .sheet-x{font-family:var(--label);font-size:13px;letter-spacing:.09em;text-transform:uppercase;
+                       color:var(--ink-3);min-height:36px;padding:0 2px;flex:none}
+  .modal-body{padding:14px 16px;overflow-y:auto;flex:1;min-height:0;-webkit-overflow-scrolling:touch}
+  .modal-foot{display:flex;align-items:center;gap:14px;padding:11px 16px;border-top:1px solid var(--rule);flex:none;
+              padding-bottom:calc(11px + env(safe-area-inset-bottom,0px));flex-wrap:wrap}
+  .modal-foot .right{display:flex;gap:16px;margin-left:auto;align-items:center}
+  .modal-foot button{font-family:var(--label);font-size:13px;text-transform:uppercase;letter-spacing:.09em;
+                     color:var(--ink-2);min-height:var(--tap);display:flex;align-items:center}
+  .modal-foot button.primary{color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:4px}
+  .modal-foot button.danger{color:var(--tech-t)}
+  .modal-foot button:disabled{color:var(--ink-3);text-decoration:none;cursor:default}
+  .hint{font-family:var(--body);font-size:12.5px;color:var(--ink-3);line-height:1.5;margin-top:5px}
 
-  /* ---------- occasion on a day ---------- */
-  .occ-pick{padding:4px 8px 0}
-  .occ-pick select{width:100%;font-size:10px;font-family:var(--body);color:var(--ink-soft);
-                   border:1px solid transparent;background:none;border-radius:6px;padding:2px 4px;cursor:pointer}
-  .occ-pick select:hover{border-color:var(--line);background:var(--card)}
-  .occ-pick.set select{color:var(--pine-dark);font-weight:600;background:var(--pine-ghost);border-color:var(--pine-ghost)}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-family:var(--label);font-size:11px;text-transform:uppercase;
+               letter-spacing:.1em;color:var(--ink-3);margin-bottom:5px}
+  .field input,.field textarea,.field select{width:100%;background:none;border:none;
+      border-bottom:1px solid var(--rule-2);padding:7px 0;font-size:15.5px;min-height:var(--tap);
+      border-radius:0;-webkit-appearance:none;appearance:none}
+  .field textarea{min-height:92px;resize:vertical;line-height:1.5}
+  .field input:focus,.field textarea:focus,.field select:focus{outline:none;border-bottom-color:var(--ink)}
+  .row{display:flex;gap:14px;flex-wrap:wrap}
+  .row .field{flex:1;min-width:116px}
+  .inline-check{display:flex;align-items:center;gap:9px;font-size:14.5px;cursor:pointer;min-height:var(--tap)}
+  .inline-check input{accent-color:var(--ink);margin:0}
 
-  /* ---------- repertoire map ---------- */
-  dialog.wide{max-width:760px}
-  .repmap{display:block;max-width:100%}
-  .repmap .mq{opacity:.5}
-  .repmap .mq-hero{fill:var(--pine-ghost)}
-  .repmap .mq-worth{fill:var(--butter-soft)}
-  .repmap .mq-filler{fill:var(--panel)}
-  .repmap .mq-recon{fill:var(--tomato-soft)}
-  .repmap .mqlab{font-size:10px;letter-spacing:.06em;text-transform:uppercase;fill:var(--ink-soft)}
-  .repmap .max{stroke:var(--line);stroke-dasharray:3 3}
-  .repmap .maxis{stroke:var(--ink-soft);stroke-width:1}
-  .repmap .mtitle{font-size:11px;fill:var(--ink-soft);letter-spacing:.04em}
-  .repmap .mdot{fill:var(--tagc);stroke:var(--paper);stroke-width:1.5;cursor:pointer}
-  .repmap .mdot:hover{stroke:var(--ink);stroke-width:2;r:8}
-
-  /* ---------- radar ---------- */
-  .detail-profile{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:10px}
-  .detail-profile-side{flex:1;min-width:180px}
-  .radar{flex:none;overflow:visible}
-  .radar .rr{fill:none;stroke:var(--line);stroke-width:.8}
-  .radar .rs{stroke:var(--line);stroke-width:.8}
-  .radar .rshape{fill:rgba(62,92,75,.16);stroke:var(--pine);stroke-width:2;stroke-linejoin:round}
-  .radar .rd{fill:var(--pine)}
-  .radar .rl{font-size:10.5px;font-weight:600;fill:var(--ink)}
-  .radar .rl .rv{fill:var(--pine-dark)}
-  .radar .rk{font-size:9.5px;fill:var(--ink-soft)}
-  .radar .rzone{font-size:9px;letter-spacing:.1em;text-transform:uppercase;fill:var(--ink-soft)}
-
-  /* ---------- ratings & per-day instance marks ---------- */
   .stars{display:flex;align-items:center;gap:2px}
-  .stars .star{border:none;background:none;padding:0 2px;font-size:22px;line-height:1;color:var(--butter);cursor:pointer}
-  .stars .star:hover{color:#B8860B}
-  .stars .star-label{font-size:11px;color:var(--ink-soft);margin-left:8px}
-  .inline-check{display:flex;align-items:center;gap:7px;font-size:13px;cursor:pointer}
-  .inline-check input{margin:0;cursor:pointer}
-  .planned .pname{display:block}
-  .planned .marks{display:flex;align-items:center;gap:5px;margin-top:3px;font-size:10px;color:var(--ink-soft);font-weight:400}
-  .planned .marks .rate{color:#8A6510;font-weight:600}
-  .planned.leftover{border-left-style:dashed;background:repeating-linear-gradient(135deg,var(--card),var(--card) 6px,var(--panel) 6px,var(--panel) 12px)}
-  .history-item{border-bottom:1px solid var(--line);padding:8px 2px}
-  .history-item:last-child{border-bottom:none}
-  .history-head{display:flex;align-items:baseline;gap:8px;font-size:12px}
-  .history-head .hdate{font-weight:600}
-  .history-head .hrate{color:var(--butter);letter-spacing:1px}
-  .history-item .hnote{font-size:12.5px;color:var(--ink-soft);margin-top:3px;white-space:pre-wrap;line-height:1.45}
+  .stars .star{font-size:30px;line-height:1;color:var(--tech-t);padding:2px 5px;min-height:var(--tap);
+               display:flex;align-items:center}
+  .stars .star-label{font-family:var(--label);font-size:11px;text-transform:uppercase;letter-spacing:.08em;
+                     color:var(--ink-3);margin-left:8px}
 
-  .estimate-panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-top:8px;font-size:12.5px;line-height:1.5}
-  .estimate-panel input[type=number]{width:56px;padding:4px 6px;border:1px solid var(--line);border-radius:6px}
-  @media (prefers-reduced-motion: reduce){ *{transition:none!important} }
+  /* picker sheets: a list of tappable rows */
+  .picker-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;color:inherit;
+              padding:11px 0;border-bottom:1px dotted var(--rule);min-height:var(--tap)}
+  .picker-row .pk-main{flex:1;min-width:0}
+  .picker-row .pk-name{font-family:var(--display);font-weight:500;font-size:16px;line-height:1.2}
+  .picker-row .pk-sub{font-family:var(--label);font-size:11px;text-transform:uppercase;letter-spacing:.07em;
+                      color:var(--ink-3);margin-top:2px}
+  .picker-search{width:100%;background:none;border:none;border-bottom:1px solid var(--ink);
+                 font-family:var(--label);font-size:15px;text-transform:uppercase;letter-spacing:.05em;
+                 padding:8px 0;margin-bottom:4px;min-height:var(--tap)}
+
+  /* ----------------------- detail & history ----------------------- */
+  .detail-meta{display:flex;flex-wrap:wrap;gap:4px 14px;margin-bottom:12px;font-family:var(--label);
+               font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3)}
+  .detail-meta .due{color:var(--tech-e);font-weight:600}
+  .detail-profile{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  .detail-profile-side{flex:1;min-width:170px}
+  .tech-readout{display:flex;flex-direction:column;gap:5px;font-family:var(--label);font-size:12.5px;
+                text-transform:uppercase;letter-spacing:.06em}
+  .tech-readout .ax{display:flex;align-items:baseline;gap:7px;color:var(--ink-2)}
+  .tech-readout .swatch{width:6px;height:6px;background:var(--tc);flex:none;align-self:center}
+  .tech-readout .axval{font-weight:700;color:var(--ink)}
+  .tech-readout .axmuted{color:var(--ink-3);letter-spacing:.05em}
+  .axkind{font-family:var(--label);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
+          color:var(--ink-3);margin-left:5px}
+  pre.recipe{white-space:pre-wrap;font-family:var(--body);font-size:14px;line-height:1.55;
+             border-left:2px solid var(--rule-2);padding:2px 0 2px 12px;margin-top:4px}
+  .history-item{border-bottom:1px dotted var(--rule);padding:9px 0}
+  .history-item:last-child{border-bottom:none}
+  .history-head{display:flex;align-items:baseline;gap:9px;font-family:var(--label);font-size:12px;
+                text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3)}
+  .history-head .hdate{font-weight:600;color:var(--ink)}
+  .history-head .hrate{color:var(--tech-t);letter-spacing:1px}
+  .history-item .hnote{font-family:var(--display);font-style:italic;font-size:14px;color:var(--ink-2);
+                       margin-top:3px;white-space:pre-wrap;line-height:1.45}
+  h4.sect{font-family:var(--label);font-size:11.5px;text-transform:uppercase;letter-spacing:.1em;
+          color:var(--ink-3);margin:16px 0 2px;border-top:1px solid var(--rule);padding-top:10px}
+
+  .radar{flex:none;overflow:visible}
+  .radar .rr{fill:none;stroke:var(--rule);stroke-width:.8}
+  .radar .rs{stroke:var(--rule);stroke-width:.8}
+  .radar .rshape{fill:none;stroke:var(--ink);stroke-width:1.6;stroke-linejoin:round}
+  .radar .rd{fill:var(--ink)}
+  .radar .rl{font-family:var(--label);font-size:10.5px;font-weight:600;fill:var(--ink);letter-spacing:.06em;text-transform:uppercase}
+  .radar .rk{font-family:var(--label);font-size:9.5px;fill:var(--ink-3);letter-spacing:.05em;text-transform:uppercase}
+  .radar .rzone{font-family:var(--label);font-size:9px;letter-spacing:.14em;text-transform:uppercase;fill:var(--ink-3)}
+
+  /* ------------------------ repertoire map ------------------------ */
+  .repmap{display:block;max-width:100%}
+  .repmap .mq{fill:none}
+  .repmap .mqlab{font-family:var(--label);font-size:10px;letter-spacing:.09em;text-transform:uppercase;fill:var(--ink-3)}
+  .repmap .max{stroke:var(--rule);stroke-dasharray:2 3}
+  .repmap .maxis{stroke:var(--ink);stroke-width:1}
+  .repmap .mtitle{font-family:var(--label);font-size:10.5px;fill:var(--ink-3);letter-spacing:.09em;text-transform:uppercase}
+  .repmap .mdot{fill:var(--ink);cursor:pointer}
+  .repmap .mdot:hover{fill:var(--tech-t)}
+
+  /* "What's due?" rows */
+  .suggest-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dotted var(--rule);
+                min-height:var(--tap);cursor:pointer}
+  .suggest-item:last-child{border-bottom:none}
+  .suggest-item .sname{flex:1;min-width:0;font-family:var(--display);font-weight:500;font-size:15.5px;line-height:1.2}
+  .suggest-item .swhen{font-family:var(--label);font-size:11px;text-transform:uppercase;letter-spacing:.07em;
+                       color:var(--ink-3);text-align:right;flex:none}
+  .suggest-item .swhen b{color:var(--tech-e)}
+  .suggest-item .sdeck{font-family:var(--label);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;
+                       color:var(--ink-2);flex:none;min-height:38px;text-decoration:underline;text-underline-offset:3px}
+  .suggest-item .sdeck:disabled{color:var(--ink-3);text-decoration:none;cursor:default}
+  .goal-chip.protein-chip .status{color:var(--tech-h)}
+
+  .estimate-panel{border-top:1px dotted var(--rule);padding-top:10px;margin-top:10px;font-size:13.5px;line-height:1.55}
+  .estimate-panel input[type=number]{width:62px;background:none;border:none;border-bottom:1px solid var(--rule-2);padding:3px 0}
+  .goal-row{display:flex;gap:9px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+  .goal-row input,.goal-row select{background:none;border:none;border-bottom:1px solid var(--rule-2);
+                                   padding:6px 0;min-height:40px}
+  .goal-row input[type=number]{width:52px}
+  .goal-row input[type=text]{flex:1;min-width:92px}
+  .goal-row .del{font-family:var(--label);font-size:12px;color:var(--ink-3);min-height:40px;text-transform:uppercase}
+
+  /* --------------------------- wide screens ----------------------- */
+  @media (min-width:760px){
+    body{font-size:15px}
+    .view{padding:0 26px 34px;max-width:1180px;margin:0 auto;width:100%}
+    .daylist{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:0 30px;align-items:start}
+    .meal-list,.deck-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0 30px}
+    .tabbar{justify-content:center;gap:40px}
+    .tabbar button{flex:none;min-width:130px}
+    dialog{margin:auto;max-height:86vh;border:1px solid var(--ink)}
+    .goals-strip{padding:8px 26px}
+    header{padding:12px 26px 10px}
+  }
+  @media (prefers-reduced-motion: reduce){ *{animation:none!important;transition:none!important} }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>The Menu Board</h1>
-  <div class="week-nav">
-    <button id="prevWeek" title="Previous week">&#8592;</button>
-    <span class="week-label" id="weekLabel"></span>
-    <button id="nextWeek" title="Next week">&#8594;</button>
-    <button id="todayBtn">Today</button>
-    <button id="weeksToggleBtn" title="Toggle between showing one or two weeks">2 weeks</button>
-  </div>
-  <div class="spacer"></div>
-  <button id="mapBtn">Map</button>
-  <button id="goalsBtn">Edit goals</button>
-  <button id="exportBtn">Export</button>
-  <button id="importBtn">Import</button>
-  <input type="file" id="importFile" accept=".json" hidden>
-  <span class="cloud-box">
-    <button id="cloudAuthBtn">Sign in to sync</button>
-    <span class="cloud-status" id="cloudStatus">On this device only</span>
+  <span class="wordmark" aria-label="FoodTech">
+    <span class="wm-food">food</span><span class="wm-tech">TECH</span>
   </span>
+  <span class="head-right">
+    <span class="cloud-status" id="cloudStatus">On this device only</span>
+    <button class="icon-btn" id="cloudAuthBtn">Sign in</button>
+    <button class="icon-btn" id="moreBtn" aria-haspopup="dialog">More</button>
+  </span>
+  <input type="file" id="importFile" accept=".json" hidden>
 </header>
 
 <div class="goals-strip" id="goalsStrip"></div>
 
-<div class="daytotals-strip">
-  <div class="dt-spacer">Daily totals</div>
-  <div class="dt-weeks" id="dtGrid"></div>
+<div class="views" id="views">
+
+  <!-- ------------------------------ PLAN ------------------------------ -->
+  <section class="view" id="viewPlan">
+    <div class="view-head">
+      <h2 id="planTitle">Plan</h2>
+      <span class="sub" id="planRange"></span>
+      <span class="act">
+        <button id="planBack" title="Earlier">&#8592;</button>
+        <button id="planToday">Today</button>
+        <button id="planFwd" title="Later">&#8594;</button>
+      </span>
+    </div>
+    <div class="daylist" id="dayList"></div>
+  </section>
+
+  <!-- ------------------------------ MEALS ----------------------------- -->
+  <section class="view" id="viewMeals" hidden>
+    <div class="view-head">
+      <h2>Meals</h2>
+      <span class="sub" id="mealCount"></span>
+      <span class="act">
+        <button id="suggestBtn">Due</button>
+        <button id="mapBtn">Map</button>
+        <button id="addMealBtn">New</button>
+      </span>
+    </div>
+    <div class="search-row">
+      <input id="search" type="search" placeholder="Search meals">
+      <button id="filterToggle" aria-expanded="false">Filter</button>
+    </div>
+    <div class="tag-filter" id="tagFilter" hidden></div>
+    <!-- Only appears once a night's occasion is actually driving the order. -->
+    <div class="sortnote" id="sortNote" hidden>
+      <span id="sortLabel"></span>
+      <button class="linkish" id="sortAdjust">adjust</button>
+      <button class="linkish" id="sortClear">clear</button>
+    </div>
+    <div class="weights" id="weightSliders" hidden></div>
+    <div class="meal-list" id="bankList"></div>
+  </section>
+
+  <!-- ------------------------------ DECK ------------------------------ -->
+  <section class="view" id="viewDeck" hidden>
+    <div class="view-head">
+      <h2>On deck</h2>
+      <span class="sub" id="deckSub"></span>
+    </div>
+    <div class="deck-list" id="deckList"></div>
+  </section>
+
 </div>
 
-<div class="layout">
-  <aside>
-    <div class="bank-head">
-      <h2>Meals bank</h2>
-      <div class="bank-actions">
-        <button class="primary" id="addMealBtn">+ New meal</button>
-        <button id="suggestBtn">What&rsquo;s due?</button>
-      </div>
-      <div class="search-row">
-        <input id="search" type="search" placeholder="Search meals&hellip;">
-        <button id="filterToggle" aria-expanded="false" title="Filter by tag">Filter</button>
-      </div>
-      <div class="tag-filter" id="tagFilter" hidden></div>
-      <!-- Only appears once a night's occasion is actually driving the order. -->
-      <div class="sortnote" id="sortNote" hidden>
-        <span id="sortLabel"></span>
-        <button class="linkish" id="sortAdjust" title="Fine-tune the weighting">adjust</button>
-        <button class="linkish" id="sortClear" title="Back to an even weighting">clear</button>
-      </div>
-      <div class="weights" id="weightSliders" hidden></div>
+<nav class="tabbar" id="tabbar">
+  <button data-view="plan" class="on">Plan</button>
+  <button data-view="meals">Meals</button>
+  <button data-view="deck">Deck<span class="tcount" id="deckCount"></span></button>
+</nav>
+
+<!-- pick a meal for a given day and slot -->
+<dialog id="pickMealDlg">
+  <div class="modal-head">
+    <div style="flex:1;min-width:0">
+      <h3 id="pickTitle">Pick a meal</h3>
+      <div class="hint" id="pickSub" style="margin-top:2px"></div>
     </div>
-    <details class="ondeck" id="onDeck" open>
-      <summary><span>On deck</span><span class="deck-count" id="deckCount"></span></summary>
-      <div id="deckList"></div>
-    </details>
-    <div class="bank-list" id="bankList"></div>
-  </aside>
-  <main id="calendar"></main>
-</div>
+    <button class="sheet-x" data-close>Close</button>
+  </div>
+  <div class="modal-body">
+    <input class="picker-search" id="pickSearch" type="search" placeholder="Search">
+    <div id="pickList"></div>
+  </div>
+</dialog>
+
+<!-- pick a day and slot for a given meal -->
+<dialog id="pickDayDlg">
+  <div class="modal-head">
+    <div style="flex:1;min-width:0">
+      <h3 id="pickDayTitle">Schedule</h3>
+      <div class="hint" id="pickDaySub" style="margin-top:2px"></div>
+    </div>
+    <button class="sheet-x" data-close>Close</button>
+  </div>
+  <div class="modal-body"><div id="pickDayList"></div></div>
+</dialog>
+
+<!-- overflow: the things that do not belong on a phone's main surface -->
+<dialog id="moreDlg">
+  <div class="modal-head"><h3>More</h3><button class="sheet-x" data-close>Close</button></div>
+  <div class="modal-body">
+    <button class="picker-row" id="goalsBtn"><span class="pk-main"><span class="pk-name">Goals &amp; protein target</span>
+      <span class="pk-sub">What counts, and how often</span></span></button>
+    <button class="picker-row" id="exportBtn"><span class="pk-main"><span class="pk-name">Export a backup</span>
+      <span class="pk-sub">Downloads everything as a file</span></span></button>
+    <button class="picker-row" id="importBtn"><span class="pk-main"><span class="pk-name">Import a backup</span>
+      <span class="pk-sub">Replaces everything on this device</span></span></button>
+  </div>
+</dialog>
 
 <!-- meal editor -->
 <dialog id="editDlg">
-  <div class="modal-head"><h3 id="editTitle">New meal</h3><button class="subtle" data-close>&#10005;</button></div>
+  <div class="modal-head"><h3 id="editTitle">New meal</h3><button class="sheet-x" data-close>Close</button></div>
   <div class="modal-body">
     <div class="field"><label for="fName">Name</label><input id="fName" placeholder="e.g., Pasta bolognese"></div>
     <div class="field"><label for="fTags">Tags</label><input id="fTags" placeholder="comma-separated, e.g., beef, pasta">
@@ -409,11 +492,12 @@
 
 <!-- meal detail -->
 <dialog id="detailDlg">
-  <div class="modal-head"><h3 id="dName"></h3><button class="subtle" data-close>&#10005;</button></div>
+  <div class="modal-head"><h3 id="dName"></h3><button class="sheet-x" data-close>Close</button></div>
   <div class="modal-body" id="dBody"></div>
   <div class="modal-foot">
-    <button id="dDeckBtn">Put on deck</button>
-    <div class="right"><button data-close>Close</button><button class="primary" id="dEditBtn">Edit</button></div>
+    <button id="dDeckBtn">On deck</button>
+    <button id="dEditBtn">Edit</button>
+    <div class="right"><button data-close>Close</button><button class="primary" id="dScheduleBtn">Schedule</button></div>
   </div>
 </dialog>
 
@@ -421,7 +505,7 @@
 <dialog id="instDlg">
   <div class="modal-head">
     <div><h3 id="iName"></h3><div class="hint" id="iWhen" style="margin-top:2px"></div></div>
-    <button class="subtle" data-close>&#10005;</button>
+    <button class="sheet-x" data-close>Close</button>
   </div>
   <div class="modal-body">
     <div class="field"><label>How did it turn out?</label><div id="iStars" class="stars"></div></div>
@@ -439,7 +523,7 @@
 
 <!-- suggestions -->
 <dialog id="suggestDlg">
-  <div class="modal-head"><h3>What&rsquo;s due?</h3><button class="subtle" data-close>&#10005;</button></div>
+  <div class="modal-head"><h3>What&rsquo;s due?</h3><button class="sheet-x" data-close>Close</button></div>
   <div class="modal-body" id="suggestBody"></div>
   <div class="modal-foot"><div class="right"><button data-close>Close</button></div></div>
 </dialog>
@@ -448,7 +532,7 @@
 <dialog id="mapDlg" class="wide">
   <div class="modal-head">
     <div><h3>The repertoire</h3><div class="hint" id="mapSub" style="margin-top:2px"></div></div>
-    <button class="subtle" data-close>&#10005;</button>
+    <button class="sheet-x" data-close>Close</button>
   </div>
   <div class="modal-body" id="mapBody"></div>
   <div class="modal-foot"><div class="right"><button data-close>Close</button></div></div>
@@ -456,7 +540,7 @@
 
 <!-- goals editor -->
 <dialog id="goalsDlg">
-  <div class="modal-head"><h3>Goals</h3><button class="subtle" data-close>&#10005;</button></div>
+  <div class="modal-head"><h3>Goals</h3><button class="sheet-x" data-close>Close</button></div>
   <div class="modal-body">
     <div class="field"><label for="proteinTargetInput">Daily protein target (g)</label>
       <input id="proteinTargetInput" type="number" min="0" placeholder="e.g., 150">
@@ -797,15 +881,12 @@ function iso(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0
 function fromISO(s){ const [y,m,dd]=s.split("-").map(Number); return new Date(y,m-1,dd); }
 function addDays(d,n){ const x=new Date(d); x.setDate(x.getDate()+n); return x; }
 function weekStartOf(d){ return addDays(d,-d.getDay()); }
+// Weekly goals still measure a calendar week, even though the plan is now an
+// open-ended run of days rather than a fixed week grid.
 let weekStart = weekStartOf(new Date());
 const todayISO = iso(new Date());
-let weeksToShow = 1;
 
 function fmtShort(d){ return d.toLocaleDateString(undefined,{month:"short",day:"numeric"}); }
-function weekLabel(){
-  const end = addDays(weekStart,weeksToShow*7-1);
-  return fmtShort(weekStart)+" \u2013 "+fmtShort(end)+", "+end.getFullYear();
-}
 
 /* ============================== helpers ============================== */
 function mealById(id){ return state.meals.find(m=>m.id===id); }
@@ -862,9 +943,7 @@ function setDayOccasion(dISO, occ){
 }
 
 /* ============================== rendering ============================== */
-const bankList = document.getElementById("bankList");
 const tagFilter = document.getElementById("tagFilter");
-const calendar = document.getElementById("calendar");
 const goalsStrip = document.getElementById("goalsStrip");
 let activeTags = new Set();
 let matchAllTags = false;
@@ -899,63 +978,52 @@ function clearDeckFor(mealId){
   for(let i=deck.length-1; i>=0; i--) if(deck[i].mealId===mealId) deck.splice(i,1);
 }
 
+/* ============================== views ==============================
+   Three surfaces, switched by the tab bar: the plan, the meal bank, and the
+   on-deck queue. One layout at every width -- a phone gets one column, a
+   desktop gets several of the same column side by side.                    */
+let currentView = "plan";
+let planStart = (function(){ const d=new Date(); d.setHours(0,0,0,0); return d; })();
+const PLAN_DAYS = 10;          // a phone scrolls; it does not need a fixed week
+
+function setView(name){
+  currentView = name;
+  for(const [id,v] of [["viewPlan","plan"],["viewMeals","meals"],["viewDeck","deck"]]){
+    document.getElementById(id).hidden = (v !== name);
+  }
+  document.querySelectorAll("#tabbar button").forEach(b=>{
+    b.classList.toggle("on", b.dataset.view===name);
+  });
+  document.getElementById("views").scrollTop = 0;
+}
+
+/* ============================== on deck ============================== */
 function renderOnDeck(){
   const deck = deckList();
   const holder = document.getElementById("deckList");
-  const count = document.getElementById("deckCount");
   holder.innerHTML = "";
-  count.textContent = deck.length ? deck.length : "";
+  const count = document.getElementById("deckCount");
+  const sub = document.getElementById("deckSub");
+  count.textContent = deck.length ? " " + deck.length : "";
+  sub.textContent = deck.length ? deck.length + (deck.length===1?" waiting":" waiting") : "";
+
   if(!deck.length){
-    holder.innerHTML = '<div class="deck-empty">Nothing queued. Drag a meal here, or use &ldquo;Put on deck&rdquo; when a dish gets requested.</div>';
+    holder.innerHTML = '<div class="empty">Nothing queued.<br>Open a meal and choose &ldquo;On deck&rdquo; when a dish gets asked for.</div>';
     return;
   }
   deck.forEach(item=>{
-    const m = mealById(item.mealId);
-    if(!m){ return; }
-    const row = document.createElement("div");
-    row.className = "deck-item"; row.draggable = true;
-    row.style.setProperty("--tagc", tagColor(m));
-    row.innerHTML = '<div class="deck-top"><span class="deck-name">'+esc(m.name)+'</span>'+
-                    '<button class="deck-x" title="Take off deck">&#10005;</button></div>';
-    const note = document.createElement("input");
-    note.className = "deck-note"; note.type = "text";
-    note.placeholder = "why? (optional)"; note.value = item.note || "";
-    note.title = "e.g. Ellen asked for this";
-    note.onchange = ()=>{ item.note = note.value.trim(); saveState(); };
-    note.onclick = ev=>ev.stopPropagation();
-    row.appendChild(note);
-    row.querySelector(".deck-x").onclick = ev=>{ ev.stopPropagation(); removeFromDeck(item.id); render(); };
-    row.querySelector(".deck-name").onclick = ()=>openDetail(item.mealId);
-    row.addEventListener("dragstart", ev=>{
-      ev.dataTransfer.setData("text/plain", JSON.stringify({mealId:item.mealId, fromDeck:item.id}));
-      ev.dataTransfer.effectAllowed = "move";
-    });
+    const m = mealById(item.mealId); if(!m) return;
+    const row = document.createElement("button");
+    row.className = "deck-item";
+    row.innerHTML = '<span class="nm">'+esc(m.name)+
+      (item.note? '<span class="why">'+esc(item.note)+'</span>' : '')+'</span>'+
+      techGlyph(m);
+    row.onclick = ()=>openDetail(item.mealId);
     holder.appendChild(row);
   });
 }
 
-// The whole panel accepts drops from the meal bank.
-(function wireDeckDropTarget(){
-  const panel = document.getElementById("onDeck");
-  panel.addEventListener("dragover", ev=>{ ev.preventDefault(); panel.classList.add("dragover"); });
-  panel.addEventListener("dragleave", ()=>panel.classList.remove("dragover"));
-  panel.addEventListener("drop", ev=>{
-    ev.preventDefault(); panel.classList.remove("dragover");
-    let data; try{ data = JSON.parse(ev.dataTransfer.getData("text/plain")); }catch(e){ return; }
-    if(!data || !data.mealId || !mealById(data.mealId)) return;
-    if(data.fromDeck) return;                    // already here
-    if(data.from){                               // pulled off a day: unschedule it
-      const src = state.plan[data.from.date] && state.plan[data.from.date][data.from.slot];
-      if(src && src[data.from.idx] && src[data.from.idx].mealId===data.mealId) src.splice(data.from.idx,1);
-      cleanDay(data.from.date);
-    }
-    addToDeck(data.mealId);
-    render();
-  });
-})();
 
-// The occasion picker on each day is the only control that names a night.
-// The sidebar just reports which night is currently ordering the bank.
 function renderTonight(){
   const note = document.getElementById("sortNote");
   const panel = document.getElementById("weightSliders");
@@ -999,11 +1067,6 @@ function renderTonight(){
   }
 }
 
-function render(){
-  document.getElementById("weekLabel").textContent = weekLabel();
-  renderOnDeck(); renderTonight(); renderTagFilter(); renderBank(); renderCalendar(); renderGoals(); renderDayTotals();
-  saveState();
-}
 
 function renderTagFilter(){
   const tags = [...new Set(state.meals.flatMap(m=>m.tags||[]))].sort();
@@ -1037,21 +1100,28 @@ function showFilterPanel(open){
   document.getElementById("filterToggle").setAttribute("aria-expanded", open ? "true" : "false");
 }
 
+
+function render(){
+  renderOnDeck(); renderTonight(); renderTagFilter(); renderBank();
+  renderDayList(); renderGoals();
+  saveState();
+}
+
 function cardMeta(m){
-  const bits = [techGlyph(m)];
-  if(m.freq && m.freq.per) bits.push('<span class="badge">'+freqLabel(m.freq)+'</span>');
+  const bits = [];
+  if(m.freq && m.freq.per) bits.push(freqLabel(m.freq));
   const di = dueInfo(m);
-  if(di && di.due) bits.push('<span class="badge due">'+(di.never?"never made":"due")+'</span>');
-  if(m.recipe) bits.push('<span class="badge recipe">recipe</span>');
-  if(m.nut && m.nut.cal) bits.push('<span>~'+m.nut.cal+' kcal</span>');
-  return bits.join("");
+  if(di && di.due) bits.push('<span class="due">'+(di.never?"never made":"due")+'</span>');
+  const real = realizedTaste(m);
+  if(real.n) bits.push("★".repeat(Math.round(real.mean)));
+  if(m.recipe) bits.push("recipe");
+  return bits.join('<span aria-hidden="true">·</span>');
 }
 
 function renderBank(){
   const q = document.getElementById("search").value.trim().toLowerCase();
-  bankList.innerHTML = "";
-  // Even weighting means no occasion is pressing, so stay alphabetical and
-  // predictable. Once a night has a shape, sort by how well each dish fits it.
+  const list = document.getElementById("bankList");
+  list.innerHTML = "";
   const byFit = !weightsAreEven();
   const meals = [...state.meals].sort((a,b)=>
     byFit ? fitScore(b,activeWeights)-fitScore(a,activeWeights) || a.name.localeCompare(b.name)
@@ -1065,49 +1135,62 @@ function renderBank(){
     }
     if(q && !m.name.toLowerCase().includes(q) && !(m.tags||[]).some(t=>t.includes(q))) continue;
     shown++;
-    const el = document.createElement("div");
-    el.className = "meal-card"; el.draggable = true;
-    el.style.setProperty("--tagc", tagColor(m));
-    const di = dueInfo(m);
-    const fitBar = byFit ? '<div class="fitbar" title="How well this suits the weighting you have set"><div style="width:'+
-                           Math.round(fitScore(m,activeWeights)*100)+'%"></div></div>' : '';
-    el.innerHTML = '<div class="name">'+esc(m.name)+'</div><div class="meta">'+cardMeta(m)+'</div>'+fitBar+
-                   (di && di.due ? '<div class="due-dot" title="Due for a repeat"></div>' : '');
-    el.addEventListener("dragstart", ev=>{
-      ev.dataTransfer.setData("text/plain", JSON.stringify({mealId:m.id}));
-      ev.dataTransfer.effectAllowed = "copyMove";
-    });
-    el.addEventListener("click", ()=>openDetail(m.id));
-    bankList.appendChild(el);
+    const row = document.createElement("button");
+    row.className = "meal-row";
+    row.innerHTML = '<span class="mr-main"><span class="name">'+esc(m.name)+'</span>'+
+                    '<span class="meta">'+cardMeta(m)+'</span>'+
+                    (byFit? '<span class="fitbar"><div style="width:'+Math.round(fitScore(m,activeWeights)*100)+'%"></div></span>':'')+
+                    '</span><span class="mr-glyph">'+techGlyph(m)+'</span>';
+    row.onclick = ()=>openDetail(m.id);
+    list.appendChild(row);
   }
-  if(!shown) bankList.innerHTML = '<div class="empty">No meals match. Try clearing the search or filter.</div>';
+  document.getElementById("mealCount").textContent = shown + (shown===1?" meal":" meals");
+  if(!shown) list.innerHTML = '<div class="empty">Nothing matches.<br>Clear the search or the filter.</div>';
 }
 
-function renderCalendar(){
-  calendar.innerHTML = "";
-  for(let w=0; w<weeksToShow; w++){
-    const weekGrid = document.createElement("div"); weekGrid.className = "week-grid";
-    for(let i=0;i<7;i++){
-      const d = addDays(weekStart,w*7+i), dISO = iso(d);
-      const dayEl = document.createElement("div");
-      dayEl.className = "day"+(dISO===todayISO?" today":"");
-      const head = document.createElement("div");
-      head.className = "day-head";
-      head.innerHTML = '<div class="dow">'+DOW[i]+'</div><div class="date">'+fmtShort(d)+'</div>';
-      dayEl.appendChild(head);
-      dayEl.appendChild(renderOccasionPicker(dISO));
+/* ============================== the plan ==============================
+   A run of days from wherever you have scrolled to, today first by default.
+   Assigning a meal is a tap, not a drag: touch has no drag-and-drop.      */
+function renderDayList(){
+  const holder = document.getElementById("dayList");
+  holder.innerHTML = "";
+  const end = addDays(planStart, PLAN_DAYS-1);
+  document.getElementById("planRange").textContent = fmtShort(planStart)+" – "+fmtShort(end);
 
-      const slotsEl = document.createElement("div"); slotsEl.className = "slots";
-      const rec = state.plan[dISO] || defaultDayRec();
-      const openSlots = SLOT_ORDER.filter(s => Array.isArray(rec[s]));
-      for(const slot of openSlots) slotsEl.appendChild(renderSlot(dISO, slot, rec[slot]||[]));
-      dayEl.appendChild(slotsEl);
+  for(let i=0;i<PLAN_DAYS;i++){
+    const d = addDays(planStart,i), dISO = iso(d);
+    const dayEl = document.createElement("div");
+    dayEl.className = "day"+(dISO===todayISO?" today":"");
 
-      dayEl.appendChild(renderSlotToggles(dISO, openSlots));
+    const head = document.createElement("div");
+    head.className = "day-head";
+    head.innerHTML = '<span class="dw">'+DOW[d.getDay()]+'</span><span class="dt">'+fmtShort(d)+'</span>';
+    head.appendChild(renderOccasionPicker(dISO));
+    dayEl.appendChild(head);
 
-      weekGrid.appendChild(dayEl);
+    const rec = state.plan[dISO] || defaultDayRec();
+    const openSlots = SLOT_ORDER.filter(s => Array.isArray(rec[s]));
+    for(const slot of openSlots) dayEl.appendChild(renderSlot(dISO, slot, rec[slot]||[]));
+
+    const totals = dayTotals(dISO);
+    if(totals){
+      const t = document.createElement("div");
+      t.className = "daytotal";
+      t.textContent = "~"+Math.round(totals.cal)+" kcal · "+Math.round(totals.p)+"g protein";
+      dayEl.appendChild(t);
     }
-    calendar.appendChild(weekGrid);
+
+    // Slot management is rarely wanted, so it hides behind a word.
+    const toggle = document.createElement("button");
+    toggle.className = "day-slots-toggle";
+    toggle.textContent = "Meals shown";
+    const toggles = renderSlotToggles(dISO, openSlots);
+    toggles.hidden = true;
+    toggle.onclick = ()=>{ toggles.hidden = !toggles.hidden; };
+    dayEl.appendChild(toggle);
+    dayEl.appendChild(toggles);
+
+    holder.appendChild(dayEl);
   }
 }
 
@@ -1116,7 +1199,7 @@ function renderOccasionPicker(dISO){
   const wrap = document.createElement("div");
   wrap.className = "occ-pick"+(cur!==DEFAULT_OCCASION?" set":"");
   const sel = document.createElement("select");
-  sel.title = "What kind of night is this? It decides what counts as the right amount of effort, cost and richness.";
+  sel.setAttribute("aria-label","What kind of night this is");
   for(const key in OCCASIONS){
     const o = document.createElement("option");
     o.value = key; o.textContent = OCCASIONS[key].label; o.selected = key===cur;
@@ -1124,7 +1207,7 @@ function renderOccasionPicker(dISO){
   }
   sel.onchange = ()=>{
     setDayOccasion(dISO, sel.value);
-    // Naming the night also aims the picker at it -- same concept, one gesture.
+    // Naming the night also aims the meal list at it -- same idea, one gesture.
     activeOccasion = sel.value;
     activeWeights = Object.assign({}, OCCASIONS[sel.value].w);
     render();
@@ -1159,50 +1242,125 @@ function renderSlotToggles(dISO, openSlots){
   return row;
 }
 
-function renderSlot(dISO, slot, ids){
+function renderSlot(dISO, slot, entries){
   const wrap = document.createElement("div");
-  wrap.className = "slot"; wrap.dataset.date = dISO; wrap.dataset.slot = slot;
-  const label = document.createElement("div"); label.className = "slot-label";
-  label.innerHTML = "<span>"+slot+"</span>";
-  wrap.appendChild(label);
-  ids.forEach((entry, idx)=>{
+  wrap.className = "slot";
+  wrap.innerHTML = '<div class="slot-label">'+slot+'</div>';
+  const body = document.createElement("div");
+  body.className = "slot-body";
+
+  entries.forEach((entry, idx)=>{
     const m = mealById(entry.mealId); if(!m) return;
-    const p = document.createElement("div");
-    p.className = "planned"+(entry.leftover?" leftover":""); p.draggable = true;
-    p.style.setProperty("--tagc", tagColor(m));
-    p.innerHTML = '<span class="pname">'+esc(m.name)+'</span>'+instanceMarks(entry)+
-                  '<button class="x" title="Remove">&#10005;</button>';
-    p.querySelector(".x").onclick = (ev)=>{ ev.stopPropagation(); ids.splice(idx,1); cleanDay(dISO); render(); };
-    p.addEventListener("click", ()=>openInstance(dISO, slot, idx));
-    p.addEventListener("dragstart", ev=>{
-      ev.dataTransfer.setData("text/plain", JSON.stringify({mealId:entry.mealId, from:{date:dISO, slot, idx}}));
-      ev.dataTransfer.effectAllowed = "move";
-      ev.stopPropagation();
-    });
-    wrap.appendChild(p);
+    const b = document.createElement("button");
+    b.className = "planned"+(entry.leftover?" leftover":"");
+    b.innerHTML = '<span class="pname">'+esc(m.name)+'</span>'+instanceMarks(entry);
+    b.onclick = ()=>openInstance(dISO, slot, idx);
+    body.appendChild(b);
   });
-  wrap.addEventListener("dragover", ev=>{ ev.preventDefault(); wrap.classList.add("dragover"); });
-  wrap.addEventListener("dragleave", ()=>wrap.classList.remove("dragover"));
-  wrap.addEventListener("drop", ev=>{
-    ev.preventDefault(); wrap.classList.remove("dragover");
-    let data; try{ data = JSON.parse(ev.dataTransfer.getData("text/plain")); }catch(e){ return; }
-    if(!data || !data.mealId || !mealById(data.mealId)) return;
-    let moved = null;
-    if(data.from){
-      const src = state.plan[data.from.date] && state.plan[data.from.date][data.from.slot];
-      // Move the whole entry so its note/rating/leftover flag travel with it.
-      if(src && src[data.from.idx] && src[data.from.idx].mealId===data.mealId) moved = src.splice(data.from.idx,1)[0];
-      cleanDay(data.from.date);
-    }
-    const day = ensureDay(dISO);
-    if(!Array.isArray(day[slot])) day[slot] = [];
-    day[slot].push(moved || {mealId:data.mealId});
-    // Giving a meal a night satisfies the intention, however it got queued.
-    clearDeckFor(data.mealId);
-    render();
-  });
+
+  const add = document.createElement("button");
+  add.className = "slot-add";
+  add.textContent = entries.length ? "+ add another" : "+ add";
+  add.onclick = ()=>openMealPicker(dISO, slot);
+  body.appendChild(add);
+
+  wrap.appendChild(body);
   return wrap;
 }
+
+/* ===================== picking a meal for a slot =====================
+   Ordered by how well each dish fits the night's occasion, which is the
+   whole reason occasions exist.                                          */
+const pickMealDlg = document.getElementById("pickMealDlg");
+let pickTarget = null;
+
+function openMealPicker(dISO, slot){
+  pickTarget = {dISO, slot};
+  const occ = dayOccasion(dISO);
+  document.getElementById("pickTitle").textContent = DOW[fromISO(dISO).getDay()]+" "+slot;
+  document.getElementById("pickSub").textContent =
+    occ===DEFAULT_OCCASION ? "Ordered A–Z" : "Best fit for "+OCCASIONS[occ].label.toLowerCase()+" first";
+  document.getElementById("pickSearch").value = "";
+  renderMealPicker();
+  pickMealDlg.showModal();
+}
+
+function renderMealPicker(){
+  if(!pickTarget) return;
+  const q = document.getElementById("pickSearch").value.trim().toLowerCase();
+  const occ = dayOccasion(pickTarget.dISO);
+  const w = OCCASIONS[occ].w;
+  const byFit = occ !== DEFAULT_OCCASION;
+  const list = document.getElementById("pickList");
+  list.innerHTML = "";
+
+  const meals = [...state.meals]
+    .filter(m=>!q || m.name.toLowerCase().includes(q) || (m.tags||[]).some(t=>t.includes(q)))
+    .sort((a,b)=> byFit ? fitScore(b,w)-fitScore(a,w) || a.name.localeCompare(b.name)
+                        : a.name.localeCompare(b.name));
+
+  if(!meals.length){ list.innerHTML = '<div class="empty">Nothing matches.</div>'; return; }
+
+  for(const m of meals){
+    const di = dueInfo(m);
+    const row = document.createElement("button");
+    row.className = "picker-row";
+    const bits = [];
+    if(di && di.due) bits.push(di.never ? "never made" : "due");
+    if(m.freq && m.freq.per) bits.push(freqLabel(m.freq));
+    row.innerHTML = '<span class="pk-main"><span class="pk-name">'+esc(m.name)+'</span>'+
+                    (bits.length? '<span class="pk-sub">'+bits.join(" · ")+'</span>':'')+
+                    '</span>'+techGlyph(m);
+    row.onclick = ()=>{
+      const day = ensureDay(pickTarget.dISO);
+      if(!Array.isArray(day[pickTarget.slot])) day[pickTarget.slot] = [];
+      day[pickTarget.slot].push({mealId:m.id});
+      clearDeckFor(m.id);         // giving it a night satisfies the intention
+      pickMealDlg.close();
+      render();
+    };
+    list.appendChild(row);
+  }
+}
+document.getElementById("pickSearch").addEventListener("input", renderMealPicker);
+
+/* ===================== picking a day for a meal ===================== */
+const pickDayDlg = document.getElementById("pickDayDlg");
+let pickDayMealId = null;
+
+function openDayPicker(mealId){
+  const m = mealById(mealId); if(!m) return;
+  pickDayMealId = mealId;
+  document.getElementById("pickDayTitle").textContent = m.name;
+  document.getElementById("pickDaySub").textContent = "Which night?";
+  const list = document.getElementById("pickDayList");
+  list.innerHTML = "";
+
+  for(let i=0;i<14;i++){
+    const d = addDays(planStart,i), dISO = iso(d);
+    const rec = state.plan[dISO] || defaultDayRec();
+    const openSlots = SLOT_ORDER.filter(s=>Array.isArray(rec[s]));
+    for(const slot of openSlots){
+      const taken = (rec[slot]||[]).map(e=>{ const mm=mealById(e.mealId); return mm?mm.name:null; }).filter(Boolean);
+      const row = document.createElement("button");
+      row.className = "picker-row";
+      row.innerHTML = '<span class="pk-main"><span class="pk-name">'+DOW[d.getDay()]+' '+fmtShort(d)+
+                      (dISO===todayISO?' — today':'')+'</span>'+
+                      '<span class="pk-sub">'+slot+(taken.length? " · "+esc(taken.join(", ")) : "")+'</span></span>';
+      row.onclick = ()=>{
+        const day = ensureDay(dISO);
+        if(!Array.isArray(day[slot])) day[slot] = [];
+        day[slot].push({mealId:pickDayMealId});
+        clearDeckFor(pickDayMealId);
+        pickDayDlg.close();
+        setView("plan");
+        render();
+      };
+      list.appendChild(row);
+    }
+  }
+}
+
 
 function dayTotals(dISO){
   const rec = state.plan[dISO]; if(!rec) return null;
@@ -1215,34 +1373,6 @@ function dayTotals(dISO){
     }
   }
   return any ? {cal,p,f,c} : null;
-}
-
-function proteinBar(pGrams, target){
-  if(!target) return "";
-  const pct = Math.max(0, Math.min(100, Math.round(pGrams/target*100)));
-  const cls = pGrams>=target ? "good" : pct>=70 ? "warn" : "low";
-  return '<div class="protein-bar '+cls+'" title="'+Math.round(pGrams)+'g protein of '+target+'g target"><div class="protein-fill" style="width:'+pct+'%"></div></div>';
-}
-
-function renderDayTotals(){
-  const grid = document.getElementById("dtGrid");
-  grid.innerHTML = "";
-  for(let w=0; w<weeksToShow; w++){
-    const row = document.createElement("div"); row.className = "dt-grid";
-    for(let i=0;i<7;i++){
-      const dISO = iso(addDays(weekStart,w*7+i));
-      const cell = document.createElement("div");
-      cell.className = "dt-cell";
-      const t = dayTotals(dISO);
-      if(!t){ cell.innerHTML = '<span class="empty">&mdash;</span>'; }
-      else{
-        cell.innerHTML = "~<b>"+Math.round(t.cal)+"</b> kcal &middot; "+Math.round(t.p)+"P / "+Math.round(t.f)+"F / "+Math.round(t.c)+"C"
-          + proteinBar(t.p, state.proteinTarget);
-      }
-      row.appendChild(cell);
-    }
-    grid.appendChild(row);
-  }
 }
 
 function monthRange(d){
@@ -1925,14 +2055,17 @@ document.getElementById("importFile").onchange = ev=>{
 };
 
 /* ============================== wiring ============================== */
-document.getElementById("prevWeek").onclick = ()=>{ weekStart = addDays(weekStart,-7); render(); };
-document.getElementById("nextWeek").onclick = ()=>{ weekStart = addDays(weekStart, 7); render(); };
-document.getElementById("todayBtn").onclick = ()=>{ weekStart = weekStartOf(new Date()); render(); };
-document.getElementById("weeksToggleBtn").onclick = ()=>{
-  weeksToShow = weeksToShow===1 ? 2 : 1;
-  document.getElementById("weeksToggleBtn").textContent = weeksToShow===2 ? "1 week" : "2 weeks";
+document.querySelectorAll("#tabbar button").forEach(b=>{
+  b.onclick = ()=>setView(b.dataset.view);
+});
+document.getElementById("planBack").onclick = ()=>{ planStart = addDays(planStart,-7); render(); };
+document.getElementById("planFwd").onclick  = ()=>{ planStart = addDays(planStart, 7); render(); };
+document.getElementById("planToday").onclick = ()=>{
+  planStart = (function(){ const d=new Date(); d.setHours(0,0,0,0); return d; })();
   render();
+  document.getElementById("views").scrollTop = 0;
 };
+document.getElementById("moreBtn").onclick = ()=>document.getElementById("moreDlg").showModal();
 document.getElementById("search").addEventListener("input", renderBank);
 document.getElementById("filterToggle").onclick = ()=>{
   showFilterPanel(tagFilter.hidden);
@@ -1948,6 +2081,23 @@ document.getElementById("sortClear").onclick = ()=>{
   render();
 };
 document.querySelectorAll("dialog [data-close]").forEach(b=>b.onclick = ()=>b.closest("dialog").close());
+
+// The More sheet is a menu: every item hands off to something else, so it
+// should never still be sitting there behind what it opened.
+const moreDlg = document.getElementById("moreDlg");
+["goalsBtn","exportBtn","importBtn"].forEach(id=>{
+  const b = document.getElementById(id);
+  const existing = b.onclick;
+  b.onclick = (ev)=>{ moreDlg.close(); if(existing) existing.call(b, ev); };
+});
+
+document.getElementById("dScheduleBtn").onclick = ()=>{
+  if(!detailId) return;
+  const id = detailId;
+  detailDlg.close();
+  openDayPicker(id);
+  pickDayDlg.showModal();
+};
 
 render();
 
