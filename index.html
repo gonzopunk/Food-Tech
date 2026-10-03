@@ -872,7 +872,15 @@ function seed(){
   return { meals, goals, plan:{}, onDeck:[], schemaVersion:SCHEMA_VERSION };
 }
 
-let state = loadState() || seed();
+/* A brand-new install starts empty rather than inheriting one particular
+   household's repertoire. The seed above is kept because it is the original
+   meal list and the macro figures in it are real, but nothing calls it now;
+   anyone starting fresh builds their own bank. */
+function emptyState(){
+  return { meals:[], goals:[], plan:{}, onDeck:[], schemaVersion:SCHEMA_VERSION };
+}
+
+let state = loadState() || emptyState();
 saveState();
 
 /* ============================== dates ============================== */
@@ -1145,7 +1153,12 @@ function renderBank(){
     list.appendChild(row);
   }
   document.getElementById("mealCount").textContent = shown + (shown===1?" meal":" meals");
-  if(!shown) list.innerHTML = '<div class="empty">Nothing matches.<br>Clear the search or the filter.</div>';
+  if(!shown){
+    // An empty bank and a filtered-to-nothing bank need different words.
+    list.innerHTML = state.meals.length
+      ? '<div class="empty">Nothing matches.<br>Clear the search or the filter.</div>'
+      : '<div class="empty">No meals yet.<br><br>Tap <b>New</b> above to add the first one &mdash; a name and a couple of tags is enough to start.</div>';
+  }
 }
 
 /* ============================== the plan ==============================
@@ -1299,7 +1312,12 @@ function renderMealPicker(){
     .sort((a,b)=> byFit ? fitScore(b,w)-fitScore(a,w) || a.name.localeCompare(b.name)
                         : a.name.localeCompare(b.name));
 
-  if(!meals.length){ list.innerHTML = '<div class="empty">Nothing matches.</div>'; return; }
+  if(!meals.length){
+    list.innerHTML = state.meals.length
+      ? '<div class="empty">Nothing matches.</div>'
+      : '<div class="empty">No meals yet.<br><br>Add one from the Meals tab first.</div>';
+    return;
+  }
 
   for(const m of meals){
     const di = dueInfo(m);
