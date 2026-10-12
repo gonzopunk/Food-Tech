@@ -282,5 +282,13 @@ Keep it that way.
   that keeps closed `<dialog>` elements hidden. Scope layout to `[open]`.
 - **After a stylesheet rewrite, check every class the JS emits** still has a
   rule. One sweep caught three orphans.
+- **A "large text" option must scale the uppercase labels too.** They are the
+  smallest, lightest and most letterspaced text on screen, which makes them the
+  hardest to read — scaling only the dish names and notes enlarges what was
+  already legible and misses the actual problem. Large mode should also darken
+  the faintest ink; size alone does not fix contrast.
+- **Put quick actions in the list, not behind a sheet.** Rating from a row of
+  five stars is what makes capture frictionless, and capture is the thing the
+  whole tracking half depends on. A sheet per item is one tap too many.
 - **Jamey prefers plain language.** Explain in concrete terms, name what he will
   see on screen, and give console or GitHub steps explicitly and one at a time.

@@ -3,87 +3,34 @@
 Companion to `DESIGN.md`. That document says what the app is and what it refuses
 to be; this one says what happens next.
 
-Reorganized 2026-10-12 after two weeks of real use. Items are now grouped by
-**surface** rather than by where the idea came from, because that's how they'll
-actually be built — one batch per area. Sizes are rough: *minutes*, *afternoon*,
-*a day*, *a week*, *a project*.
+Items are grouped by **surface** rather than by where the idea came from, because
+that's how they get built — one batch per area. Sizes are rough: *minutes*,
+*afternoon*, *a day*, *a week*, *a project*.
+
+Last updated 2026-10-12.
 
 ---
 
-## Batch 1 — the agreed list
+## Start here
 
-Everything here is settled. No decisions outstanding; build in roughly this
-order, since the later groups are larger.
+**Batch 1 is done, shipped and confirmed on the phone.** Nothing is half-finished
+and there are no open bugs.
 
-### 1A · Quick corrections *(under an hour, all told)*
+**The obvious next build is Batch 2 (occasions).** It is fully decided, scoped,
+self-contained, and needs no conversation first — occasions move from days to
+slots, then become editable. Roughly a week.
 
-| | What | Note |
-| --- | --- | --- |
-| **1A.1** | Rename the fourth axis **"Nourish" → "Health"** | Still outstanding from the last roadmap. Breaks the acronym every time someone looks at the radar. |
-| **1A.2** | Plan window **7 days, not 10** | A week is the natural unit and matches what the goals measure. |
-| **1A.3** | **Large/small text toggle** | A switch, in More. Scales dish names, notes **and the uppercase labels** — those are the smallest, lightest text on screen and the hardest to read, so leaving them out (as the first attempt did) missed the point. Large mode also darkens the faintest ink. Per-device, not synced. |
+**Batch 2.5 needs a conversation before any code.** Three connected visual
+questions, raised after two weeks of use. Not urgent, and the app is perfectly
+usable meanwhile — but doing any one of them alone means doing the work twice.
 
-**Known and accepted:** a rolling 7 days from today is not the same window the
-weekly goals count (they use a calendar week). Two weeks of use hasn't made this
-confusing, so we're leaving it. Revisit only if it starts to mislead.
+**Batch 3 (the aggregate view) wants more data first.** Inline rating landed in
+Batch 1, so ratings should now start accumulating. Give it a few weeks of real
+use before building anything that reads them back; an analysis view on thin data
+shows nothing and wrongly discredits the idea.
 
-### 1B · The plan view — make logging as easy as planning *(a day)*
-
-The underlying problem: **planning looks forward, logging looks backward**, and
-the current view serves only the first. Yesterday isn't on screen at all, and
-reaching it costs a full week's jump.
-
-- **1B.1** ~~Start the window at yesterday~~ — **tried and reverted.** Opening on
-  yesterday was overkill once 1B.2 and 1B.3 existed; the unrated line plus a
-  one-day caret covers backfilling without spending a planning row on the past.
-- **1B.2** **Day-at-a-time navigation**: single caret moves a day, double caret
-  moves a week.
-- **1B.3** **Surface unrated past meals** — a line at the top of the plan. The
-  list rates **inline**: five empty stars per row, one tap, row gone. A *notes*
-  link opens the full sheet when there's something to write down. The line also
-  has a **dismiss**, which marks those entries as deliberately unrated so they
-  never come back — "I'm not rating these" is a real answer.
-
-*1B.3 was independently the top-ranked suggestion on the previous roadmap. Two
-routes arriving at the same place is good evidence it's the right next thing.*
-
-**Watch item:** if 1B.3 starts to feel like nagging, it gets softened or
-dropped — Jamey flagged this risk when agreeing to it. An app that scolds you
-about unrated dinners is worse than one that forgets.
-
-### 1C · The meal picker *(an afternoon)*
-
-- **1C.1** **Create a new meal from the picker** — "+ New meal" at the top; on
-  save it assigns to the slot you were filling.
-- **1C.2** **Slot-aware ordering.** Match the slot tag first, then apply occasion
-  fit within that. Breakfast should not lead with bolognese.
-- **1C.3** Factor in **recently used in this slot** — applied *after* tag
-  matching, never blended into it, so frequency can't push a dinner dish into
-  breakfast.
-
-### 1D · Header and chrome *(an afternoon)*
-
-Two observations that turned out to be one fix:
-
-- **1D.1** Move **sign out** into **More**. It's a once-a-year action sitting in
-  prime space.
-- **1D.2** Show the **sync status only when something is wrong**. When all is
-  well it disappears entirely — which also removes the green "Up to date" text
-  that reads like a link. It keeps earning its place for "offline" and "save
-  failed," which are the only times it says anything.
-
-**Deferred, deliberately:** hiding the header on scroll. Worth re-asking *after*
-1D lands — with only the wordmark and More left, the header may be light enough
-that the motion isn't worth it.
-
-### 1E · Sheets and the deck *(an afternoon)*
-
-- **1E.1** **Move the primary action to the sheet header.** The on-screen
-  keyboard covers the footer Save button when editing a note. Top-right is where
-  a keyboard can never reach, and it needs no viewport maths.
-- **1E.2** **Remove from on deck.** *This is a regression* — the control existed
-  before the phone rebuild and was dropped in it. The detail sheet's greyed-out
-  "Already on deck" becomes a working **"Take off deck"** toggle.
+**One decision stands open:** D1, multi-user — answered "not for now", with 3B
+(record who cooked) still worth doing cheaply to keep the option alive.
 
 ---
 
@@ -245,7 +192,37 @@ tracking, no servings calculator, no recipe manager, no duplicating SmartList.
 
 ---
 
-## Done since the last revision
+## Done
+
+### Batch 1 — shipped 2026-10-12, confirmed on the phone
+
+| | |
+| --- | --- |
+| **1A.1** | Fourth axis renamed **Nourish → Health**; the labels spell TECH again |
+| **1A.2** | Plan window 7 days, not 10 |
+| **1A.3** | Large-text toggle in More — scales dish names, notes **and the uppercase labels**, and darkens the faintest ink |
+| **1B.1** | *Tried and reverted* — opening on yesterday was overkill once 1B.2 and 1B.3 existed |
+| **1B.2** | Day-at-a-time navigation: `« ‹ Today › »` |
+| **1B.3** | Unrated meals surface as a quiet line; the list rates **inline** with five stars per row, a *notes* link for the full sheet, and a **dismiss** that sticks |
+| **1C.1** | Create a meal from inside the picker; it lands in the slot you were filling |
+| **1C.2–3** | Slot-aware ordering — breakfast leads with breakfast, by tag then by how often it's been eaten there |
+| **1D.1** | Sign out moved to More; Sign in stays in the header until you've used it |
+| **1D.2** | Sync status shows only when something is wrong |
+| **1E.1** | Save moved into the sheet header, where the keyboard can't cover it |
+| **1E.2** | Remove from on deck — a regression from the phone rebuild — plus a working toggle in the detail sheet |
+
+**Two lessons worth keeping:**
+
+- *Large text means the labels too.* The first attempt scaled dish names and
+  notes and left the uppercase labels alone, on the theory that scaling chrome
+  adds clutter. Wrong: those labels are the smallest, lightest, most
+  letterspaced text on screen and therefore the hardest to read.
+- *Quick actions belong in the list, not behind a sheet.* The first unrated list
+  opened the full rating sheet per meal. Five tappable stars on the row itself is
+  what makes capture frictionless — and capture is the precondition for Batch 3.
+
+### Earlier
 
 - Empty start for new users — no more inheriting one household's repertoire
 - Three documents: design guide, roadmap, beta-tester page
+- Mobile rebuild, cloud sync, GitHub Pages hosting
