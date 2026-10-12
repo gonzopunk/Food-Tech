@@ -26,6 +26,15 @@
     --label:"Barlow Condensed","Arial Narrow",sans-serif;
     --body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --tap:44px;
+    /* Content type only. Labels and chrome stay fixed: scaling those adds
+       clutter without making anything easier to read. */
+    --fs-dish:15.5px;   /* a meal name in the plan */
+    --fs-name:16px;     /* a meal name in a list */
+    --fs-note:14px;     /* notes and log entries */
+    --fs-body:15px;     /* sheet body text */
+  }
+  :root.big-text{
+    --fs-dish:18.5px; --fs-name:19px; --fs-note:16.5px; --fs-body:17px;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   [hidden]{display:none!important}
@@ -102,7 +111,7 @@
   .slot:last-child .slot-body{border-bottom:none}
   .planned{display:flex;align-items:baseline;gap:8px;width:100%;text-align:left;
            min-height:var(--tap);padding:5px 0;color:inherit}
-  .planned .pname{font-family:var(--display);font-weight:500;font-size:15.5px;line-height:1.2;flex:1;min-width:0}
+  .planned .pname{font-family:var(--display);font-weight:500;font-size:var(--fs-dish);line-height:1.2;flex:1;min-width:0}
   .planned.leftover .pname{font-style:italic;color:var(--ink-2)}
   .planned .marks{display:flex;align-items:center;gap:6px;flex:none;font-family:var(--label);
                   font-size:11px;letter-spacing:.06em;color:var(--ink-3)}
@@ -149,7 +158,7 @@
   .meal-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;color:inherit;
             padding:9px 0;border-bottom:1px dotted var(--rule);min-height:var(--tap)}
   .meal-row .mr-main{flex:1;min-width:0}
-  .meal-row .name{font-family:var(--display);font-weight:500;font-size:16px;line-height:1.2}
+  .meal-row .name{font-family:var(--display);font-weight:500;font-size:var(--fs-name);line-height:1.2}
   .meal-row .meta{display:flex;align-items:center;gap:9px;margin-top:3px;font-family:var(--label);
                   font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);flex-wrap:wrap}
   .meal-row .meta .due{color:var(--tech-e);font-weight:600}
@@ -168,10 +177,24 @@
   .tech-glyph i:nth-child(3){--tc:var(--tech-c)} .tech-glyph i:nth-child(4){--tc:var(--tech-h)}
 
   /* ---------------------------- deck ------------------------------ */
+  .deck-item{display:flex;align-items:center;gap:10px;border-bottom:1px dotted var(--rule);min-height:var(--tap)}
+  .deck-open{display:flex;align-items:baseline;gap:10px;flex:1;min-width:0;text-align:left;color:inherit;padding:10px 0}
+  .deck-off{font-family:var(--label);font-size:11px;text-transform:uppercase;letter-spacing:.08em;
+            color:var(--ink-3);flex:none;padding:10px 0 10px 8px;min-height:var(--tap)}
+  .deck-off:hover{color:var(--ink)}
+  /* the unrated nudge: a quiet line, never a banner */
+  .unrated{display:block;width:100%;text-align:left;font-family:var(--label);font-size:12px;
+           text-transform:uppercase;letter-spacing:.09em;color:var(--ink-2);padding:10px 0;
+           text-decoration:underline;text-underline-offset:4px;
+           border-bottom:1px dotted var(--rule);min-height:var(--tap)}
+  .unrated:hover{color:var(--ink)}
+  .view-head .nav button{min-width:18px;text-align:center}
+  .picker-new .pk-name{color:var(--tech-h)}
+
   .deck-item{display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;color:inherit;
              padding:10px 0;border-bottom:1px dotted var(--rule);min-height:var(--tap)}
-  .deck-item .nm{font-family:var(--display);font-weight:500;font-size:16px;flex:1;min-width:0;line-height:1.2}
-  .deck-item .why{font-family:var(--display);font-style:italic;font-size:13px;color:var(--ink-3);
+  .deck-open .nm{font-family:var(--display);font-weight:500;font-size:var(--fs-name);flex:1;min-width:0;line-height:1.2}
+  .deck-open .why{font-family:var(--display);font-style:italic;font-size:var(--fs-note);color:var(--ink-3);
                   display:block;margin-top:2px;font-weight:400}
 
   /* -------------------------- tab bar ----------------------------- */
@@ -195,6 +218,9 @@
   @keyframes sheet-up{from{transform:translateY(14px);opacity:.6}to{transform:none;opacity:1}}
   .modal-head{display:flex;align-items:flex-start;gap:10px;padding:14px 16px 10px;border-bottom:1px solid var(--ink);flex:none}
   .modal-head h3{font-family:var(--display);font-weight:600;font-size:19px;line-height:1.15;flex:1;min-width:0}
+  .modal-head .head-title{flex:1;min-width:0}
+  .modal-head .head-title h3{flex:none}
+  .modal-head .act-save{color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:4px}
   .modal-head .sheet-x{font-family:var(--label);font-size:13px;letter-spacing:.09em;text-transform:uppercase;
                        color:var(--ink-3);min-height:36px;padding:0 2px;flex:none}
   .modal-body{padding:14px 16px;overflow-y:auto;flex:1;min-height:0;-webkit-overflow-scrolling:touch}
@@ -212,7 +238,7 @@
   .field label{display:block;font-family:var(--label);font-size:11px;text-transform:uppercase;
                letter-spacing:.1em;color:var(--ink-3);margin-bottom:5px}
   .field input,.field textarea,.field select{width:100%;background:none;border:none;
-      border-bottom:1px solid var(--rule-2);padding:7px 0;font-size:15.5px;min-height:var(--tap);
+      border-bottom:1px solid var(--rule-2);padding:7px 0;font-size:var(--fs-body);min-height:var(--tap);
       border-radius:0;-webkit-appearance:none;appearance:none}
   .field textarea{min-height:92px;resize:vertical;line-height:1.5}
   .field input:focus,.field textarea:focus,.field select:focus{outline:none;border-bottom-color:var(--ink)}
@@ -231,7 +257,7 @@
   .picker-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;color:inherit;
               padding:11px 0;border-bottom:1px dotted var(--rule);min-height:var(--tap)}
   .picker-row .pk-main{flex:1;min-width:0}
-  .picker-row .pk-name{font-family:var(--display);font-weight:500;font-size:16px;line-height:1.2}
+  .picker-row .pk-name{font-family:var(--display);font-weight:500;font-size:var(--fs-name);line-height:1.2}
   .picker-row .pk-sub{font-family:var(--label);font-size:11px;text-transform:uppercase;letter-spacing:.07em;
                       color:var(--ink-3);margin-top:2px}
   .picker-search{width:100%;background:none;border:none;border-bottom:1px solid var(--ink);
@@ -252,7 +278,7 @@
   .tech-readout .axmuted{color:var(--ink-3);letter-spacing:.05em}
   .axkind{font-family:var(--label);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
           color:var(--ink-3);margin-left:5px}
-  pre.recipe{white-space:pre-wrap;font-family:var(--body);font-size:14px;line-height:1.55;
+  pre.recipe{white-space:pre-wrap;font-family:var(--body);font-size:var(--fs-note);line-height:1.55;
              border-left:2px solid var(--rule-2);padding:2px 0 2px 12px;margin-top:4px}
   .history-item{border-bottom:1px dotted var(--rule);padding:9px 0}
   .history-item:last-child{border-bottom:none}
@@ -260,7 +286,7 @@
                 text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3)}
   .history-head .hdate{font-weight:600;color:var(--ink)}
   .history-head .hrate{color:var(--tech-t);letter-spacing:1px}
-  .history-item .hnote{font-family:var(--display);font-style:italic;font-size:14px;color:var(--ink-2);
+  .history-item .hnote{font-family:var(--display);font-style:italic;font-size:var(--fs-note);color:var(--ink-2);
                        margin-top:3px;white-space:pre-wrap;line-height:1.45}
   h4.sect{font-family:var(--label);font-size:11.5px;text-transform:uppercase;letter-spacing:.1em;
           color:var(--ink-3);margin:16px 0 2px;border-top:1px solid var(--rule);padding-top:10px}
@@ -328,6 +354,8 @@
     <span class="wm-food">food</span><span class="wm-tech">TECH</span>
   </span>
   <span class="head-right">
+    <!-- Status earns header space only when it has something to report; signing
+         in matters before you have, so that button lives here until you do. -->
     <span class="cloud-status" id="cloudStatus">On this device only</span>
     <button class="icon-btn" id="cloudAuthBtn">Sign in</button>
     <button class="icon-btn" id="moreBtn" aria-haspopup="dialog">More</button>
@@ -344,12 +372,15 @@
     <div class="view-head">
       <h2 id="planTitle">Plan</h2>
       <span class="sub" id="planRange"></span>
-      <span class="act">
-        <button id="planBack" title="Earlier">&#8592;</button>
+      <span class="act nav">
+        <button id="planBackWeek" title="Back a week" aria-label="Back a week">&#171;</button>
+        <button id="planBackDay" title="Back a day" aria-label="Back a day">&#8249;</button>
         <button id="planToday">Today</button>
-        <button id="planFwd" title="Later">&#8594;</button>
+        <button id="planFwdDay" title="Forward a day" aria-label="Forward a day">&#8250;</button>
+        <button id="planFwdWeek" title="Forward a week" aria-label="Forward a week">&#187;</button>
       </span>
     </div>
+    <button class="unrated" id="unratedPrompt" hidden></button>
     <div class="daylist" id="dayList"></div>
   </section>
 
@@ -423,6 +454,18 @@
   <div class="modal-body"><div id="pickDayList"></div></div>
 </dialog>
 
+<!-- meals cooked but not yet rated -->
+<dialog id="unratedDlg">
+  <div class="modal-head">
+    <div style="flex:1;min-width:0">
+      <h3>Not yet rated</h3>
+      <div class="hint" style="margin-top:2px">How did these turn out?</div>
+    </div>
+    <button class="sheet-x" data-close>Close</button>
+  </div>
+  <div class="modal-body"><div id="unratedList"></div></div>
+</dialog>
+
 <!-- overflow: the things that do not belong on a phone's main surface -->
 <dialog id="moreDlg">
   <div class="modal-head"><h3>More</h3><button class="sheet-x" data-close>Close</button></div>
@@ -433,12 +476,23 @@
       <span class="pk-sub">Downloads everything as a file</span></span></button>
     <button class="picker-row" id="importBtn"><span class="pk-main"><span class="pk-name">Import a backup</span>
       <span class="pk-sub">Replaces everything on this device</span></span></button>
+    <label class="picker-row" for="bigTextChk" style="cursor:pointer">
+      <span class="pk-main"><span class="pk-name">Large text</span>
+      <span class="pk-sub">Bigger dish names and notes, on this device only</span></span>
+      <input type="checkbox" id="bigTextChk" style="accent-color:var(--ink);width:20px;height:20px;flex:none">
+    </label>
+    <button class="picker-row" id="signOutRow" hidden><span class="pk-main"><span class="pk-name">Sign out</span>
+      <span class="pk-sub" id="signOutWho"></span></span></button>
   </div>
 </dialog>
 
 <!-- meal editor -->
 <dialog id="editDlg">
-  <div class="modal-head"><h3 id="editTitle">New meal</h3><button class="sheet-x" data-close>Close</button></div>
+  <div class="modal-head">
+    <button class="sheet-x" data-close>Cancel</button>
+    <h3 id="editTitle" class="head-title">New meal</h3>
+    <button class="sheet-x act-save" id="saveMealBtn">Save</button>
+  </div>
   <div class="modal-body">
     <div class="field"><label for="fName">Name</label><input id="fName" placeholder="e.g., Pasta bolognese"></div>
     <div class="field"><label for="fTags">Tags</label><input id="fTags" placeholder="comma-separated, e.g., beef, pasta">
@@ -449,7 +503,7 @@
           <option value="5">5 &middot; sublime</option><option value="4">4 &middot; very good</option>
           <option value="3">3 &middot; good</option><option value="2">2 &middot; simple</option>
           <option value="1">1 &middot; plain</option></select></div>
-      <div class="field"><label for="fNourish">Nourish <span class="axkind offer">offers</span></label>
+      <div class="field"><label for="fNourish">Health <span class="axkind offer">offers</span></label>
         <select id="fNourish">
           <option value="5">5 &middot; nourishing</option><option value="4">4 &middot; solid</option>
           <option value="3">3 &middot; middling</option><option value="2">2 &middot; heavy</option>
@@ -486,7 +540,7 @@
   </div>
   <div class="modal-foot">
     <button id="deleteMealBtn" style="color:var(--tomato);border-color:var(--tomato-soft)">Delete</button>
-    <div class="right"><button data-close>Cancel</button><button class="primary" id="saveMealBtn">Save meal</button></div>
+
   </div>
 </dialog>
 
@@ -504,8 +558,9 @@
 <!-- planned-instance editor: notes/rating for one meal on one day -->
 <dialog id="instDlg">
   <div class="modal-head">
-    <div><h3 id="iName"></h3><div class="hint" id="iWhen" style="margin-top:2px"></div></div>
-    <button class="sheet-x" data-close>Close</button>
+    <button class="sheet-x" data-close>Cancel</button>
+    <div class="head-title"><h3 id="iName"></h3><div class="hint" id="iWhen" style="margin-top:2px"></div></div>
+    <button class="sheet-x act-save" id="iSaveBtn">Save</button>
   </div>
   <div class="modal-body">
     <div class="field"><label>How did it turn out?</label><div id="iStars" class="stars"></div></div>
@@ -517,7 +572,7 @@
   </div>
   <div class="modal-foot">
     <button id="iRemoveBtn" style="color:var(--tomato);border-color:var(--tomato-soft)">Remove from this day</button>
-    <div class="right"><button id="iRecipeBtn">View recipe</button><button data-close>Cancel</button><button class="primary" id="iSaveBtn">Save</button></div>
+    <div class="right"><button id="iRecipeBtn">View recipe</button></div>
   </div>
 </dialog>
 
@@ -681,7 +736,7 @@ const TECH_AXES = [
    scale:{1:"no work",2:"quick",3:"moderate",4:"involved",5:"a project"}},
   {k:"c", virtue:"Cheap",   label:"Cost",   kind:"demand", varName:"--tech-c",
    scale:{1:"pennies",2:"thrifty",3:"normal",4:"pricey",5:"splurge"}},
-  {k:"h", virtue:"Healthy", label:"Nourish",kind:"offer",  varName:"--tech-h",
+  {k:"h", virtue:"Healthy", label:"Health", kind:"offer",  varName:"--tech-h",
    scale:{1:"indulgent",2:"heavy",3:"middling",4:"solid",5:"nourishing"}}
 ];
 const AXIS = Object.fromEntries(TECH_AXES.map(a=>[a.k,a]));
@@ -991,8 +1046,14 @@ function clearDeckFor(mealId){
    on-deck queue. One layout at every width -- a phone gets one column, a
    desktop gets several of the same column side by side.                    */
 let currentView = "plan";
-let planStart = (function(){ const d=new Date(); d.setHours(0,0,0,0); return d; })();
-const PLAN_DAYS = 10;          // a phone scrolls; it does not need a fixed week
+// The window opens on yesterday, not today. Planning looks forward but logging
+// looks back, and the meal most likely to need a rating is last night's.
+function defaultPlanStart(){
+  const d = new Date(); d.setHours(0,0,0,0);
+  return addDays(d,-1);
+}
+let planStart = defaultPlanStart();
+const PLAN_DAYS = 7;           // a week: the unit the goals measure
 
 function setView(name){
   currentView = name;
@@ -1021,12 +1082,20 @@ function renderOnDeck(){
   }
   deck.forEach(item=>{
     const m = mealById(item.mealId); if(!m) return;
-    const row = document.createElement("button");
+    const row = document.createElement("div");
     row.className = "deck-item";
-    row.innerHTML = '<span class="nm">'+esc(m.name)+
+    const open = document.createElement("button");
+    open.className = "deck-open";
+    open.innerHTML = '<span class="nm">'+esc(m.name)+
       (item.note? '<span class="why">'+esc(item.note)+'</span>' : '')+'</span>'+
       techGlyph(m);
-    row.onclick = ()=>openDetail(item.mealId);
+    open.onclick = ()=>openDetail(item.mealId);
+    const off = document.createElement("button");
+    off.className = "deck-off";
+    off.textContent = "remove";
+    off.setAttribute("aria-label","Take "+m.name+" off deck");
+    off.onclick = ()=>{ removeFromDeck(item.id); render(); };
+    row.appendChild(open); row.appendChild(off);
     holder.appendChild(row);
   });
 }
@@ -1164,7 +1233,57 @@ function renderBank(){
 /* ============================== the plan ==============================
    A run of days from wherever you have scrolled to, today first by default.
    Assigning a meal is a tap, not a drag: touch has no drag-and-drop.      */
+/* Meals already cooked but never rated. Capped at a fortnight so this can never
+   become a growing pile of guilt -- if it isn't rated within two weeks, the
+   memory has gone anyway and the prompt should let it go. */
+const UNRATED_LOOKBACK_DAYS = 14;
+function unratedInstances(){
+  const out = [];
+  const from = iso(addDays(fromISO(todayISO), -UNRATED_LOOKBACK_DAYS));
+  for(const dISO in state.plan){
+    if(dISO >= todayISO || dISO < from) continue;
+    const rec = state.plan[dISO];
+    for(const slot in rec){
+      if(!Array.isArray(rec[slot])) continue;
+      rec[slot].forEach((entry, idx)=>{
+        if(entry.rating || entry.leftover) return;
+        if(!mealById(entry.mealId)) return;
+        out.push({dISO, slot, idx, entry});
+      });
+    }
+  }
+  return out.sort((a,b)=> b.dISO.localeCompare(a.dISO));
+}
+
+function renderUnratedPrompt(){
+  const holder = document.getElementById("unratedPrompt");
+  const list = unratedInstances();
+  holder.hidden = list.length === 0;
+  if(!list.length) return;
+  holder.textContent = list.length===1
+    ? "1 meal not yet rated"
+    : list.length + " meals not yet rated";
+  holder.onclick = ()=>openUnrated(list);
+}
+
+const unratedDlg = document.getElementById("unratedDlg");
+function openUnrated(list){
+  const body = document.getElementById("unratedList");
+  body.innerHTML = "";
+  for(const it of list){
+    const m = mealById(it.entry.mealId);
+    const row = document.createElement("button");
+    row.className = "picker-row";
+    row.innerHTML = '<span class="pk-main"><span class="pk-name">'+esc(m.name)+'</span>'+
+                    '<span class="pk-sub">'+fmtLong(it.dISO)+' · '+it.slot+'</span></span>';
+    row.onclick = ()=>{ unratedDlg.close(); openInstance(it.dISO, it.slot, it.idx); };
+    body.appendChild(row);
+  }
+  unratedDlg.showModal();
+}
+
 function renderDayList(){
+  renderUnratedPrompt();
   const holder = document.getElementById("dayList");
   holder.innerHTML = "";
   const end = addDays(planStart, PLAN_DAYS-1);
@@ -1286,6 +1405,9 @@ function renderSlot(dISO, slot, entries){
    whole reason occasions exist.                                          */
 const pickMealDlg = document.getElementById("pickMealDlg");
 let pickTarget = null;
+// Set when a meal is being created from inside the picker, so that saving it
+// drops it straight into the slot you were filling.
+let pendingAssign = null;
 
 function openMealPicker(dISO, slot){
   pickTarget = {dISO, slot};
@@ -1298,24 +1420,57 @@ function openMealPicker(dISO, slot){
   pickMealDlg.showModal();
 }
 
+/* How often a meal has been put in this particular slot. Breakfast should lead
+   with the things you actually eat for breakfast, whatever their TECH profile. */
+function slotUseCount(mealId, slot){
+  let n = 0;
+  for(const dISO in state.plan){
+    const arr = state.plan[dISO][slot];
+    if(!Array.isArray(arr)) continue;
+    for(const e of arr) if(e.mealId===mealId) n++;
+  }
+  return n;
+}
+
 function renderMealPicker(){
   if(!pickTarget) return;
   const q = document.getElementById("pickSearch").value.trim().toLowerCase();
+  const slot = pickTarget.slot;
   const occ = dayOccasion(pickTarget.dISO);
   const w = OCCASIONS[occ].w;
   const byFit = occ !== DEFAULT_OCCASION;
   const list = document.getElementById("pickList");
   list.innerHTML = "";
 
+  // Ordering runs in tiers, never blended: a meal tagged for this slot outranks
+  // an untagged one however well it fits the night, and frequency only breaks
+  // ties inside a tier. Otherwise a well-fitting dinner creeps into breakfast.
+  const tagged = m => (m.tags||[]).includes(slot) ? 1 : 0;
   const meals = [...state.meals]
     .filter(m=>!q || m.name.toLowerCase().includes(q) || (m.tags||[]).some(t=>t.includes(q)))
-    .sort((a,b)=> byFit ? fitScore(b,w)-fitScore(a,w) || a.name.localeCompare(b.name)
-                        : a.name.localeCompare(b.name));
+    .sort((a,b)=>
+      tagged(b)-tagged(a)
+      || slotUseCount(b.id,slot)-slotUseCount(a.id,slot)
+      || (byFit ? fitScore(b,w)-fitScore(a,w) : 0)
+      || a.name.localeCompare(b.name));
+
+  // Creating a meal mid-flow, without losing the slot you were filling.
+  const add = document.createElement("button");
+  add.className = "picker-row picker-new";
+  add.innerHTML = '<span class="pk-main"><span class="pk-name">+ New meal</span>'+
+                  '<span class="pk-sub">add it and put it here</span></span>';
+  add.onclick = ()=>{
+    pendingAssign = {dISO:pickTarget.dISO, slot:pickTarget.slot};
+    pickMealDlg.close();
+    openEditor(null);
+  };
+  list.appendChild(add);
 
   if(!meals.length){
-    list.innerHTML = state.meals.length
-      ? '<div class="empty">Nothing matches.</div>'
-      : '<div class="empty">No meals yet.<br><br>Add one from the Meals tab first.</div>';
+    const note = document.createElement("div");
+    note.className = "empty";
+    note.innerHTML = state.meals.length ? "Nothing matches." : "No meals yet.";
+    list.appendChild(note);
     return;
   }
 
@@ -1730,6 +1885,8 @@ document.getElementById("fTags").addEventListener("input", ()=>{
   const tags = document.getElementById("fTags").value.split(",").map(s=>s.trim().toLowerCase()).filter(Boolean);
   setTechFields(deriveTech(tags));
 });
+// Abandoning the editor abandons the pending slot assignment with it.
+editDlg.addEventListener("close", ()=>{ pendingAssign = null; });
 document.getElementById("addMealBtn").onclick = ()=>openEditor(null);
 document.getElementById("estimateBtn").onclick = estimateMacros;
 document.getElementById("saveMealBtn").onclick = ()=>{
@@ -1747,8 +1904,19 @@ document.getElementById("saveMealBtn").onclick = ()=>{
                  h: clamp5(+document.getElementById("fNourish").value) };
   const data = { name, tags, freq: per?{per,times}:null, nut, tech,
                  recipe: document.getElementById("fRecipe").value, notes: document.getElementById("fNotes").value.trim() };
+  let savedId = editingId;
   if(editingId){ Object.assign(mealById(editingId), data); }
-  else state.meals.push(Object.assign({id:uid()}, data));
+  else { savedId = uid(); state.meals.push(Object.assign({id:savedId}, data)); }
+
+  // Created from the picker: put it where the cook was already heading.
+  if(pendingAssign && savedId){
+    const day = ensureDay(pendingAssign.dISO);
+    if(!Array.isArray(day[pendingAssign.slot])) day[pendingAssign.slot] = [];
+    day[pendingAssign.slot].push({mealId:savedId});
+    clearDeckFor(savedId);
+    pendingAssign = null;
+    setView("plan");
+  }
   editDlg.close(); render();
 };
 document.getElementById("deleteMealBtn").onclick = ()=>{
@@ -1803,19 +1971,17 @@ function openDetail(id){
   document.getElementById("dBody").innerHTML = html;
   const deckBtn = document.getElementById("dDeckBtn");
   const queued = deckList().some(d=>d.mealId===id);
-  deckBtn.textContent = queued ? "Already on deck" : "Put on deck";
-  deckBtn.disabled = queued;
+  // A toggle, not a dead end: "already on deck" with no way back was a trap.
+  deckBtn.textContent = queued ? "Take off deck" : "On deck";
+  deckBtn.disabled = false;
   detailDlg.showModal();
 }
 document.getElementById("dEditBtn").onclick = ()=>{ detailDlg.close(); openEditor(detailId); };
 document.getElementById("dDeckBtn").onclick = ()=>{
   if(!detailId) return;
-  const onDeckAlready = !addToDeck(detailId);
+  const queued = deckList().some(d=>d.mealId===detailId);
+  if(queued) clearDeckFor(detailId); else addToDeck(detailId);
   detailDlg.close(); render();
-  if(onDeckAlready) return;
-  // Land the caret in the new item's note so the "why" can be typed straight away.
-  const last = document.querySelector("#deckList .deck-item:last-child .deck-note");
-  if(last) last.focus();
 };
 
 /* ============================== the repertoire map ==============================
@@ -2076,14 +2242,32 @@ document.getElementById("importFile").onchange = ev=>{
 document.querySelectorAll("#tabbar button").forEach(b=>{
   b.onclick = ()=>setView(b.dataset.view);
 });
-document.getElementById("planBack").onclick = ()=>{ planStart = addDays(planStart,-7); render(); };
-document.getElementById("planFwd").onclick  = ()=>{ planStart = addDays(planStart, 7); render(); };
+document.getElementById("planBackWeek").onclick = ()=>{ planStart = addDays(planStart,-7); render(); };
+document.getElementById("planBackDay").onclick  = ()=>{ planStart = addDays(planStart,-1); render(); };
+document.getElementById("planFwdDay").onclick   = ()=>{ planStart = addDays(planStart, 1); render(); };
+document.getElementById("planFwdWeek").onclick  = ()=>{ planStart = addDays(planStart, 7); render(); };
 document.getElementById("planToday").onclick = ()=>{
-  planStart = (function(){ const d=new Date(); d.setHours(0,0,0,0); return d; })();
+  planStart = defaultPlanStart();
   render();
   document.getElementById("views").scrollTop = 0;
 };
 document.getElementById("moreBtn").onclick = ()=>document.getElementById("moreDlg").showModal();
+
+/* Large text is a property of this screen, not of the cook, so it stays in the
+   browser rather than syncing: large on a phone, normal on a desktop. */
+const BIG_TEXT_KEY = "foodtech-big-text";
+const bigTextChk = document.getElementById("bigTextChk");
+function applyBigText(on){
+  document.documentElement.classList.toggle("big-text", on);
+  bigTextChk.checked = on;
+  try{ localStorage.setItem(BIG_TEXT_KEY, on ? "1" : "0"); }catch(e){}
+}
+(function initBigText(){
+  let saved = "0";
+  try{ saved = localStorage.getItem(BIG_TEXT_KEY) || "0"; }catch(e){}
+  applyBigText(saved === "1");
+})();
+bigTextChk.onchange = ()=>applyBigText(bigTextChk.checked);
 document.getElementById("search").addEventListener("input", renderBank);
 document.getElementById("filterToggle").onclick = ()=>{
   showFilterPanel(tagFilter.hidden);

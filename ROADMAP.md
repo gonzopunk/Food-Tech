@@ -21,7 +21,7 @@ order, since the later groups are larger.
 | --- | --- | --- |
 | **1A.1** | Rename the fourth axis **"Nourish" → "Health"** | Still outstanding from the last roadmap. Breaks the acronym every time someone looks at the radar. |
 | **1A.2** | Plan window **7 days, not 10** | A week is the natural unit and matches what the goals measure. |
-| **1A.3** | Larger body text | First complaint after first phone use. |
+| **1A.3** | **Large/small text toggle** | Not a blanket resize — a switch, in More. Scales the *content* (dish names, notes, meal names) and leaves the chrome alone, since bumping labels adds clutter without aiding reading. Per-device, not synced: large on the phone, normal on the desktop. |
 
 **Known and accepted:** a rolling 7 days from today is not the same window the
 weekly goals count (they use a calendar week). Two weeks of use hasn't made this
@@ -148,8 +148,15 @@ this has gone from hypothetical to real.
 
 ## Open decision
 
-**D1 — multi-user, and when.** Elizabeth has started using it, which settles the
-question of whether it matters and leaves only the timing.
+**D1 — multi-user, and when.** *Decided 2026-10-12: stay single-user for now.*
+Elizabeth's usage is sparse enough that separate spaces are fine in practice.
+
+The reason to still do **3B (record who cooked)** is therefore not that it's
+needed today — it's that it keeps the option open cheaply. Treat it as insurance,
+not as a step toward a shared kitchen, and don't let it pull other multi-user
+work along behind it.
+
+The rest of this section is kept for whenever the question reopens.
 
 Data lives at `menuBoard/{uid}`, single-user by construction. A shared kitchen
 wants a container with a `members` array — SmartList's shape — and that is a

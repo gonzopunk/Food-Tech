@@ -62,6 +62,9 @@ function setStatus(text, tone = "") {
   if (!statusEl) return;
   statusEl.textContent = text;
   statusEl.className = "cloud-status" + (tone ? " " + tone : "");
+  // "Up to date" is the expected case and says nothing worth the space; it also
+  // read as a tappable link. Show the line only when it has news.
+  statusEl.hidden = (tone === "ok");
 }
 
 /* ------------------------------ state slicing ---------------------------- */
@@ -217,14 +220,22 @@ async function signOutNow() {
 }
 
 function renderAuthButton(btn) {
+  const row = document.getElementById("signOutRow");
+  const who = document.getElementById("signOutWho");
   if (user) {
-    btn.textContent = "Sign out";
-    btn.title = `Signed in as ${user.email || user.displayName || "you"}`;
-    btn.onclick = signOutNow;
+    // Signing out is a once-a-year action; it does not deserve header space.
+    btn.hidden = true;
+    if (row) {
+      row.hidden = false;
+      if (who) who.textContent = user.email || user.displayName || "";
+      row.onclick = () => { document.getElementById("moreDlg").close(); signOutNow(); };
+    }
   } else {
-    btn.textContent = "Sign in to sync";
+    btn.hidden = false;
+    btn.textContent = "Sign in";
     btn.title = "Use the same Google account as SmartList";
     btn.onclick = signIn;
+    if (row) row.hidden = true;
   }
 }
 
