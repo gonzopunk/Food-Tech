@@ -32,9 +32,14 @@
     --fs-name:16px;     /* a meal name in a list */
     --fs-note:14px;     /* notes and log entries */
     --fs-body:15px;     /* sheet body text */
+    --fs-lab:11px;      /* uppercase labels and metadata */
+    --fs-lab-xs:10.5px; /* the smallest labels */
   }
   :root.big-text{
     --fs-dish:18.5px; --fs-name:19px; --fs-note:16.5px; --fs-body:17px;
+    --fs-lab:13px; --fs-lab-xs:12.5px;
+    /* and lift the faintest ink: size alone does not fix low contrast */
+    --ink-3:#6E7066;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   [hidden]{display:none!important}
@@ -70,7 +75,7 @@
                background:var(--paper);overflow-x:auto;flex:none;scrollbar-width:none}
   .goals-strip::-webkit-scrollbar{display:none}
   .goal-chip{display:flex;align-items:baseline;gap:6px;white-space:nowrap;
-             font-family:var(--label);font-size:12.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+             font-family:var(--label);font-size:var(--fs-lab);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
   .goal-chip .status{font-weight:600;color:var(--ink)}
   .goal-chip.met .status{color:var(--tech-h)}
   .goal-chip.broken .status{color:var(--tech-t)}
@@ -83,7 +88,7 @@
   .view-head{display:flex;align-items:baseline;gap:10px;padding:14px 0 8px;position:sticky;top:0;
              background:var(--paper);z-index:3;border-bottom:1px solid var(--ink)}
   .view-head h2{font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:-.01em}
-  .view-head .sub{font-family:var(--label);font-size:12px;text-transform:uppercase;letter-spacing:.09em;color:var(--ink-3)}
+  .view-head .sub{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.09em;color:var(--ink-3)}
   .view-head .act{margin-left:auto;display:flex;gap:14px}
   .view-head .act button{font-family:var(--label);font-size:12.5px;text-transform:uppercase;
                          letter-spacing:.09em;color:var(--ink-2);min-height:36px}
@@ -97,15 +102,15 @@
   .day-head .dw{font-family:var(--display);font-weight:600;font-size:16.5px}
   .day.today .day-head .dw::after{content:"today";font-family:var(--label);font-size:10px;
         letter-spacing:.1em;color:var(--tech-t);margin-left:7px;vertical-align:2px}
-  .day-head .dt{font-family:var(--label);font-size:12.5px;letter-spacing:.07em;color:var(--ink-3);text-transform:uppercase}
+  .day-head .dt{font-family:var(--label);font-size:var(--fs-lab);letter-spacing:.07em;color:var(--ink-3);text-transform:uppercase}
   .occ-pick{margin-left:auto}
-  .occ-pick select{font-family:var(--label);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;
+  .occ-pick select{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.08em;
                    color:var(--ink-3);background:none;border:none;padding:4px 0;cursor:pointer;
                    -webkit-appearance:none;appearance:none;text-align:right;min-height:32px}
   .occ-pick.set select{color:var(--tech-h);font-weight:600}
 
   .slot{display:grid;grid-template-columns:58px 1fr;gap:8px;align-items:start;padding:3px 0}
-  .slot-label{font-family:var(--label);font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;
+  .slot-label{font-family:var(--label);font-size:var(--fs-lab-xs);text-transform:uppercase;letter-spacing:.1em;
               color:var(--ink-3);padding-top:7px}
   .slot-body{min-width:0;border-bottom:1px dotted var(--rule);padding-bottom:3px}
   .slot:last-child .slot-body{border-bottom:none}
@@ -114,9 +119,9 @@
   .planned .pname{font-family:var(--display);font-weight:500;font-size:var(--fs-dish);line-height:1.2;flex:1;min-width:0}
   .planned.leftover .pname{font-style:italic;color:var(--ink-2)}
   .planned .marks{display:flex;align-items:center;gap:6px;flex:none;font-family:var(--label);
-                  font-size:11px;letter-spacing:.06em;color:var(--ink-3)}
+                  font-size:var(--fs-lab);letter-spacing:.06em;color:var(--ink-3)}
   .planned .marks .rate{color:var(--tech-t);letter-spacing:.5px}
-  .slot-add{font-family:var(--label);font-size:11.5px;text-transform:uppercase;letter-spacing:.09em;
+  .slot-add{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.09em;
             color:var(--ink-3);min-height:var(--tap);display:flex;align-items:center;width:100%}
   .slot-add:hover{color:var(--ink)}
   .day-slots-toggle{font-family:var(--label);font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;
@@ -125,7 +130,7 @@
   .slot-toggle{display:flex;align-items:center;gap:5px;font-family:var(--label);font-size:10.5px;
                text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);cursor:pointer;min-height:32px}
   .slot-toggle input{accent-color:var(--ink);margin:0}
-  .daytotal{font-family:var(--label);font-size:11px;letter-spacing:.06em;text-transform:uppercase;
+  .daytotal{font-family:var(--label);font-size:var(--fs-lab);letter-spacing:.06em;text-transform:uppercase;
             color:var(--ink-3);margin-top:5px}
 
   /* --------------------------- meals ------------------------------ */
@@ -160,7 +165,7 @@
   .meal-row .mr-main{flex:1;min-width:0}
   .meal-row .name{font-family:var(--display);font-weight:500;font-size:var(--fs-name);line-height:1.2}
   .meal-row .meta{display:flex;align-items:center;gap:9px;margin-top:3px;font-family:var(--label);
-                  font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);flex-wrap:wrap}
+                  font-size:var(--fs-lab);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);flex-wrap:wrap}
   .meal-row .meta .due{color:var(--tech-e);font-weight:600}
   .meal-row .mr-glyph{flex:none}
   .fitbar{height:2px;background:var(--rule);margin-top:6px}
@@ -179,16 +184,33 @@
   /* ---------------------------- deck ------------------------------ */
   .deck-item{display:flex;align-items:center;gap:10px;border-bottom:1px dotted var(--rule);min-height:var(--tap)}
   .deck-open{display:flex;align-items:baseline;gap:10px;flex:1;min-width:0;text-align:left;color:inherit;padding:10px 0}
-  .deck-off{font-family:var(--label);font-size:11px;text-transform:uppercase;letter-spacing:.08em;
+  .deck-off{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.08em;
             color:var(--ink-3);flex:none;padding:10px 0 10px 8px;min-height:var(--tap)}
   .deck-off:hover{color:var(--ink)}
   /* the unrated nudge: a quiet line, never a banner */
-  .unrated{display:block;width:100%;text-align:left;font-family:var(--label);font-size:12px;
-           text-transform:uppercase;letter-spacing:.09em;color:var(--ink-2);padding:10px 0;
-           text-decoration:underline;text-underline-offset:4px;
-           border-bottom:1px dotted var(--rule);min-height:var(--tap)}
-  .unrated:hover{color:var(--ink)}
   .view-head .nav button{min-width:18px;text-align:center}
+  .unrated{display:flex;align-items:center;gap:10px;padding:0;border-bottom:1px dotted var(--rule)}
+  .unrated-open{flex:1;min-width:0;text-align:left;font-family:var(--label);font-size:var(--fs-lab);
+                text-transform:uppercase;letter-spacing:.09em;color:var(--ink-2);padding:11px 0;
+                text-decoration:underline;text-underline-offset:4px;min-height:var(--tap)}
+  .unrated-open:hover{color:var(--ink)}
+  .unrated-off{flex:none;font-family:var(--label);font-size:var(--fs-lab-xs);text-transform:uppercase;
+               letter-spacing:.08em;color:var(--ink-3);padding:11px 0 11px 8px;min-height:var(--tap)}
+  .unrated-off:hover{color:var(--ink)}
+  /* rate-from-the-list rows */
+  .rate-row{padding:11px 0;border-bottom:1px dotted var(--rule)}
+  .rate-row:last-child{border-bottom:none}
+  .rate-name{font-family:var(--display);font-weight:500;font-size:var(--fs-name);line-height:1.2}
+  .rate-when{font-family:var(--label);font-size:var(--fs-lab-xs);text-transform:uppercase;
+             letter-spacing:.07em;color:var(--ink-3);margin-top:2px}
+  .rate-actions{display:flex;align-items:center;gap:10px;margin-top:4px}
+  .rate-stars{flex:1}
+  .rate-stars .star{font-size:27px;padding:2px 6px 2px 0}
+  .rate-note{flex:none;font-family:var(--label);font-size:var(--fs-lab-xs);text-transform:uppercase;
+             letter-spacing:.08em;color:var(--ink-3);min-height:var(--tap);text-decoration:underline;
+             text-underline-offset:3px}
+  .rate-note:hover{color:var(--ink)}
+
   .picker-new .pk-name{color:var(--tech-h)}
 
   .deck-item{display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;color:inherit;
@@ -201,7 +223,7 @@
   .tabbar{display:flex;border-top:1px solid var(--ink);background:var(--paper);flex:none;
           padding-bottom:env(safe-area-inset-bottom,0px)}
   .tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-                 padding:9px 4px 8px;min-height:var(--tap);font-family:var(--label);font-size:12px;
+                 padding:9px 4px 8px;min-height:var(--tap);font-family:var(--label);font-size:var(--fs-lab);
                  text-transform:uppercase;letter-spacing:.11em;color:var(--ink-3)}
   .tabbar button.on{color:var(--ink);font-weight:600}
   .tabbar button.on::before{content:"";position:absolute;margin-top:-9px;width:26px;height:2px;background:var(--tech-t)}
@@ -258,7 +280,7 @@
               padding:11px 0;border-bottom:1px dotted var(--rule);min-height:var(--tap)}
   .picker-row .pk-main{flex:1;min-width:0}
   .picker-row .pk-name{font-family:var(--display);font-weight:500;font-size:var(--fs-name);line-height:1.2}
-  .picker-row .pk-sub{font-family:var(--label);font-size:11px;text-transform:uppercase;letter-spacing:.07em;
+  .picker-row .pk-sub{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.07em;
                       color:var(--ink-3);margin-top:2px}
   .picker-search{width:100%;background:none;border:none;border-bottom:1px solid var(--ink);
                  font-family:var(--label);font-size:15px;text-transform:uppercase;letter-spacing:.05em;
@@ -270,7 +292,7 @@
   .detail-meta .due{color:var(--tech-e);font-weight:600}
   .detail-profile{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
   .detail-profile-side{flex:1;min-width:170px}
-  .tech-readout{display:flex;flex-direction:column;gap:5px;font-family:var(--label);font-size:12.5px;
+  .tech-readout{display:flex;flex-direction:column;gap:5px;font-family:var(--label);font-size:var(--fs-lab);
                 text-transform:uppercase;letter-spacing:.06em}
   .tech-readout .ax{display:flex;align-items:baseline;gap:7px;color:var(--ink-2)}
   .tech-readout .swatch{width:6px;height:6px;background:var(--tc);flex:none;align-self:center}
@@ -282,7 +304,7 @@
              border-left:2px solid var(--rule-2);padding:2px 0 2px 12px;margin-top:4px}
   .history-item{border-bottom:1px dotted var(--rule);padding:9px 0}
   .history-item:last-child{border-bottom:none}
-  .history-head{display:flex;align-items:baseline;gap:9px;font-family:var(--label);font-size:12px;
+  .history-head{display:flex;align-items:baseline;gap:9px;font-family:var(--label);font-size:var(--fs-lab);
                 text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3)}
   .history-head .hdate{font-weight:600;color:var(--ink)}
   .history-head .hrate{color:var(--tech-t);letter-spacing:1px}
@@ -1046,11 +1068,11 @@ function clearDeckFor(mealId){
    on-deck queue. One layout at every width -- a phone gets one column, a
    desktop gets several of the same column side by side.                    */
 let currentView = "plan";
-// The window opens on yesterday, not today. Planning looks forward but logging
-// looks back, and the meal most likely to need a rating is last night's.
+// Opens on today. Reaching back for logging is handled by the unrated line and
+// the single-day caret, which turned out to be enough.
 function defaultPlanStart(){
   const d = new Date(); d.setHours(0,0,0,0);
-  return addDays(d,-1);
+  return d;
 }
 let planStart = defaultPlanStart();
 const PLAN_DAYS = 7;           // a week: the unit the goals measure
@@ -1246,7 +1268,7 @@ function unratedInstances(){
     for(const slot in rec){
       if(!Array.isArray(rec[slot])) continue;
       rec[slot].forEach((entry, idx)=>{
-        if(entry.rating || entry.leftover) return;
+        if(entry.rating || entry.leftover || entry.skipRating) return;
         if(!mealById(entry.mealId)) return;
         out.push({dISO, slot, idx, entry});
       });
@@ -1260,26 +1282,70 @@ function renderUnratedPrompt(){
   const list = unratedInstances();
   holder.hidden = list.length === 0;
   if(!list.length) return;
-  holder.textContent = list.length===1
-    ? "1 meal not yet rated"
-    : list.length + " meals not yet rated";
-  holder.onclick = ()=>openUnrated(list);
+  holder.innerHTML = "";
+  const open = document.createElement("button");
+  open.className = "unrated-open";
+  open.textContent = list.length===1 ? "1 meal not yet rated" : list.length + " meals not yet rated";
+  open.onclick = ()=>openUnrated();
+  const off = document.createElement("button");
+  off.className = "unrated-off";
+  off.textContent = "dismiss";
+  off.title = "Stop asking about these";
+  off.onclick = ()=>{
+    // "I am not going to rate these" is a real answer, and it should stick.
+    for(const it of list) it.entry.skipRating = true;
+    render();
+  };
+  holder.appendChild(open); holder.appendChild(off);
 }
 
 const unratedDlg = document.getElementById("unratedDlg");
-function openUnrated(list){
+function openUnrated(){
+  renderUnratedList();
+  if(!unratedDlg.open) unratedDlg.showModal();
+}
+function renderUnratedList(){
   const body = document.getElementById("unratedList");
+  const list = unratedInstances();
   body.innerHTML = "";
+  if(!list.length){ unratedDlg.close(); return; }
+
   for(const it of list){
     const m = mealById(it.entry.mealId);
-    const row = document.createElement("button");
-    row.className = "picker-row";
-    row.innerHTML = '<span class="pk-main"><span class="pk-name">'+esc(m.name)+'</span>'+
-                    '<span class="pk-sub">'+fmtLong(it.dISO)+' · '+it.slot+'</span></span>';
-    row.onclick = ()=>{ unratedDlg.close(); openInstance(it.dISO, it.slot, it.idx); };
+    const row = document.createElement("div");
+    row.className = "rate-row";
+    row.innerHTML = '<div class="rate-name">'+esc(m.name)+'</div>'+
+                    '<div class="rate-when">'+fmtLong(it.dISO)+' · '+it.slot+'</div>';
+
+    const actions = document.createElement("div");
+    actions.className = "rate-actions";
+    const stars = document.createElement("div");
+    stars.className = "stars rate-stars";
+    for(let v=1; v<=5; v++){
+      const b = document.createElement("button");
+      b.className = "star"; b.textContent = "☆";
+      b.setAttribute("aria-label", v+" of 5 for "+m.name);
+      // Fill as you slide across, so you can see what you are about to choose.
+      b.onmouseenter = ()=>{ [...stars.children].forEach((c,i)=>c.textContent = i<v ? "★" : "☆"); };
+      b.onclick = ()=>{
+        it.entry.rating = v;
+        saveState();
+        renderUnratedList();
+        renderUnratedPrompt();
+      };
+      stars.appendChild(b);
+    }
+    stars.onmouseleave = ()=>{ [...stars.children].forEach(c=>c.textContent = "☆"); };
+
+    const note = document.createElement("button");
+    note.className = "rate-note";
+    note.textContent = "notes";
+    note.onclick = ()=>{ unratedDlg.close(); openInstance(it.dISO, it.slot, it.idx); };
+
+    actions.appendChild(stars); actions.appendChild(note);
+    row.appendChild(actions);
     body.appendChild(row);
   }
-  unratedDlg.showModal();
 }
 
 function renderDayList(){

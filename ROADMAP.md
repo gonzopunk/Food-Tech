@@ -21,7 +21,7 @@ order, since the later groups are larger.
 | --- | --- | --- |
 | **1A.1** | Rename the fourth axis **"Nourish" → "Health"** | Still outstanding from the last roadmap. Breaks the acronym every time someone looks at the radar. |
 | **1A.2** | Plan window **7 days, not 10** | A week is the natural unit and matches what the goals measure. |
-| **1A.3** | **Large/small text toggle** | Not a blanket resize — a switch, in More. Scales the *content* (dish names, notes, meal names) and leaves the chrome alone, since bumping labels adds clutter without aiding reading. Per-device, not synced: large on the phone, normal on the desktop. |
+| **1A.3** | **Large/small text toggle** | A switch, in More. Scales dish names, notes **and the uppercase labels** — those are the smallest, lightest text on screen and the hardest to read, so leaving them out (as the first attempt did) missed the point. Large mode also darkens the faintest ink. Per-device, not synced. |
 
 **Known and accepted:** a rolling 7 days from today is not the same window the
 weekly goals count (they use a calendar week). Two weeks of use hasn't made this
@@ -33,13 +33,16 @@ The underlying problem: **planning looks forward, logging looks backward**, and
 the current view serves only the first. Yesterday isn't on screen at all, and
 reaching it costs a full week's jump.
 
-- **1B.1** Start the window at **yesterday**, not today. Six days ahead is ample
-  for planning, and the meal most likely to need rating is then always the first
-  thing on screen.
+- **1B.1** ~~Start the window at yesterday~~ — **tried and reverted.** Opening on
+  yesterday was overkill once 1B.2 and 1B.3 existed; the unrated line plus a
+  one-day caret covers backfilling without spending a planning row on the past.
 - **1B.2** **Day-at-a-time navigation**: single caret moves a day, double caret
   moves a week.
-- **1B.3** **Surface unrated past meals** — a line at the top of the plan:
-  *"3 meals from last week not yet rated."* Tap, rate, done.
+- **1B.3** **Surface unrated past meals** — a line at the top of the plan. The
+  list rates **inline**: five empty stars per row, one tap, row gone. A *notes*
+  link opens the full sheet when there's something to write down. The line also
+  has a **dismiss**, which marks those entries as deliberately unrated so they
+  never come back — "I'm not rating these" is a real answer.
 
 *1B.3 was independently the top-ranked suggestion on the previous roadmap. Two
 routes arriving at the same place is good evidence it's the right next thing.*
@@ -119,6 +122,37 @@ the standard.
   it. Less clever than reassigning them and much harder to lose data with.
 - **Show what a weighting does** — a live preview of which meals rise as you move
   the sliders. Otherwise it's tuning numbers blind.
+
+---
+
+## Batch 2.5 — the visual reconsideration *(needs discussion first)*
+
+Raised 2026-10-12 after two weeks of use. **Do not start building any of this
+until we have talked it through** — these are connected, and fixing them one at a
+time would mean doing the work twice.
+
+**2.5A — Is "Service" too literary?** The paper ground, the serif, the
+letterpress restraint — it may be reaching for a register this app doesn't need.
+Worth re-examining as a whole rather than patching. Not urgent, and the current
+look is perfectly usable in the meantime.
+
+**2.5B — The TECH marks are hard to parse.** The four sliding markers don't read
+at a glance, and the colours don't signify clearly enough to tell you which axis
+you're looking at. This is the most important item in the group: the marks are
+the one place colour is allowed, so they carry the whole motif. If they aren't
+legible, the motif isn't doing its job.
+
+*Connects to 4A (foreground the TECH motif) — that item should probably be
+absorbed into this discussion rather than built separately.*
+
+**2.5C — The More sheet is a cluttered text list.** Should be icon-based, or at
+least visually structured rather than a stack of sentences. Small on its own, but
+it's part of the same question about how the interface wants to look.
+
+**Open question carried forward:** are the TECH colours strictly reserved for
+TECH? Today's date currently carries a Tasty-red rule, which is the one existing
+exception. Either make it ink, or write the exception into `DESIGN.md` as a
+named rule rather than a drift.
 
 ---
 
