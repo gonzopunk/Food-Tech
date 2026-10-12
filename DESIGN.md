@@ -64,6 +64,22 @@ axes, TECH as a structural device in the interface — is live design work.
 app records per night and reflects patterns back over months. It must never
 pronounce on a single dinner.
 
+### The unit of situation is a meal, not a day
+
+Added 2026-10-12, from two weeks of real use. The occasion supplies the
+situation a mean is relative to — and situations change *within* a day, not just
+between days.
+
+The case that settles it: a celebratory dinner usually means a **quick, easy
+lunch**. The two are not merely different, they are causally linked — the effort
+going into dinner is precisely why lunch should ask nothing. A day-level
+occasion would mark both "celebration" and have the picker offer an elaborate
+lunch on the one day that least wants one.
+
+So occasions attach to a **slot on a day**, not to the day. The original
+day-level model was a simplification that happened to look right because only
+dinner was being recorded.
+
 ### The distinctions that took work to find
 
 | Distinction | Why it matters |
@@ -177,7 +193,8 @@ until that changes, and it may never. Say so rather than designing around it.
 **Built:**
 
 - Meal bank with TECH magnitudes, tags, frequency targets, optional recipe
-- Plan as a scrolling run of days with per-day occasions
+- Plan as a scrolling run of days with occasions (per-day today; moving to
+  per-slot — see §2)
 - Tap-to-assign via an occasion-ordered meal picker
 - Per-instance ratings, notes, leftovers → a cooking log per meal
 - On-deck queue for "cook this soon, night undecided"
@@ -246,6 +263,16 @@ Keep it that way.
 - **Don't add a composite score**, however tempting a single number looks.
 - **Never rename an axis to a synonym.** Taste, Effort, Cost, Health. The drift
   from Health to "Nourish" happened once already and quietly cost the acronym.
+- **GitHub will flag the Firebase key in `cloud.js` as a leaked secret. It is
+  not.** Firebase web API keys are public by design — they identify the project
+  and grant nothing. Access is controlled by the Firestore rules and the Auth
+  authorized-domains list. A browser app cannot hide this key, so there is
+  nothing to fix in code and nothing to rotate. Dismiss the alert.
+
+  The one real precaution is unrelated to the repo: that key is Firebase's
+  auto-created browser key and is enabled for ~25 APIs. Restrict it in Cloud
+  Console to the sites that use it (`gonzopunk.github.io` and SmartList's Cloud
+  Run address) so it can't be pointed at other billable Google APIs.
 - **Firestore rules deploy by hand.** They live in `../SmartList/firestore.rules`
   (one database serves both apps) and must be pasted into the Firebase console,
   selecting the named database `ai-studio-9e72797b-…`, never `(default)`.
