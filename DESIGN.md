@@ -80,6 +80,12 @@ So occasions attach to a **slot on a day**, not to the day. The original
 day-level model was a simplification that happened to look right because only
 dinner was being recorded.
 
+*Built 2026-10-13 (schema v6).* Stored as `plan[date].occasions = {dinner:"celebration"}`,
+and the control sits on the slot label, which is the only thing on screen that
+names the meal. Existing day occasions migrated to **dinner alone** — an
+assumption rather than a faithful translation, and the right one: marking lunch
+"celebration" is exactly the error this change exists to fix.
+
 ### The distinctions that took work to find
 
 | Distinction | Why it matters |
@@ -123,7 +129,8 @@ dinner was being recorded.
 | --- | --- |
 | **No composite TECH score** | A single number destroys the tension that is the whole substance. Four separate readings, always. |
 | **Cheap is coarse** (budget / normal / splurge) | Cost swings with what was on sale. Finer precision would be false precision. |
-| **Occasion = a weight profile** | Naming a night and aiming the meal picker are one gesture, because they are one idea. Occasions live on days; the picker reads them. |
+| **Occasion = a weight profile** | Naming a meal and aiming the meal picker are one gesture, because they are one idea. Occasions live on slots (see §2); the picker reads the slot it is filling. |
+| **The occasion sheet, not a dropdown** | The hint is the half of an occasion that explains it — *"low time or energy"*, *"the occasion carries it"* — and a `<select>` has nowhere to put one. A sheet also leaves room for the editor 2B needs. |
 | **Tap, not drag** | Drag-and-drop does not exist on touch, and the phone is the primary device. |
 | **Visual direction: "Service"** | The kitchen's own paperwork — prep lists, ticket rails. Rules and type, no cards, no shadows. Chosen over a warm-editorial look that leans on photography this app doesn't have. |
 | **Data home: SmartList's Firebase project**, under `menuBoard/{uid}` | One Google sign-in serves both apps and the user id already matches. Revises an earlier call to use a separate project. |
@@ -193,8 +200,7 @@ until that changes, and it may never. Say so rather than designing around it.
 **Built:**
 
 - Meal bank with TECH magnitudes, tags, frequency targets, optional recipe
-- Plan as a scrolling run of days with occasions (per-day today; moving to
-  per-slot — see §2)
+- Plan as a scrolling run of days; each meal slot can carry an occasion
 - Tap-to-assign via an occasion-ordered meal picker
 - Per-instance ratings, notes, leftovers → a cooking log per meal
 - On-deck queue for "cook this soon, night undecided"
@@ -204,7 +210,7 @@ until that changes, and it may never. Say so rather than designing around it.
 - Cloud sync, offline cache, local fallback
 - Three-tab mobile layout in the Service style
 
-**Schema version 5.** Migrations are stepwise and additive; each writes a
+**Schema version 6.** Migrations are stepwise and additive; each writes a
 pre-upgrade backup to localStorage before touching anything.
 
 **The SmartList connection is NOT built.** Nothing links the two apps yet. What

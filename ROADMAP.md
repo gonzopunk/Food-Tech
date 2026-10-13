@@ -7,18 +7,24 @@ Items are grouped by **surface** rather than by where the idea came from, becaus
 that's how they get built — one batch per area. Sizes are rough: *minutes*,
 *afternoon*, *a day*, *a week*, *a project*.
 
-Last updated 2026-10-12.
+Last updated 2026-10-13.
 
 ---
 
 ## Start here
 
-**Batch 1 is done, shipped and confirmed on the phone.** Nothing is half-finished
-and there are no open bugs.
+**2A is done and needs checking on the phone.** Occasions now belong to meal
+slots rather than days, and the control lives on the slot label. Schema v6; the
+migration is tested against synthetic data but has not yet met the real plan.
 
-**The obvious next build is Batch 2 (occasions).** It is fully decided, scoped,
-self-contained, and needs no conversation first — occasions move from days to
-slots, then become editable. Roughly a week.
+**The next build is 2B (editing occasions).** Decided and scoped below. It needs
+no conversation first, but it is worth letting 2A sit for a few days before
+building an editor on top of it.
+
+**One thing to watch in 2A:** the slot label carries no visual hint that it is
+tappable. That is deliberate — the alternative is a decoration repeated three
+times a day, twenty-one times a screen — but if it turns out to be undiscoverable
+in use, say so and it gets an affordance.
 
 **Batch 2.5 needs a conversation before any code.** Three connected visual
 questions, raised after two weeks of use. Not urgent, and the app is perfectly
@@ -34,28 +40,10 @@ shows nothing and wrongly discredits the idea.
 
 ---
 
-## Batch 2 — occasions *(a week)*
+## Batch 2 — occasions *(a few days left)*
 
-Larger, and it changes the data model, so it stands on its own.
-
-### 2A · Occasions move from days to slots
-
-**A design-level correction, not a feature.** See `DESIGN.md` §2. A celebratory
-dinner usually means a quick, easy lunch — the two are causally linked, and a
-day-level occasion marks both "celebration" and offers an elaborate lunch on the
-one day that least wants one.
-
-- Store as `plan[date].occasions = { dinner: "celebration" }` — a map beside the
-  slot arrays, guarded the same way the existing day key is.
-- **Put the control on the slot label**, and show it only when it isn't
-  ordinary: `DINNER` normally, `DINNER · CELEBRATION` when set. Zero added
-  clutter in the common case, which matters given how tall empty days already
-  are.
-- **Migration decision:** an existing day-level occasion moves to **dinner
-  only**. Dinner is the slot actually being planned, so that's the likeliest
-  intent — and marking lunch "celebration" is exactly the error this change
-  exists to fix. Flagged here because it's an assumption, not a faithful
-  translation.
+Larger, and it changes the data model, so it stands on its own. **2A shipped
+2026-10-13** and is recorded under Done.
 
 ### 2B · Editing occasions
 
@@ -174,7 +162,10 @@ history.
 ## Waiting on evidence
 
 - **Empty-day density.** Three "+ add" rows per day makes unplanned days a long
-  scroll. 2A's slot labels will change how this looks, so reassess after.
+  scroll. 2A left this unchanged in the common case — an ordinary slot shows only
+  its name, as before — so the question is still open.
+- **Whether the slot label reads as tappable.** No affordance was added on
+  purpose; see "Start here".
 - **The "Meals shown" slot toggle** repeating on every day.
 - **Hide header on scroll** — re-ask after 1D.
 
@@ -220,6 +211,25 @@ tracking, no servings calculator, no recipe manager, no duplicating SmartList.
 - *Quick actions belong in the list, not behind a sheet.* The first unrated list
   opened the full rating sheet per meal. Five tappable stars on the row itself is
   what makes capture frictionless — and capture is the precondition for Batch 3.
+
+### Batch 2A — shipped 2026-10-13
+
+Occasions moved from the day to the meal slot — a design-level correction, not a
+feature. See `DESIGN.md` §2 for the argument.
+
+| | |
+| --- | --- |
+| **Model** | `plan[date].occasions = {dinner:"celebration"}`, a map beside the slot arrays. Schema v6, with a pre-upgrade backup as usual. |
+| **Migration** | An existing day occasion moves to **dinner alone**. Unknown occasion names are dropped rather than carried. Verified against synthetic v5 data, including a day that already had both keys, and re-running it is a no-op. |
+| **Control** | The slot label is the button. `DINNER` normally; `DINNER` over `CELEBRATION` in full ink when set, so ordinary meals cost no extra space. |
+| **Sheet** | Six rows with their hints — *"low time or energy"*, *"the occasion carries it"* — which had been written but never shown anywhere. |
+| **Picker** | Now reads the occasion of the slot it is filling, so on one day a celebration dinner leads with the roast and the depleted lunch leads with toast and eggs. That difference is the whole point of 2A. |
+| **Housekeeping** | Hiding a slot takes its occasion with it, so nothing unreachable keeps a day alive in the plan. |
+
+*Colour note:* the occasion mark is set in ink, not in a TECH colour. The old
+day dropdown used the Health green, which gave a TECH colour a non-TECH meaning.
+That erosion is one of the open questions in Batch 2.5 and this change does not
+add to it.
 
 ### Earlier
 

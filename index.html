@@ -26,8 +26,11 @@
     --label:"Barlow Condensed","Arial Narrow",sans-serif;
     --body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
     --tap:44px;
-    /* Content type only. Labels and chrome stay fixed: scaling those adds
-       clutter without making anything easier to read. */
+    /* The slot label column. It has to hold an occasion name under the slot
+       name, so it grows with the label type rather than staying fixed. */
+    --slot-lab-w:66px;
+    /* Type scale. Large mode scales the uppercase labels too: they are the
+       smallest, lightest text on screen and so the hardest to read. */
     --fs-dish:15.5px;   /* a meal name in the plan */
     --fs-name:16px;     /* a meal name in a list */
     --fs-note:14px;     /* notes and log entries */
@@ -38,6 +41,7 @@
   :root.big-text{
     --fs-dish:18.5px; --fs-name:19px; --fs-note:16.5px; --fs-body:17px;
     --fs-lab:13px; --fs-lab-xs:12.5px;
+    --slot-lab-w:80px;
     /* and lift the faintest ink: size alone does not fix low contrast */
     --ink-3:#6E7066;
   }
@@ -103,15 +107,18 @@
   .day.today .day-head .dw::after{content:"today";font-family:var(--label);font-size:10px;
         letter-spacing:.1em;color:var(--tech-t);margin-left:7px;vertical-align:2px}
   .day-head .dt{font-family:var(--label);font-size:var(--fs-lab);letter-spacing:.07em;color:var(--ink-3);text-transform:uppercase}
-  .occ-pick{margin-left:auto}
-  .occ-pick select{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.08em;
-                   color:var(--ink-3);background:none;border:none;padding:4px 0;cursor:pointer;
-                   -webkit-appearance:none;appearance:none;text-align:right;min-height:32px}
-  .occ-pick.set select{color:var(--tech-h);font-weight:600}
-
-  .slot{display:grid;grid-template-columns:58px 1fr;gap:8px;align-items:start;padding:3px 0}
+  .slot{display:grid;grid-template-columns:var(--slot-lab-w) 1fr;gap:8px;align-items:start;padding:3px 0}
+  /* The label doubles as the occasion control. Normally it just names the slot;
+     set to anything but ordinary it names the occasion underneath, in full ink,
+     because that is then the more interesting fact about the meal. */
   .slot-label{font-family:var(--label);font-size:var(--fs-lab-xs);text-transform:uppercase;letter-spacing:.1em;
-              color:var(--ink-3);padding-top:7px}
+              color:var(--ink-3);padding:7px 0 0;text-align:left;display:block;line-height:1.2;
+              overflow-wrap:anywhere;align-self:stretch}
+  .slot-label .sl-occ{display:block;letter-spacing:.05em;color:var(--ink);font-weight:600;margin-top:2px}
+  .slot-label:hover{color:var(--ink-2)}
+  .slot-label:hover .sl-occ{color:var(--ink)}
+  .occ-row.on .pk-name{font-weight:600}
+  .occ-tick{flex:none;width:16px;text-align:right;color:var(--ink)}
   .slot-body{min-width:0;border-bottom:1px dotted var(--rule);padding-bottom:3px}
   .slot:last-child .slot-body{border-bottom:none}
   .planned{display:flex;align-items:baseline;gap:8px;width:100%;text-align:left;
@@ -422,7 +429,7 @@
       <button id="filterToggle" aria-expanded="false">Filter</button>
     </div>
     <div class="tag-filter" id="tagFilter" hidden></div>
-    <!-- Only appears once a night's occasion is actually driving the order. -->
+    <!-- Only appears once an occasion is actually driving the order. -->
     <div class="sortnote" id="sortNote" hidden>
       <span id="sortLabel"></span>
       <button class="linkish" id="sortAdjust">adjust</button>
@@ -474,6 +481,18 @@
     <button class="sheet-x" data-close>Close</button>
   </div>
   <div class="modal-body"><div id="pickDayList"></div></div>
+</dialog>
+
+<!-- what kind of meal this is: an occasion is a weighting, nothing more -->
+<dialog id="occDlg">
+  <div class="modal-head">
+    <div style="flex:1;min-width:0">
+      <h3 id="occTitle">What kind of meal?</h3>
+      <div class="hint" style="margin-top:2px">Changes which dishes get offered first. Nothing else.</div>
+    </div>
+    <button class="sheet-x" data-close>Close</button>
+  </div>
+  <div class="modal-body"><div id="occList"></div></div>
 </dialog>
 
 <!-- meals cooked but not yet rated -->
@@ -635,7 +654,7 @@
 const KEY = "menu-board-v1";
 const BACKUP_PREV = KEY + "-backup-prev";   // last session's data, refreshed once per load
 const BACKUP_PREFIX = KEY + "-backup-v";    // snapshot taken before a schema upgrade, keyed by the version upgraded FROM
-const SCHEMA_VERSION = 5;
+const SCHEMA_VERSION = 6;
 let memoryFallback = null;
 
 function stash(key, raw){
@@ -694,6 +713,23 @@ function migrate(data, raw){
   // yet pinned to a day.
   if(from < 5){
     if(!Array.isArray(data.onDeck)) data.onDeck = [];
+  }
+
+  // v5 -> v6: the occasion moved off the day and onto the slot. A celebratory
+  // dinner usually means a quick, easy lunch, so one occasion per day marked
+  // the one meal that least wanted marking. Existing day occasions move to
+  // DINNER ALONE -- an assumption, not a faithful translation, but dinner is
+  // the slot the old control was almost always set for.
+  if(from < 6){
+    for(const date in (data.plan||{})){
+      const rec = data.plan[date];
+      if(!rec || typeof rec !== "object") continue;
+      if(typeof rec.occasion === "string" && rec.occasion !== DEFAULT_OCCASION && OCCASIONS[rec.occasion]){
+        if(!rec.occasions || typeof rec.occasions !== "object") rec.occasions = {};
+        if(!rec.occasions.dinner) rec.occasions.dinner = rec.occasion;
+      }
+      delete rec.occasion;
+    }
   }
 
   data.schemaVersion = SCHEMA_VERSION;
@@ -1013,17 +1049,30 @@ function ensureDay(dateISO){ if(!state.plan[dateISO]) state.plan[dateISO]=defaul
 function cleanDay(dateISO){
   const d = state.plan[dateISO]; if(!d) return;
   const hasSlots = SLOT_ORDER.some(s=>Array.isArray(d[s]));
-  if(!hasSlots && !d.occasion) delete state.plan[dateISO];
+  const hasOcc = d.occasions && Object.keys(d.occasions).length;
+  if(!hasSlots && !hasOcc) delete state.plan[dateISO];
 }
-// The occasion is the situation a mean is relative to. Stored only when it
-// differs from ordinary, so untouched days stay absent from the plan.
-function dayOccasion(dISO){
+/* The occasion is the situation a mean is relative to -- and the unit of
+   situation is a meal, not a day. A celebration dinner and the quick lunch
+   before it fall on the same day and are opposite occasions; one of the two is
+   the reason the other is easy. So it is stored per slot, and only when it is
+   something other than ordinary, which keeps untouched days out of the plan. */
+function slotOccasion(dISO, slot){
   const rec = state.plan[dISO];
-  return (rec && rec.occasion) || DEFAULT_OCCASION;
+  const occ = rec && rec.occasions && rec.occasions[slot];
+  return (occ && OCCASIONS[occ]) ? occ : DEFAULT_OCCASION;
 }
-function setDayOccasion(dISO, occ){
+function setSlotOccasion(dISO, slot, occ){
   const day = ensureDay(dISO);
-  if(occ===DEFAULT_OCCASION) delete day.occasion; else day.occasion = occ;
+  if(occ===DEFAULT_OCCASION){
+    if(day.occasions){
+      delete day.occasions[slot];
+      if(!Object.keys(day.occasions).length) delete day.occasions;
+    }
+  } else {
+    if(!day.occasions) day.occasions = {};
+    day.occasions[slot] = occ;
+  }
   cleanDay(dISO);
 }
 
@@ -1363,7 +1412,6 @@ function renderDayList(){
     const head = document.createElement("div");
     head.className = "day-head";
     head.innerHTML = '<span class="dw">'+DOW[d.getDay()]+'</span><span class="dt">'+fmtShort(d)+'</span>';
-    head.appendChild(renderOccasionPicker(dISO));
     dayEl.appendChild(head);
 
     const rec = state.plan[dISO] || defaultDayRec();
@@ -1392,26 +1440,41 @@ function renderDayList(){
   }
 }
 
-function renderOccasionPicker(dISO){
-  const cur = dayOccasion(dISO);
-  const wrap = document.createElement("div");
-  wrap.className = "occ-pick"+(cur!==DEFAULT_OCCASION?" set":"");
-  const sel = document.createElement("select");
-  sel.setAttribute("aria-label","What kind of night this is");
+/* ===================== naming the occasion =====================
+   A sheet rather than a dropdown, because the hint is the half of an occasion
+   that explains it, and a <select> has nowhere to put one.                 */
+const occDlg = document.getElementById("occDlg");
+let occTarget = null;
+
+function openOccasionPicker(dISO, slot){
+  occTarget = {dISO, slot};
+  document.getElementById("occTitle").textContent = DOW[fromISO(dISO).getDay()]+" "+slot;
+  renderOccasionList();
+  occDlg.showModal();
+}
+
+function renderOccasionList(){
+  if(!occTarget) return;
+  const cur = slotOccasion(occTarget.dISO, occTarget.slot);
+  const list = document.getElementById("occList");
+  list.innerHTML = "";
   for(const key in OCCASIONS){
-    const o = document.createElement("option");
-    o.value = key; o.textContent = OCCASIONS[key].label; o.selected = key===cur;
-    sel.appendChild(o);
+    const o = OCCASIONS[key];
+    const row = document.createElement("button");
+    row.className = "picker-row occ-row"+(key===cur?" on":"");
+    row.innerHTML = '<span class="pk-main"><span class="pk-name">'+esc(o.label)+'</span>'+
+                    '<span class="pk-sub">'+esc(o.hint)+'</span></span>'+
+                    '<span class="occ-tick" aria-hidden="true">'+(key===cur?"✓":"")+'</span>';
+    row.onclick = ()=>{
+      setSlotOccasion(occTarget.dISO, occTarget.slot, key);
+      // Naming the meal also aims the meal bank at it -- same idea, one gesture.
+      activeOccasion = key;
+      activeWeights = Object.assign({}, OCCASIONS[key].w);
+      occDlg.close();
+      render();
+    };
+    list.appendChild(row);
   }
-  sel.onchange = ()=>{
-    setDayOccasion(dISO, sel.value);
-    // Naming the night also aims the meal list at it -- same idea, one gesture.
-    activeOccasion = sel.value;
-    activeWeights = Object.assign({}, OCCASIONS[sel.value].w);
-    render();
-  };
-  wrap.appendChild(sel);
-  return wrap;
 }
 
 function renderSlotToggles(dISO, openSlots){
@@ -1429,7 +1492,11 @@ function renderSlotToggles(dISO, openSlots){
         if(ids && ids.length && !confirm("Remove "+slot+" and its "+ids.length+" planned meal(s) for this day?")){
           cb.checked = true; return;
         }
-        delete day[slot]; cleanDay(dISO);
+        delete day[slot];
+        // An occasion on a slot that is no longer shown is unreachable, and
+        // would quietly keep the day alive in the plan.
+        if(day.occasions) delete day.occasions[slot];
+        cleanDay(dISO);
       }
       render();
     };
@@ -1443,7 +1510,21 @@ function renderSlotToggles(dISO, openSlots){
 function renderSlot(dISO, slot, entries){
   const wrap = document.createElement("div");
   wrap.className = "slot";
-  wrap.innerHTML = '<div class="slot-label">'+slot+'</div>';
+
+  // The label is the only thing on screen that names this meal, so it is also
+  // where its occasion is named and changed. Shown only when it is not
+  // ordinary: most meals are, and empty days are already tall enough.
+  const occ = slotOccasion(dISO, slot);
+  const lab = document.createElement("button");
+  lab.className = "slot-label";
+  lab.innerHTML = esc(slot)+
+    (occ!==DEFAULT_OCCASION ? '<span class="sl-occ">'+esc(OCCASIONS[occ].label)+'</span>' : '');
+  lab.title = occ!==DEFAULT_OCCASION
+    ? OCCASIONS[occ].label+" — "+OCCASIONS[occ].hint
+    : "What kind of "+slot+" this is";
+  lab.onclick = ()=>openOccasionPicker(dISO, slot);
+  wrap.appendChild(lab);
+
   const body = document.createElement("div");
   body.className = "slot-body";
 
@@ -1477,7 +1558,7 @@ let pendingAssign = null;
 
 function openMealPicker(dISO, slot){
   pickTarget = {dISO, slot};
-  const occ = dayOccasion(dISO);
+  const occ = slotOccasion(dISO, slot);
   document.getElementById("pickTitle").textContent = DOW[fromISO(dISO).getDay()]+" "+slot;
   document.getElementById("pickSub").textContent =
     occ===DEFAULT_OCCASION ? "Ordered A–Z" : "Best fit for "+OCCASIONS[occ].label.toLowerCase()+" first";
@@ -1502,7 +1583,7 @@ function renderMealPicker(){
   if(!pickTarget) return;
   const q = document.getElementById("pickSearch").value.trim().toLowerCase();
   const slot = pickTarget.slot;
-  const occ = dayOccasion(pickTarget.dISO);
+  const occ = slotOccasion(pickTarget.dISO, pickTarget.slot);
   const w = OCCASIONS[occ].w;
   const byFit = occ !== DEFAULT_OCCASION;
   const list = document.getElementById("pickList");
