@@ -13,15 +13,12 @@ Last updated 2026-10-13.
 
 ## Start here
 
-**2A, 2A.1 and 2B.1 are done.** Occasions moved from days to meal slots, empty
-slots stopped existing, and occasions became editable data. Schema v8, verified
-against the real 63-meal / 43-day backup with nothing lost.
+**2A, 2A.1, 2B.1 and 2B.2 are done.** Occasions moved from days to meal slots,
+empty slots stopped existing, occasions became editable data, and weights now
+read as proportions. Schema v8, verified against the real 63-meal / 43-day
+backup with nothing lost.
 
-**The next build is 2B.2 — weights read as proportions.** Small, self-contained,
-and it fixes a defect in shipped code: the weight sliders currently let you
-express an absolute level that has no effect at all. See the entry below.
-
-**Then 2B.3–2B.5 (the editor) wait for evidence.** They are scoped and ready, but
+**2B.3–2B.5 (the editor) wait for evidence.** They are scoped and ready, but
 occasions have been set only five times in 43 days — and that number is not
 trustworthy, since it spans a desktop-only stretch and a mobile rebuild, and the
 control was buried in a day dropdown for most of it. 2A and 2A.1 just made it
@@ -312,6 +309,22 @@ tracking, no servings calculator, no recipe manager, no duplicating SmartList.
 - *Quick actions belong in the list, not behind a sheet.* The first unrated list
   opened the full rating sheet per meal. Five tappable stars on the row itself is
   what makes capture frictionless — and capture is the precondition for Batch 3.
+
+### Batch 2B.2 — shipped 2026-10-13
+
+Weights stopped pretending to be absolute quantities.
+
+| | |
+| --- | --- |
+| **Kept** | The slider stays continuous at 0.1. Measuring said that is where the signal stops; coarsening it to five steps would have cost two-thirds of the reachable recommendations. |
+| **Dropped** | The `1.4x` readout — the actual false precision, a display claim rather than a storage one. |
+| **Added** | A share bar and key: *Tasty 70% · Easy 8% · Cheap 8% · Healthy 14%*. Celebration now says what it means at a glance. |
+| **Added** | Three landmarks on a shared scale beneath the aligned tracks — *ignore it · normal · this is the point* — with `normal` at one third, where 1 falls on a 0–3 range. Verified: it lands at 182 on a 94–359 track. |
+| **Bug fixed** | `weightsAreEven()` tested each weight against **1**, so all-four-at-2 was called a custom weighting and showed a sort note for an ordering that was plain A–Z. It now tests whether the four are equal to *each other*, which is what fitScore can actually see. The share work surfaced this. |
+
+*Also fixed in passing:* the scale landmarks were first positioned with
+`padding-left`, and absolutely positioned children resolve against the padding
+box — so they sat 78px left of the track they label. Margin, not padding.
 
 ### Batch 2B.1 — shipped 2026-10-13
 
