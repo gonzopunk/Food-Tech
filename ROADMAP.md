@@ -13,18 +13,23 @@ Last updated 2026-10-13.
 
 ## Start here
 
-**2A is done and needs checking on the phone.** Occasions now belong to meal
-slots rather than days, and the control lives on the slot label. Schema v6; the
-migration is tested against synthetic data but has not yet met the real plan.
+**2A and 2A.1 are done and need checking on the phone.** Occasions moved from
+days to meal slots, and then empty slots stopped existing at all. Schema v7. Both
+migrations are tested against synthetic v5 and v6 data but have not met the real
+plan yet.
 
 **The next build is 2B (editing occasions).** Decided and scoped below. It needs
 no conversation first, but it is worth letting 2A sit for a few days before
 building an editor on top of it.
 
-**One thing to watch in 2A:** the slot label carries no visual hint that it is
-tappable. That is deliberate — the alternative is a decoration repeated three
-times a day, twenty-one times a screen — but if it turns out to be undiscoverable
-in use, say so and it gets an affordance.
+**Two things to watch:**
+
+- The slot label carries no visual hint that it is tappable, and neither does
+  the word row. Deliberate — the alternative is decoration repeated twenty-one
+  times a screen — but if it proves undiscoverable, say so and it gets one.
+- Setting an occasion on a meal you have not planned yet now happens inside the
+  meal picker, from its subtitle. That is the right moment for it, but it is a
+  less obvious place than a control sitting on the day.
 
 **Batch 2.5 needs a conversation before any code.** Three connected visual
 questions, raised after two weeks of use. Not urgent, and the app is perfectly
@@ -42,8 +47,8 @@ shows nothing and wrongly discredits the idea.
 
 ## Batch 2 — occasions *(a few days left)*
 
-Larger, and it changes the data model, so it stands on its own. **2A shipped
-2026-10-13** and is recorded under Done.
+Larger, and it changes the data model, so it stands on its own. **2A and 2A.1
+shipped 2026-10-13** and are recorded under Done.
 
 ### 2B · Editing occasions
 
@@ -161,12 +166,8 @@ history.
 
 ## Waiting on evidence
 
-- **Empty-day density.** Three "+ add" rows per day makes unplanned days a long
-  scroll. 2A left this unchanged in the common case — an ordinary slot shows only
-  its name, as before — so the question is still open.
-- **Whether the slot label reads as tappable.** No affordance was added on
-  purpose; see "Start here".
-- **The "Meals shown" slot toggle** repeating on every day.
+- **Whether the slot label and the word row read as tappable.** No affordance
+  was added on purpose; see "Start here".
 - **Hide header on scroll** — re-ask after 1D.
 
 ---
@@ -211,6 +212,26 @@ tracking, no servings calculator, no recipe manager, no duplicating SmartList.
 - *Quick actions belong in the list, not behind a sheet.* The first unrated list
   opened the full rating sheet per meal. Five tappable stars on the row itself is
   what makes capture frictionless — and capture is the precondition for Batch 3.
+
+### Batch 2A.1 — shipped 2026-10-13
+
+Empty meal slots stopped existing. Three standing "+ add" rows and a "Meals
+shown" line made an untouched day 247px tall on a phone — 2.5 days to a screen,
+~2.8 screens to scroll an empty week.
+
+| | |
+| --- | --- |
+| **The rule** | A slot row appears when it holds a meal or carries a non-ordinary occasion. Everything else is offered by one line: `+ breakfast · lunch · dinner · snack`. Tapping a word opens the picker for that slot — the same number of taps as before. |
+| **Result** | An empty day went from **247px to 94px**; an empty week from ~2.8 screens to about one. |
+| **Gone** | `DEFAULT_OPEN_SLOTS`, the per-day slot checkboxes, and the "Meals shown" line — deleted, not relocated. |
+| **Schema v7** | Empty slot arrays are pruned and days left holding nothing leave the plan. Tested from both v5 and v6. |
+| **Day picker** | Rebuilt on the same idiom: one row per day showing what is on it, with the word row underneath. Fourteen rows instead of forty-two. |
+| **Occasions** | An empty slot has no label, so its occasion is set from the meal picker's subtitle — which reorders the list under your thumb as you choose. A slot marked but not yet filled still shows its own row, so nothing you have said about a day becomes invisible. |
+
+*Rejected:* a global default (still needs exceptions, so the per-day editor
+survives), defaults indexed to the weekday (same, plus 28 checkboxes to set),
+and inferring the pattern from history (invisible and unexplainable, which the
+app's habits don't allow).
 
 ### Batch 2A — shipped 2026-10-13
 

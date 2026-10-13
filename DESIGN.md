@@ -132,6 +132,7 @@ assumption rather than a faithful translation, and the right one: marking lunch
 | **Occasion = a weight profile** | Naming a meal and aiming the meal picker are one gesture, because they are one idea. Occasions live on slots (see §2); the picker reads the slot it is filling. |
 | **The occasion sheet, not a dropdown** | The hint is the half of an occasion that explains it — *"low time or energy"*, *"the occasion carries it"* — and a `<select>` has nowhere to put one. A sheet also leaves room for the editor 2B needs. |
 | **Tap, not drag** | Drag-and-drop does not exist on touch, and the phone is the primary device. |
+| **A slot exists only once it holds something** | Three standing empty rows made an untouched day nearly as tall as a planned one, and the checkboxes managing them were a chore. Unplanned meals are offered as one line of words instead. The alternative — a default set of slots, global or per weekday — treats the symptom: it still needs exceptions, so the per-day editor survives. Removing the concept removes the setting. |
 | **Visual direction: "Service"** | The kitchen's own paperwork — prep lists, ticket rails. Rules and type, no cards, no shadows. Chosen over a warm-editorial look that leans on photography this app doesn't have. |
 | **Data home: SmartList's Firebase project**, under `menuBoard/{uid}` | One Google sign-in serves both apps and the user id already matches. Revises an earlier call to use a separate project. |
 | **Sync split across four documents** | `meals`, `plan`, `onDeck`, `settings` change independently, so editing a recipe on a laptop can't clobber a rating saved on a phone. |
@@ -200,7 +201,8 @@ until that changes, and it may never. Say so rather than designing around it.
 **Built:**
 
 - Meal bank with TECH magnitudes, tags, frequency targets, optional recipe
-- Plan as a scrolling run of days; each meal slot can carry an occasion
+- Plan as a scrolling run of days; a day shows only the meals you have planned
+  or marked, and offers the rest as one row of words
 - Tap-to-assign via an occasion-ordered meal picker
 - Per-instance ratings, notes, leftovers → a cooking log per meal
 - On-deck queue for "cook this soon, night undecided"
@@ -210,7 +212,7 @@ until that changes, and it may never. Say so rather than designing around it.
 - Cloud sync, offline cache, local fallback
 - Three-tab mobile layout in the Service style
 
-**Schema version 6.** Migrations are stepwise and additive; each writes a
+**Schema version 7.** Migrations are stepwise and additive; each writes a
 pre-upgrade backup to localStorage before touching anything.
 
 **The SmartList connection is NOT built.** Nothing links the two apps yet. What
@@ -293,6 +295,12 @@ Keep it that way.
   hardest to read — scaling only the dish names and notes enlarges what was
   already legible and misses the actual problem. Large mode should also darken
   the faintest ink; size alone does not fix contrast.
+- **When a surface feels cluttered, look for a concept to delete before
+  reaching for a setting.** Empty meal slots were going to be fixed with
+  defaults — global, or indexed to the weekday. Both would have kept the
+  per-day override that was the actual complaint. Nothing needed configuring
+  once a slot simply stopped existing until it was used: the day got 60%
+  shorter and a whole control disappeared.
 - **Put quick actions in the list, not behind a sheet.** Rating from a row of
   five stars is what makes capture frictionless, and capture is the thing the
   whole tracking half depends on. A sheet per item is one tap too many.

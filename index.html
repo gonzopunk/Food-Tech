@@ -131,12 +131,18 @@
   .slot-add{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.09em;
             color:var(--ink-3);min-height:var(--tap);display:flex;align-items:center;width:100%}
   .slot-add:hover{color:var(--ink)}
-  .day-slots-toggle{font-family:var(--label);font-size:10.5px;text-transform:uppercase;letter-spacing:.09em;
-                    color:var(--ink-3);margin-top:4px;min-height:32px}
-  .slot-toggles{display:flex;flex-wrap:wrap;gap:4px 14px;padding:6px 0 2px}
-  .slot-toggle{display:flex;align-items:center;gap:5px;font-family:var(--label);font-size:10.5px;
-               text-transform:uppercase;letter-spacing:.08em;color:var(--ink-3);cursor:pointer;min-height:32px}
-  .slot-toggle input{accent-color:var(--ink);margin:0}
+  /* The one row that stands in for every meal not yet planned. It replaces
+     three empty slot rows and the "Meals shown" line, which together made an
+     untouched day nearly as tall as a full one. */
+  .slot-adds{display:flex;flex-wrap:wrap;align-items:center;gap:0 4px;min-height:var(--tap)}
+  .slot-adds .sa-plus{font-family:var(--label);font-size:var(--fs-lab);color:var(--ink-3);margin-right:2px}
+  .slot-adds .sa{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.09em;
+                 color:var(--ink-3);padding:6px 7px;min-height:var(--tap);display:flex;align-items:center}
+  .slot-adds .sa:hover{color:var(--ink)}
+  .slot-adds .sa-sep{color:var(--rule-2);font-size:var(--fs-lab)}
+  /* In the plan it is indented to line up with the dishes; in the day picker
+     it starts at the edge, because there is no label column there. */
+  .day .slot-adds{padding-left:calc(var(--slot-lab-w) + 8px)}
   .daytotal{font-family:var(--label);font-size:var(--fs-lab);letter-spacing:.06em;text-transform:uppercase;
             color:var(--ink-3);margin-top:5px}
 
@@ -289,6 +295,9 @@
   .picker-row .pk-name{font-family:var(--display);font-weight:500;font-size:var(--fs-name);line-height:1.2}
   .picker-row .pk-sub{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.07em;
                       color:var(--ink-3);margin-top:2px}
+  /* The day picker stacks: the day and what is on it, then the slot words. */
+  .picker-row.pickday{flex-direction:column;align-items:stretch;gap:0}
+  .picker-row.pickday .pk-main{display:block;width:100%}
   .picker-search{width:100%;background:none;border:none;border-bottom:1px solid var(--ink);
                  font-family:var(--label);font-size:15px;text-transform:uppercase;letter-spacing:.05em;
                  padding:8px 0;margin-bottom:4px;min-height:var(--tap)}
@@ -461,7 +470,9 @@
   <div class="modal-head">
     <div style="flex:1;min-width:0">
       <h3 id="pickTitle">Pick a meal</h3>
-      <div class="hint" id="pickSub" style="margin-top:2px"></div>
+      <!-- Tappable: an empty slot has no label in the plan, so this is where
+           its occasion gets named -- and choosing a dish is when it matters. -->
+      <button class="linkish" id="pickSub" style="margin-top:2px;letter-spacing:.07em"></button>
     </div>
     <button class="sheet-x" data-close>Close</button>
   </div>
@@ -654,7 +665,7 @@
 const KEY = "menu-board-v1";
 const BACKUP_PREV = KEY + "-backup-prev";   // last session's data, refreshed once per load
 const BACKUP_PREFIX = KEY + "-backup-v";    // snapshot taken before a schema upgrade, keyed by the version upgraded FROM
-const SCHEMA_VERSION = 6;
+const SCHEMA_VERSION = 7;
 let memoryFallback = null;
 
 function stash(key, raw){
@@ -732,6 +743,21 @@ function migrate(data, raw){
     }
   }
 
+  // v6 -> v7: slots stopped being something you open and close. Every day
+  // carried empty breakfast/lunch/dinner arrays whether or not they were ever
+  // used; they now only exist once they hold a meal, so the empties go.
+  if(from < 7){
+    const SLOTS = ["breakfast","lunch","dinner","snack"];
+    for(const date in (data.plan||{})){
+      const rec = data.plan[date];
+      if(!rec || typeof rec !== "object") continue;
+      for(const sl of SLOTS) if(Array.isArray(rec[sl]) && !rec[sl].length) delete rec[sl];
+      const hasSlots = SLOTS.some(sl=>Array.isArray(rec[sl]));
+      const hasOcc = rec.occasions && Object.keys(rec.occasions).length;
+      if(!hasSlots && !hasOcc) delete data.plan[date];
+    }
+  }
+
   data.schemaVersion = SCHEMA_VERSION;
   console.info("Menu Board: upgraded saved data from schema v"+from+" to v"+SCHEMA_VERSION+
                ". Pre-upgrade copy kept in localStorage under \""+backupKey+"\".");
@@ -773,9 +799,11 @@ const TAG_COLORS = {
   grain:"#A8934F", pizza:"#C46A55", grill:"#6E6A62", takeout:"#8B6FA8", breakfast:"#D9A441",
   brunch:"#D9A441", dessert:"#B76A8E"
 };
+/* A day has no "open" slots. A slot row exists only while it holds a meal or
+   carries an occasion; everything else is offered by one line of words. Three
+   standing empty rows made an untouched day as tall as a planned one, and the
+   checkboxes that managed them were a chore nobody wanted twice. */
 const SLOT_ORDER = ["breakfast","lunch","dinner","snack"];
-const DEFAULT_OPEN_SLOTS = ["breakfast","lunch","dinner"];
-function defaultDayRec(){ const r={}; for(const s of DEFAULT_OPEN_SLOTS) r[s]=[]; return r; }
 
 /* ============================== Food TECH ==============================
    Tasty, Easy, Cheap, Healthy name the four FIELDS in which a cook's judgment
@@ -1045,9 +1073,24 @@ function freqLabel(freq){
   const per = {week:"wk", month:"mo", quarter:"qtr"}[freq.per];
   return (t>1? t+"\u00d7/" : "1\u00d7/")+per;
 }
-function ensureDay(dateISO){ if(!state.plan[dateISO]) state.plan[dateISO]=defaultDayRec(); return state.plan[dateISO]; }
+function ensureDay(dateISO){ if(!state.plan[dateISO]) state.plan[dateISO]={}; return state.plan[dateISO]; }
+// The one way a meal gets planned, from the plan, the day picker or the editor.
+function planMeal(dISO, slot, mealId){
+  const day = ensureDay(dISO);
+  if(!Array.isArray(day[slot])) day[slot] = [];
+  day[slot].push({mealId});
+  clearDeckFor(mealId);          // giving it a night satisfies the intention
+}
+// Which slots a day actually has something to say about.
+function visibleSlots(dISO){
+  const rec = state.plan[dISO] || {};
+  const occ = rec.occasions || {};
+  return SLOT_ORDER.filter(s => (Array.isArray(rec[s]) && rec[s].length) || occ[s]);
+}
 function cleanDay(dateISO){
   const d = state.plan[dateISO]; if(!d) return;
+  // An empty slot array is litter now that nothing is "open" or "closed".
+  for(const sl of SLOT_ORDER) if(Array.isArray(d[sl]) && !d[sl].length) delete d[sl];
   const hasSlots = SLOT_ORDER.some(s=>Array.isArray(d[s]));
   const hasOcc = d.occasions && Object.keys(d.occasions).length;
   if(!hasSlots && !hasOcc) delete state.plan[dateISO];
@@ -1414,9 +1457,13 @@ function renderDayList(){
     head.innerHTML = '<span class="dw">'+DOW[d.getDay()]+'</span><span class="dt">'+fmtShort(d)+'</span>';
     dayEl.appendChild(head);
 
-    const rec = state.plan[dISO] || defaultDayRec();
-    const openSlots = SLOT_ORDER.filter(s => Array.isArray(rec[s]));
-    for(const slot of openSlots) dayEl.appendChild(renderSlot(dISO, slot, rec[slot]||[]));
+    const rec = state.plan[dISO] || {};
+    const shown = visibleSlots(dISO);
+    for(const slot of shown) dayEl.appendChild(renderSlot(dISO, slot, rec[slot]||[]));
+
+    // Everything not yet planned, as one line of words rather than a row each.
+    const rest = SLOT_ORDER.filter(s=>!shown.includes(s));
+    if(rest.length) dayEl.appendChild(slotAddRow(rest, slot=>openMealPicker(dISO, slot)));
 
     const totals = dayTotals(dISO);
     if(totals){
@@ -1425,16 +1472,6 @@ function renderDayList(){
       t.textContent = "~"+Math.round(totals.cal)+" kcal · "+Math.round(totals.p)+"g protein";
       dayEl.appendChild(t);
     }
-
-    // Slot management is rarely wanted, so it hides behind a word.
-    const toggle = document.createElement("button");
-    toggle.className = "day-slots-toggle";
-    toggle.textContent = "Meals shown";
-    const toggles = renderSlotToggles(dISO, openSlots);
-    toggles.hidden = true;
-    toggle.onclick = ()=>{ toggles.hidden = !toggles.hidden; };
-    dayEl.appendChild(toggle);
-    dayEl.appendChild(toggles);
 
     holder.appendChild(dayEl);
   }
@@ -1472,38 +1509,34 @@ function renderOccasionList(){
       activeWeights = Object.assign({}, OCCASIONS[key].w);
       occDlg.close();
       render();
+      // Opened from inside the meal picker: reorder it rather than leaving a
+      // stale list behind the sheet that just changed its order.
+      if(pickMealDlg.open) refreshMealPicker();
     };
     list.appendChild(row);
   }
 }
 
-function renderSlotToggles(dISO, openSlots){
-  const row = document.createElement("div"); row.className = "slot-toggles";
-  for(const slot of SLOT_ORDER){
-    const label = document.createElement("label"); label.className = "slot-toggle";
-    const cb = document.createElement("input");
-    cb.type = "checkbox"; cb.checked = openSlots.includes(slot);
-    cb.onchange = ()=>{
-      const day = ensureDay(dISO);
-      if(cb.checked){
-        if(!Array.isArray(day[slot])) day[slot] = [];
-      } else {
-        const ids = day[slot];
-        if(ids && ids.length && !confirm("Remove "+slot+" and its "+ids.length+" planned meal(s) for this day?")){
-          cb.checked = true; return;
-        }
-        delete day[slot];
-        // An occasion on a slot that is no longer shown is unreachable, and
-        // would quietly keep the day alive in the plan.
-        if(day.occasions) delete day.occasions[slot];
-        cleanDay(dISO);
-      }
-      render();
-    };
-    label.appendChild(cb);
-    label.appendChild(document.createTextNode(slot));
-    row.appendChild(label);
-  }
+/* "+ breakfast · lunch · dinner · snack" -- the whole of slot management, in
+   one row. Used by the plan and by the day picker, so the gesture for "put a
+   meal in this slot" is the same wherever you start from. */
+function slotAddRow(slots, onPick){
+  const row = document.createElement("div");
+  row.className = "slot-adds";
+  const plus = document.createElement("span");
+  plus.className = "sa-plus"; plus.textContent = "+";
+  row.appendChild(plus);
+  slots.forEach((slot, i)=>{
+    if(i){
+      const sep = document.createElement("span");
+      sep.className = "sa-sep"; sep.textContent = "·";
+      row.appendChild(sep);
+    }
+    const b = document.createElement("button");
+    b.className = "sa"; b.textContent = slot;
+    b.onclick = ()=>onPick(slot);
+    row.appendChild(b);
+  });
   return row;
 }
 
@@ -1537,6 +1570,8 @@ function renderSlot(dISO, slot, entries){
     body.appendChild(b);
   });
 
+  // A slot with meals offers another; a slot showing only because it carries an
+  // occasion offers its first.
   const add = document.createElement("button");
   add.className = "slot-add";
   add.textContent = entries.length ? "+ add another" : "+ add";
@@ -1558,14 +1593,26 @@ let pendingAssign = null;
 
 function openMealPicker(dISO, slot){
   pickTarget = {dISO, slot};
+  document.getElementById("pickSearch").value = "";
+  refreshMealPicker();
+  pickMealDlg.showModal();
+}
+
+/* Title, subtitle and list together, so naming the occasion from inside the
+   picker reorders the list under your thumb. */
+function refreshMealPicker(){
+  if(!pickTarget) return;
+  const {dISO, slot} = pickTarget;
   const occ = slotOccasion(dISO, slot);
   document.getElementById("pickTitle").textContent = DOW[fromISO(dISO).getDay()]+" "+slot;
   document.getElementById("pickSub").textContent =
-    occ===DEFAULT_OCCASION ? "Ordered A–Z" : "Best fit for "+OCCASIONS[occ].label.toLowerCase()+" first";
-  document.getElementById("pickSearch").value = "";
+    occ===DEFAULT_OCCASION ? "Ordered A–Z · what kind of meal?"
+                           : "Best fit for "+OCCASIONS[occ].label.toLowerCase()+" first · change";
   renderMealPicker();
-  pickMealDlg.showModal();
 }
+document.getElementById("pickSub").onclick = ()=>{
+  if(pickTarget) openOccasionPicker(pickTarget.dISO, pickTarget.slot);
+};
 
 /* How often a meal has been put in this particular slot. Breakfast should lead
    with the things you actually eat for breakfast, whatever their TECH profile. */
@@ -1632,10 +1679,7 @@ function renderMealPicker(){
                     (bits.length? '<span class="pk-sub">'+bits.join(" · ")+'</span>':'')+
                     '</span>'+techGlyph(m);
     row.onclick = ()=>{
-      const day = ensureDay(pickTarget.dISO);
-      if(!Array.isArray(day[pickTarget.slot])) day[pickTarget.slot] = [];
-      day[pickTarget.slot].push({mealId:m.id});
-      clearDeckFor(m.id);         // giving it a night satisfies the intention
+      planMeal(pickTarget.dISO, pickTarget.slot, m.id);
       pickMealDlg.close();
       render();
     };
@@ -1652,32 +1696,35 @@ function openDayPicker(mealId){
   const m = mealById(mealId); if(!m) return;
   pickDayMealId = mealId;
   document.getElementById("pickDayTitle").textContent = m.name;
-  document.getElementById("pickDaySub").textContent = "Which night?";
+  document.getElementById("pickDaySub").textContent = "Which night, and which meal?";
   const list = document.getElementById("pickDayList");
   list.innerHTML = "";
 
+  // One row per day rather than one per open slot: fourteen rows instead of
+  // forty-two, and the slot is chosen by the same word-row the plan uses.
   for(let i=0;i<14;i++){
     const d = addDays(planStart,i), dISO = iso(d);
-    const rec = state.plan[dISO] || defaultDayRec();
-    const openSlots = SLOT_ORDER.filter(s=>Array.isArray(rec[s]));
-    for(const slot of openSlots){
-      const taken = (rec[slot]||[]).map(e=>{ const mm=mealById(e.mealId); return mm?mm.name:null; }).filter(Boolean);
-      const row = document.createElement("button");
-      row.className = "picker-row";
-      row.innerHTML = '<span class="pk-main"><span class="pk-name">'+DOW[d.getDay()]+' '+fmtShort(d)+
-                      (dISO===todayISO?' — today':'')+'</span>'+
-                      '<span class="pk-sub">'+slot+(taken.length? " · "+esc(taken.join(", ")) : "")+'</span></span>';
-      row.onclick = ()=>{
-        const day = ensureDay(dISO);
-        if(!Array.isArray(day[slot])) day[slot] = [];
-        day[slot].push({mealId:pickDayMealId});
-        clearDeckFor(pickDayMealId);
+    const rec = state.plan[dISO] || {};
+    const taken = visibleSlots(dISO).map(sl=>{
+      const names = (rec[sl]||[]).map(e=>{ const mm=mealById(e.mealId); return mm?mm.name:null; }).filter(Boolean);
+      return names.length ? sl+" · "+names.join(", ") : null;
+    }).filter(Boolean);
+
+    const row = document.createElement("div");
+    row.className = "picker-row pickday";
+    row.innerHTML = '<span class="pk-main"><span class="pk-name">'+DOW[d.getDay()]+' '+fmtShort(d)+
+                    (dISO===todayISO?' — today':'')+'</span>'+
+                    (taken.length? '<span class="pk-sub">'+esc(taken.join("  ·  "))+'</span>' : '')+
+                    '</span>';
+    row.querySelector(".pk-main").appendChild(
+      slotAddRow(SLOT_ORDER, slot=>{
+        planMeal(dISO, slot, pickDayMealId);
         pickDayDlg.close();
         setView("plan");
         render();
-      };
-      list.appendChild(row);
-    }
+      })
+    );
+    list.appendChild(row);
   }
 }
 
@@ -2057,10 +2104,7 @@ document.getElementById("saveMealBtn").onclick = ()=>{
 
   // Created from the picker: put it where the cook was already heading.
   if(pendingAssign && savedId){
-    const day = ensureDay(pendingAssign.dISO);
-    if(!Array.isArray(day[pendingAssign.slot])) day[pendingAssign.slot] = [];
-    day[pendingAssign.slot].push({mealId:savedId});
-    clearDeckFor(savedId);
+    planMeal(pendingAssign.dISO, pendingAssign.slot, savedId);
     pendingAssign = null;
     setView("plan");
   }
