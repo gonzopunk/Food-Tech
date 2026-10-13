@@ -67,16 +67,30 @@ sum of the weights, so all four sliders at maximum is mathematically identical t
 all four at normal — the interface lets you spend four gestures saying nothing.
 See `DESIGN.md` §2, "A weight has no absolute size".
 
-Two changes to the existing slider panel, done together because they are one
-idea — that a weight is relative:
+**Revised 2026-10-13 after measuring.** The first version of this item proposed
+quantising the slider to five named steps. That was wrong: measured against the
+real repertoire, five steps reach 105 distinct top-5 lists where 0.1 steps reach
+361, and 0.05 steps reach no more than 0.1 does. **0.1 is where the signal
+actually stops** — the existing increment is right, and coarsening it would throw
+away two-thirds of what the repertoire can express. See `DESIGN.md` §2.
 
-- **Replace the number with a named five-step scale.** `0–3` in steps of `0.1`
-  is false precision over a four-term average of 5-point values. Something like
-  *ignore it · matters less · normal · matters more · this is the point*.
-- **Show the shares underneath.** *Taste 42% · Effort 41% · Cost 9% · Health 8%*,
-  as a bar. All-at-maximum then visibly becomes a flat bar — the interface teaches
-  the truth instead of hiding it. It also answers "how much space is there between
-  the ranks", which is the actual content of a weighting.
+So the problem was never the stored number. It was printing `1.4×` as though a
+tenth were a readable quantity.
+
+- **Keep the slider continuous at 0.1.** No change to its mechanics.
+- **Drop the `1.4×` readout.** That is the false precision — a display claim, not
+  a storage one.
+- **Put the shares in its place.** *Taste 42% · Effort 41% · Cost 9% · Health 8%*,
+  as a bar. All-at-maximum then visibly becomes a flat bar, identical to
+  all-at-normal, which is the truth. It answers "how are these ranked, and how
+  far apart", which is the whole content of a weighting.
+- **Words as landmarks on the track, not as detents** — *ignore it · normal ·
+  this is the point* under the slider, so the vocabulary is there without
+  quantising anything.
+
+The feedback loop then closes properly: the shares show what you asked for, and
+the meal list right below shows what it bought. A 0.1 nudge that changes nothing
+visible is itself worth seeing.
 
 This belongs here rather than inside the editor, because the sliders exist and
 are wrong *today*. 2B.3 then inherits a finished control instead of inventing one.
@@ -240,6 +254,7 @@ history.
 | **4B** | **Dark mode** | a day | Service is a light, papery design. A dark version needs real care, not an inversion. |
 | **4C** | **Print / fridge view** | a day | The cheapest way to include Elizabeth, whatever happens with D1. |
 | **4D** | **Say why a dish was surfaced** — *"low effort · not made in five weeks"* | afternoon | The fit logic is good and invisible, which makes it feel like magic rather than reasoning you can disagree with. |
+| **4K** | **Half-steps for meal magnitudes** — the film-review argument | a day | Measured 2026-10-13: 38 of 63 meals share a TECH profile with another, so no weighting can tell them apart. Half-steps would lift distinct profiles 35→42 and distinct top-5 lists 361→989. More expressive power than anything in Batch 2B, but it touches every meal's stored values and the editor's dropdowns, and it should wait until 2.5 settles how TECH is displayed. |
 | **4E** | **Seasonality as a real field** | a day | Your own seed notes say "Summer only" and "3-4x/month in summer" in free text the app can't read. |
 | **4F** | **Occasion defaults by weekday** | afternoon | Most Tuesdays are ordinary; most Saturdays aren't. Partly superseded by 2A — reassess after. |
 | **4G** | **Restore-from-backup in the interface** | a day | Backups are written faithfully but reachable only through devtools. |

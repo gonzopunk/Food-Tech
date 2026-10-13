@@ -132,6 +132,36 @@ above. A meal shows four independent values on a 1–5 spectrum; an occasion sho
 four proportions of a whole. Structurally different at a glance, with no extra
 chrome.
 
+**But "no absolute size" is not "no precision".** Measured against the real
+63-meal repertoire on 2026-10-13, counting weightings as *directions* (the only
+thing `fitScore` can see):
+
+| Weight resolution | Distinct top-5 lists | Distinct top-10 lists |
+| --- | --- | --- |
+| 5 named steps | 105 | 213 |
+| **0.1 steps** | **361** | **3,332** |
+| 0.05 steps | 361 | 3,926 |
+
+Quantising to five steps would throw away about two-thirds of the recommendations
+the repertoire can actually express. And 0.05 buys nothing over 0.1 on the top
+five — so **0.1 is almost exactly where the signal stops**, which is a happy
+accident of the existing control rather than a design anyone reasoned to.
+
+A single +0.1 nudge on one axis changes the top five in **18.3%** of sampled
+cases; a full +1.0 changes it in 42.7%. So the tenths are carrying real
+information, not decorating it.
+
+The lesson generalises: *fake precision is a claim about the display, not about
+the underlying number.* The fix is to stop printing `1.4×`, not to stop storing
+it. Keep the fine value, show the consequence.
+
+**Where precision is genuinely missing is the magnitudes, not the weights.** The
+repertoire holds only 35 distinct TECH profiles across 63 meals, and 38 meals
+share a profile with at least one other — no weighting at any resolution can
+separate Chicken Marsala from Chicken Florentine. Giving magnitudes half-steps
+would raise distinct profiles to 42 and distinct top-5 lists from 361 to **989**.
+That is the film-review half-star argument, applied where it belongs.
+
 ### Things that are true and easy to get wrong
 
 - **Virtues are not opposed to each other.** Scarcity is real — groceries cost
