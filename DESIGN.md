@@ -94,6 +94,43 @@ assumption rather than a faithful translation, and the right one: marking lunch
 | **Magnitude vs virtue** | Magnitudes are descriptive and live on the meal. Virtue is evaluative, situational, and computed. Collapsing these is the error that took three rounds to find. |
 | **Potential vs realization** | A dish's ceiling vs how close you got tonight. A 3-star salmon means "great dish, botched it" or "executed fine, it's just okay" — different diagnoses, different responses. |
 | **Demands vs offers** | Effort and cost are paid; taste and health are received. Virtue is the proportion between them, given the occasion. |
+| **Magnitude vs weight** | Two sets of four numbers that look alike and are categorically different. A *magnitude* is a property of a dish — descriptive, absolute, 1–5. A *weight* is how much that field matters on this kind of night — a lens, not a fact, and meaningful only in proportion to the other three. The picker's whole job is to match one against the other. Found 2026-10-13; see below. |
+
+### A weight has no absolute size
+
+Found 2026-10-13, from Jamey asking whether putting all four sliders at maximum
+meant anything. It doesn't — and not merely as a matter of taste. `fitScore`
+divides by the sum of the weights:
+
+```js
+num += weight * axisDesirability(ax.k, mag[ax.k]);
+den += weight;
+return den ? num/den : 0;
+```
+
+so multiplying every weight by the same number cancels out exactly. Verified
+across a 63-meal repertoire: weights of all-1, all-3 and all-5 produce a
+byte-identical ordering of every dish.
+
+**What a weight vector contains is a ranking of the four fields plus the spacing
+between the ranks, and nothing else.** 5·4·3·2 and 5·4.9·1.1·1 rank the axes
+identically and recommend different dinners — the first is a gentle gradient, the
+second says "two of these matter and two don't".
+
+Two consequences:
+
+- There is **no budget** to spend. This is not a draft where taking Jordan costs
+  you LeBron; nothing is scarce. But there is also no absolute level, so the
+  interface must not let someone express one — the current sliders do, which is
+  a live defect, not a philosophical nicety.
+- The honest display is **proportional**: show what share of the decision each
+  field is carrying. All-at-maximum then looks like what it is — a flat bar,
+  identical to all-at-normal.
+
+This is also the clearest available answer to the two-kinds-of-quantity problem
+above. A meal shows four independent values on a 1–5 spectrum; an occasion shows
+four proportions of a whole. Structurally different at a glance, with no extra
+chrome.
 
 ### Things that are true and easy to get wrong
 
@@ -132,6 +169,9 @@ assumption rather than a faithful translation, and the right one: marking lunch
 | **Occasion = a weight profile** | Naming a meal and aiming the meal picker are one gesture, because they are one idea. Occasions live on slots (see §2); the picker reads the slot it is filling. |
 | **The occasion sheet, not a dropdown** | The hint is the half of an occasion that explains it — *"low time or energy"*, *"the occasion carries it"* — and a `<select>` has nowhere to put one. A sheet also leaves room for the editor 2B needs. |
 | **Tap, not drag** | Drag-and-drop does not exist on touch, and the phone is the primary device. |
+| **Occasions are data, not code** | The weights encode what matters on a kind of night, which is the cook's judgment. Stored in `state.occasions` with **stable ids**, so a label can be rewritten without orphaning every day pointing at it. |
+| **Ordinary is not an occasion** | It is the absence of one, and the baseline the others are read against. Its weights are all 1 by definition; tuning it would move the thing everything else is measured from and would break `weightsAreEven()`, which decides whether the sort note appears at all. Marked `fixed`. |
+| **Retire, don't delete** | Occasions sit on past days too, and that history is what the aggregate view will read. Deleting one would quietly rewrite the record — and silently, since `slotOccasion` falls back to ordinary for an unknown id. A retired occasion stops being offered but still renders where already used. Outright deletion only when nothing references it. |
 | **A slot exists only once it holds something** | Three standing empty rows made an untouched day nearly as tall as a planned one, and the checkboxes managing them were a chore. Unplanned meals are offered as one line of words instead. The alternative — a default set of slots, global or per weekday — treats the symptom: it still needs exceptions, so the per-day editor survives. Removing the concept removes the setting. |
 | **Visual direction: "Service"** | The kitchen's own paperwork — prep lists, ticket rails. Rules and type, no cards, no shadows. Chosen over a warm-editorial look that leans on photography this app doesn't have. |
 | **Data home: SmartList's Firebase project**, under `menuBoard/{uid}` | One Google sign-in serves both apps and the user id already matches. Revises an earlier call to use a separate project. |
@@ -212,7 +252,7 @@ until that changes, and it may never. Say so rather than designing around it.
 - Cloud sync, offline cache, local fallback
 - Three-tab mobile layout in the Service style
 
-**Schema version 7.** Migrations are stepwise and additive; each writes a
+**Schema version 8.** Migrations are stepwise and additive; each writes a
 pre-upgrade backup to localStorage before touching anything.
 
 **The SmartList connection is NOT built.** Nothing links the two apps yet. What

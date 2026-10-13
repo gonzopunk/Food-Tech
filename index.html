@@ -118,6 +118,9 @@
   .slot-label:hover{color:var(--ink-2)}
   .slot-label:hover .sl-occ{color:var(--ink)}
   .occ-row.on .pk-name{font-weight:600}
+  .occ-row.retired .pk-name{color:var(--ink-2)}
+  .occ-retired{font-family:var(--label);font-size:var(--fs-lab-xs);text-transform:uppercase;
+               letter-spacing:.08em;color:var(--ink-3);margin-left:6px}
   .occ-tick{flex:none;width:16px;text-align:right;color:var(--ink)}
   .slot-body{min-width:0;border-bottom:1px dotted var(--rule);padding-bottom:3px}
   .slot:last-child .slot-body{border-bottom:none}
@@ -665,7 +668,7 @@
 const KEY = "menu-board-v1";
 const BACKUP_PREV = KEY + "-backup-prev";   // last session's data, refreshed once per load
 const BACKUP_PREFIX = KEY + "-backup-v";    // snapshot taken before a schema upgrade, keyed by the version upgraded FROM
-const SCHEMA_VERSION = 7;
+const SCHEMA_VERSION = 8;
 let memoryFallback = null;
 
 function stash(key, raw){
@@ -735,7 +738,8 @@ function migrate(data, raw){
     for(const date in (data.plan||{})){
       const rec = data.plan[date];
       if(!rec || typeof rec !== "object") continue;
-      if(typeof rec.occasion === "string" && rec.occasion !== DEFAULT_OCCASION && OCCASIONS[rec.occasion]){
+      const known = BUILTIN_OCCASIONS.some(o=>o.id===rec.occasion);   // only built-ins can exist at v5
+      if(typeof rec.occasion === "string" && rec.occasion !== DEFAULT_OCCASION && known){
         if(!rec.occasions || typeof rec.occasions !== "object") rec.occasions = {};
         if(!rec.occasions.dinner) rec.occasions.dinner = rec.occasion;
       }
@@ -755,6 +759,16 @@ function migrate(data, raw){
       const hasSlots = SLOTS.some(sl=>Array.isArray(rec[sl]));
       const hasOcc = rec.occasions && Object.keys(rec.occasions).length;
       if(!hasSlots && !hasOcc) delete data.plan[date];
+    }
+  }
+
+  // v7 -> v8: occasions stopped being hardcoded. The weights say what matters
+  // on a kind of night, which is the cook's judgment, not the app's -- so they
+  // become data, with stable ids so a label can be rewritten without orphaning
+  // every day that points at it.
+  if(from < 8){
+    if(!Array.isArray(data.occasions) || !data.occasions.length){
+      data.occasions = BUILTIN_OCCASIONS.map(o=>Object.assign({}, o, {w:Object.assign({}, o.w)}));
     }
   }
 
@@ -855,15 +869,42 @@ function realizedTaste(m){
 }
 
 /* --- occasions: the situation a mean is relative to, expressed as weights --- */
-const OCCASIONS = {
-  ordinary:     {label:"Ordinary",     hint:"a normal night",              w:{t:1,   e:1,   c:1,   h:1}},
-  depleted:     {label:"Depleted",     hint:"low time or energy",          w:{t:0.7, e:2.6, c:1,   h:0.8}},
-  lean:         {label:"Lean week",    hint:"watching the budget",         w:{t:0.8, e:1,   c:2.6, h:1}},
-  nourishing:   {label:"Nourishing",   hint:"eating well on purpose",      w:{t:0.9, e:1,   c:1,   h:2.6}},
-  entertaining: {label:"Entertaining", hint:"cooking for others",          w:{t:2.2, e:0.6, c:0.7, h:0.7}},
-  celebration:  {label:"Celebration",  hint:"the occasion carries it",     w:{t:2.6, e:0.3, c:0.3, h:0.5}}
-};
+/* The six the app ships with. These are a SEED, not the source of truth: once
+   a kitchen has data, `state.occasions` is what counts, because the weights
+   encode what matters on a kind of night and that judgment belongs to the cook.
+
+   Ids are stable and never shown. A label can be rewritten freely without
+   orphaning the days that reference it. */
+const BUILTIN_OCCASIONS = [
+  {id:"ordinary",     fixed:true, label:"Ordinary",     hint:"a normal night",          w:{t:1,   e:1,   c:1,   h:1}},
+  {id:"depleted",                 label:"Depleted",     hint:"low time or energy",      w:{t:0.7, e:2.6, c:1,   h:0.8}},
+  {id:"lean",                     label:"Lean week",    hint:"watching the budget",     w:{t:0.8, e:1,   c:2.6, h:1}},
+  {id:"nourishing",               label:"Nourishing",   hint:"eating well on purpose",  w:{t:0.9, e:1,   c:1,   h:2.6}},
+  {id:"entertaining",             label:"Entertaining", hint:"cooking for others",      w:{t:2.2, e:0.6, c:0.7, h:0.7}},
+  {id:"celebration",              label:"Celebration",  hint:"the occasion carries it", w:{t:2.6, e:0.3, c:0.3, h:0.5}}
+];
+/* Ordinary is not really an occasion -- it is the absence of one, and the
+   baseline the others are read against. Its weights are all 1 by definition,
+   so it is marked fixed and the editor will refuse it. */
 const DEFAULT_OCCASION = "ordinary";
+
+function freshOccasions(){ return BUILTIN_OCCASIONS.map(o=>Object.assign({}, o, {w:Object.assign({}, o.w)})); }
+function occasionList(){
+  if(!Array.isArray(state.occasions) || !state.occasions.length) state.occasions = freshOccasions();
+  return state.occasions;
+}
+// Offered when setting an occasion. Retired ones still render where already
+// used, so history keeps its meaning -- they just stop being on the menu.
+function occasionsOffered(){ return occasionList().filter(o=>!o.retired); }
+function occasionById(id){ return occasionList().find(o=>o.id===id) || null; }
+function occasionWeights(id){
+  const o = occasionById(id);
+  return o && o.w ? o.w : {t:1,e:1,c:1,h:1};
+}
+function occasionLabel(id){
+  const o = occasionById(id);
+  return o ? o.label : "Ordinary";
+}
 
 // 0..1 desirability of one magnitude, given that offers are wanted high and
 // demands wanted low. Weight says how much this field matters tonight.
@@ -1010,7 +1051,7 @@ function seed(){
     {id:uid(), label:"Beans/lentils", tag:"beans", op:">=", count:2},
     {id:uid(), label:"Chicken", tag:"chicken", op:">=", count:1},
   ];
-  return { meals, goals, plan:{}, onDeck:[], schemaVersion:SCHEMA_VERSION };
+  return { meals, goals, plan:{}, onDeck:[], occasions:freshOccasions(), schemaVersion:SCHEMA_VERSION };
 }
 
 /* A brand-new install starts empty rather than inheriting one particular
@@ -1018,7 +1059,7 @@ function seed(){
    meal list and the macro figures in it are real, but nothing calls it now;
    anyone starting fresh builds their own bank. */
 function emptyState(){
-  return { meals:[], goals:[], plan:{}, onDeck:[], schemaVersion:SCHEMA_VERSION };
+  return { meals:[], goals:[], plan:{}, onDeck:[], occasions:freshOccasions(), schemaVersion:SCHEMA_VERSION };
 }
 
 let state = loadState() || emptyState();
@@ -1103,7 +1144,7 @@ function cleanDay(dateISO){
 function slotOccasion(dISO, slot){
   const rec = state.plan[dISO];
   const occ = rec && rec.occasions && rec.occasions[slot];
-  return (occ && OCCASIONS[occ]) ? occ : DEFAULT_OCCASION;
+  return (occ && occasionById(occ)) ? occ : DEFAULT_OCCASION;
 }
 function setSlotOccasion(dISO, slot, occ){
   const day = ensureDay(dISO);
@@ -1127,7 +1168,7 @@ let matchAllTags = false;
 // The weighting currently governing selection. An occasion just IS a weight
 // profile, so picking a preset and moving the sliders are the same gesture.
 let activeOccasion = DEFAULT_OCCASION;
-let activeWeights = Object.assign({}, OCCASIONS[DEFAULT_OCCASION].w);
+let activeWeights = Object.assign({}, occasionWeights(DEFAULT_OCCASION));
 function weightsAreEven(){ return TECH_AXES.every(ax=>Math.abs(activeWeights[ax.k]-1) < 0.001); }
 
 /* ============================== on deck ==============================
@@ -1223,7 +1264,7 @@ function renderTonight(){
   if(even) panel.hidden = true;
   if(!even){
     document.getElementById("sortLabel").textContent =
-      activeOccasion ? "Ordered for "+OCCASIONS[activeOccasion].label.toLowerCase() : "Ordered by a custom weighting";
+      activeOccasion ? "Ordered for "+occasionLabel(activeOccasion).toLowerCase() : "Ordered by a custom weighting";
   }
   // Built once and then only updated: rebuilding on every render would replace
   // the slider under the cursor mid-drag.
@@ -1495,18 +1536,26 @@ function renderOccasionList(){
   const cur = slotOccasion(occTarget.dISO, occTarget.slot);
   const list = document.getElementById("occList");
   list.innerHTML = "";
-  for(const key in OCCASIONS){
-    const o = OCCASIONS[key];
+  // Retired occasions are not offered, but one still in use on this very slot
+  // stays visible so you can see what it is set to.
+  const offered = occasionsOffered();
+  if(cur !== DEFAULT_OCCASION && !offered.some(o=>o.id===cur)){
+    const r = occasionById(cur);
+    if(r) offered.push(r);
+  }
+  for(const o of offered){
+    const key = o.id;
     const row = document.createElement("button");
-    row.className = "picker-row occ-row"+(key===cur?" on":"");
-    row.innerHTML = '<span class="pk-main"><span class="pk-name">'+esc(o.label)+'</span>'+
-                    '<span class="pk-sub">'+esc(o.hint)+'</span></span>'+
+    row.className = "picker-row occ-row"+(key===cur?" on":"")+(o.retired?" retired":"");
+    row.innerHTML = '<span class="pk-main"><span class="pk-name">'+esc(o.label)+
+                    (o.retired?' <span class="occ-retired">retired</span>':'')+'</span>'+
+                    (o.hint? '<span class="pk-sub">'+esc(o.hint)+'</span>':'')+'</span>'+
                     '<span class="occ-tick" aria-hidden="true">'+(key===cur?"✓":"")+'</span>';
     row.onclick = ()=>{
       setSlotOccasion(occTarget.dISO, occTarget.slot, key);
       // Naming the meal also aims the meal bank at it -- same idea, one gesture.
       activeOccasion = key;
-      activeWeights = Object.assign({}, OCCASIONS[key].w);
+      activeWeights = Object.assign({}, occasionWeights(key));
       occDlg.close();
       render();
       // Opened from inside the meal picker: reorder it rather than leaving a
@@ -1551,9 +1600,10 @@ function renderSlot(dISO, slot, entries){
   const lab = document.createElement("button");
   lab.className = "slot-label";
   lab.innerHTML = esc(slot)+
-    (occ!==DEFAULT_OCCASION ? '<span class="sl-occ">'+esc(OCCASIONS[occ].label)+'</span>' : '');
-  lab.title = occ!==DEFAULT_OCCASION
-    ? OCCASIONS[occ].label+" — "+OCCASIONS[occ].hint
+    (occ!==DEFAULT_OCCASION ? '<span class="sl-occ">'+esc(occasionLabel(occ))+'</span>' : '');
+  const occRec = occ!==DEFAULT_OCCASION ? occasionById(occ) : null;
+  lab.title = occRec
+    ? occRec.label + (occRec.hint ? " — "+occRec.hint : "")
     : "What kind of "+slot+" this is";
   lab.onclick = ()=>openOccasionPicker(dISO, slot);
   wrap.appendChild(lab);
@@ -1607,7 +1657,7 @@ function refreshMealPicker(){
   document.getElementById("pickTitle").textContent = DOW[fromISO(dISO).getDay()]+" "+slot;
   document.getElementById("pickSub").textContent =
     occ===DEFAULT_OCCASION ? "Ordered A–Z · what kind of meal?"
-                           : "Best fit for "+OCCASIONS[occ].label.toLowerCase()+" first · change";
+                           : "Best fit for "+occasionLabel(occ).toLowerCase()+" first · change";
   renderMealPicker();
 }
 document.getElementById("pickSub").onclick = ()=>{
@@ -1631,7 +1681,7 @@ function renderMealPicker(){
   const q = document.getElementById("pickSearch").value.trim().toLowerCase();
   const slot = pickTarget.slot;
   const occ = slotOccasion(pickTarget.dISO, pickTarget.slot);
-  const w = OCCASIONS[occ].w;
+  const w = occasionWeights(occ);
   const byFit = occ !== DEFAULT_OCCASION;
   const list = document.getElementById("pickList");
   list.innerHTML = "";
@@ -2469,7 +2519,7 @@ document.getElementById("sortAdjust").onclick = ()=>{
 };
 document.getElementById("sortClear").onclick = ()=>{
   activeOccasion = DEFAULT_OCCASION;
-  activeWeights = Object.assign({}, OCCASIONS[DEFAULT_OCCASION].w);
+  activeWeights = Object.assign({}, occasionWeights(DEFAULT_OCCASION));
   document.getElementById("weightSliders").hidden = true;
   render();
 };

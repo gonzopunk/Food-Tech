@@ -13,14 +13,23 @@ Last updated 2026-10-13.
 
 ## Start here
 
-**2A and 2A.1 are done and need checking on the phone.** Occasions moved from
-days to meal slots, and then empty slots stopped existing at all. Schema v7. Both
-migrations are tested against synthetic v5 and v6 data but have not met the real
-plan yet.
+**2A, 2A.1 and 2B.1 are done.** Occasions moved from days to meal slots, empty
+slots stopped existing, and occasions became editable data. Schema v8, verified
+against the real 63-meal / 43-day backup with nothing lost.
 
-**The next build is 2B (editing occasions).** Decided and scoped below. It needs
-no conversation first, but it is worth letting 2A sit for a few days before
-building an editor on top of it.
+**The next build is 2B.2 — weights read as proportions.** Small, self-contained,
+and it fixes a defect in shipped code: the weight sliders currently let you
+express an absolute level that has no effect at all. See the entry below.
+
+**Then 2B.3–2B.5 (the editor) wait for evidence.** They are scoped and ready, but
+occasions have been set only five times in 43 days — and that number is not
+trustworthy, since it spans a desktop-only stretch and a mobile rebuild, and the
+control was buried in a day dropdown for most of it. 2A and 2A.1 just made it
+far more reachable. Give it a week of normal use and look again.
+
+**The strongest alternative if 2B stalls is 3C — does this dish earn its place.**
+Unlike the rest of Batch 3 it is *not* waiting on rating history; it needs TECH
+magnitudes, which already exist and are substantially hand-set.
 
 **Two things to watch:**
 
@@ -35,33 +44,70 @@ building an editor on top of it.
 questions, raised after two weeks of use. Not urgent, and the app is perfectly
 usable meanwhile — but doing any one of them alone means doing the work twice.
 
-**Batch 3 (the aggregate view) wants more data first.** Inline rating landed in
-Batch 1, so ratings should now start accumulating. Give it a few weeks of real
-use before building anything that reads them back; an analysis view on thin data
-shows nothing and wrongly discredits the idea.
+**Batch 3A (the aggregate view) wants more data first.** 25 of 63 planned
+instances now carry a rating, and inline rating only landed on 2026-10-12, so the
+rate should climb. Give it a few weeks before building anything that reads it
+back; an analysis view on thin data shows nothing and wrongly discredits the idea.
+**3C is the exception** — it reads magnitudes, not ratings, and is ready now.
 
 **One decision stands open:** D1, multi-user — answered "not for now", with 3B
 (record who cooked) still worth doing cheaply to keep the option alive.
 
 ---
 
-## Batch 2 — occasions *(a few days left)*
+## Batch 2 — occasions
 
-Larger, and it changes the data model, so it stands on its own. **2A and 2A.1
-shipped 2026-10-13** and are recorded under Done.
+**2A, 2A.1 and 2B.1 shipped 2026-10-13** and are recorded under Done. What's left
+is one small item that should be done next, and three that should wait.
 
-### 2B · Editing occasions
+### 2B.2 · Weights read as proportions *(an afternoon — do this next)*
 
-The weights encode *what matters on this kind of night*. That's a judgment that
-should belong to the cook, not to hardcoded guesses about Jamey's Tuesdays.
-Philosophically it's the right owner too — the person of practical wisdom sets
-the standard.
+**This fixes a live defect, not a future feature.** `fitScore` normalises by the
+sum of the weights, so all four sliders at maximum is mathematically identical to
+all four at normal — the interface lets you spend four gestures saying nothing.
+See `DESIGN.md` §2, "A weight has no absolute size".
 
-- Edit labels and the four weights per occasion; add and remove occasions.
-- **Block deleting an occasion that days still reference**, showing how many use
-  it. Less clever than reassigning them and much harder to lose data with.
-- **Show what a weighting does** — a live preview of which meals rise as you move
-  the sliders. Otherwise it's tuning numbers blind.
+Two changes to the existing slider panel, done together because they are one
+idea — that a weight is relative:
+
+- **Replace the number with a named five-step scale.** `0–3` in steps of `0.1`
+  is false precision over a four-term average of 5-point values. Something like
+  *ignore it · matters less · normal · matters more · this is the point*.
+- **Show the shares underneath.** *Taste 42% · Effort 41% · Cost 9% · Health 8%*,
+  as a bar. All-at-maximum then visibly becomes a flat bar — the interface teaches
+  the truth instead of hiding it. It also answers "how much space is there between
+  the ranks", which is the actual content of a weighting.
+
+This belongs here rather than inside the editor, because the sliders exist and
+are wrong *today*. 2B.3 then inherits a finished control instead of inventing one.
+It is also where the magnitude/weight distinction becomes visible — four
+independent 1–5 values look nothing like four shares of a whole.
+
+### 2B.3 · The occasion editor *(wait for evidence)*
+
+Label, optional hint, the four weights, and a live preview: *"across your
+repertoire this favours: X · Y · Z"*, recomputed as you adjust.
+
+One honesty constraint: that list is pure `fitScore`, while the picker actually
+orders by slot-tag tier → slot use → fit. Label it as what a weighting *favours*,
+not as what you would literally see on a given night.
+
+Ordinary is not editable — see `DESIGN.md` §4.
+
+### 2B.4 · Add and retire *(with 2B.3)*
+
+Add a new occasion; **retire** rather than delete. A retired occasion stops being
+offered but still renders where already used, so history keeps its meaning.
+Outright deletion only when nothing references it, past or future. The data layer
+for this shipped with 2B.1 and is tested — only the controls are missing.
+
+### 2B.5 · Save the current weighting as an occasion *(with 2B.3)*
+
+A third action beside *adjust* and *clear* in the sort note. Tune the bank until
+the list looks like the kind of night you mean, then name it.
+
+This is the best creation path precisely because no preview is involved — you are
+looking at the real list, not a model of it. Nearly free once 2B.3 exists.
 
 ---
 
@@ -111,6 +157,45 @@ and never cook? How does your best bolognese compare with your typical one?
 **Do 1B.3 first.** An analysis view built on sparse data shows nothing and
 convinces you the idea doesn't work, when the real problem was friction in
 recording.
+
+### 3C · Does this dish earn its place *(a day — ready now)*
+
+Jamey's original motivation for Food TECH, and the one question the app has never
+asked: not *what should I cook tonight* (occasion-relative, built and working)
+but *which dishes are worth their place in the repertoire* — which is
+occasion-**free**.
+
+The clean formulation is **dominance**: a dish is dominated when something else
+in the repertoire beats it on all four axes at once. No occasion rescues a
+dominated dish. These are the inertia-meals.
+
+Tested against the real backup on 2026-10-13, and it discriminates:
+
+| | Seed data | Real repertoire |
+| --- | --- | --- |
+| Meals | 41 | 63 |
+| Distinct TECH profiles | 22 | 35 (25 unique to one dish) |
+| **Strictly dominated** | 0 | **3** |
+| Weakly dominated | 34 | 42 |
+
+Three of 63 is a signal, not noise. One of them — *Chicken and gnocchi soup*,
+the only taste-2 dish in the bank — is beaten by sixteen others. Two more fall to
+*Butternut squash soup* (t5), which raises exactly the right question: is that
+soup really tastier than brisket, or is one of those two numbers wrong? **The
+value of this view is that it turns a vague unease into a specific question.**
+
+Build notes:
+
+- Use **strict** dominance (beaten on all four). Weak dominance fires on 42 of 63
+  and would read as "most of your food is bad", which is an artefact of a
+  5-point scale, not a finding.
+- Say *who* beats it and by what, never a verdict. The answer may be that the
+  rating is wrong, and the view should invite that reading.
+- Related and possibly more interesting: **26 of 63 meals have never been
+  planned at all.** A dish nobody reaches for is a different kind of dead weight,
+  and it needs no TECH data to detect.
+- Two of the three dominated dishes hang on a single `t5`. The signal will firm
+  up as more dishes are judged; don't over-present it early.
 
 ### 3B · Record who cooked *(an afternoon)*
 
@@ -212,6 +297,18 @@ tracking, no servings calculator, no recipe manager, no duplicating SmartList.
 - *Quick actions belong in the list, not behind a sheet.* The first unrated list
   opened the full rating sheet per meal. Five tappable stars on the row itself is
   what makes capture frictionless — and capture is the precondition for Batch 3.
+
+### Batch 2B.1 — shipped 2026-10-13
+
+Occasions stopped being hardcoded.
+
+| | |
+| --- | --- |
+| **Model** | `state.occasions`, an ordered list of `{id, label, hint, w}` with **stable ids** — renaming "Lean week" to "Tight week" leaves every day that references it intact. Verified live. |
+| **Ordinary** | Carried in the list but marked `fixed`, because it is the baseline rather than an option. |
+| **Retire** | `retired` is honoured throughout already: a retired occasion drops out of the sheet, but one still set on the slot you are looking at stays visible and marked. The controls come with 2B.4; the semantics are built and tested. |
+| **Sync** | `occasions` added to `cloud.js`'s `settings` document — easy to miss, and they would have edited fine and never left the device. |
+| **Schema v8** | Run against the real 63-meal / 43-day backup: no meals, days, occasion marks or ratings lost, every occasion in use still resolves, and an already-customised list is not overwritten. |
 
 ### Batch 2A.1 — shipped 2026-10-13
 

@@ -42,7 +42,7 @@ const DOCS = {
   meals:    ["meals"],
   plan:     ["plan"],
   onDeck:   ["onDeck"],
-  settings: ["goals", "proteinTarget", "schemaVersion"],
+  settings: ["goals", "proteinTarget", "occasions", "schemaVersion"],
 };
 
 const SAVE_DEBOUNCE_MS = 1200;

@@ -2,3 +2,7 @@
 .DS_Store
 Thumbs.db
 *.log
+
+# Personal data exports. This repo is public (GitHub Pages); real meals,
+# plans and ratings must not go into it.
+data/
