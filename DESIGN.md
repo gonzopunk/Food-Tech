@@ -155,6 +155,14 @@ The lesson generalises: *fake precision is a claim about the display, not about
 the underlying number.* The fix is to stop printing `1.4×`, not to stop storing
 it. Keep the fine value, show the consequence.
 
+**A ratio quantity does not belong on a linear track.** The weight slider is
+positional: the bottom half of its travel covers 0→1 and the top half 1→3, so
+*normal* sits at the centre. Linear travel spent half its length between 1.5 and
+3, where the shares hardly move, and compressed 0→1 — the range that actually
+reorders dinner — into a third. Shrinking the range to 0–2 would also have
+centred the 1, but measurement said it costs 833 of 3,332 reachable top-10
+orderings; the positional mapping costs nothing.
+
 **Where precision is genuinely missing is the magnitudes, not the weights.** The
 repertoire holds only 35 distinct TECH profiles across 63 meals, and 38 meals
 share a profile with at least one other — no weighting at any resolution can

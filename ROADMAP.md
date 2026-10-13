@@ -319,12 +319,27 @@ Weights stopped pretending to be absolute quantities.
 | **Kept** | The slider stays continuous at 0.1. Measuring said that is where the signal stops; coarsening it to five steps would have cost two-thirds of the reachable recommendations. |
 | **Dropped** | The `1.4x` readout — the actual false precision, a display claim rather than a storage one. |
 | **Added** | A share bar and key: *Tasty 70% · Easy 8% · Cheap 8% · Healthy 14%*. Celebration now says what it means at a glance. |
-| **Added** | Three landmarks on a shared scale beneath the aligned tracks — *ignore it · normal · this is the point* — with `normal` at one third, where 1 falls on a 0–3 range. Verified: it lands at 182 on a 94–359 track. |
+| **Added** | Three landmarks on a shared scale beneath the aligned tracks — *ignore it · normal · this is the point*. |
+| **Changed** | The slider became **positional**: the bottom half of the travel runs 0→1, the top half 1→3, so **normal sits at dead centre**. A weight is a ratio — on the old linear track half the travel ran 1.5→3, where the shares barely move, while 0→1, which decides everything, was squeezed into a third. Narrowing the range to 0–2 instead would have centred the 1 but cost 833 of the 3,332 reachable top-10 orderings; this costs nothing. All 31 tenths still round-trip exactly and remain reachable by dragging. |
 | **Bug fixed** | `weightsAreEven()` tested each weight against **1**, so all-four-at-2 was called a custom weighting and showed a sort note for an ordering that was plain A–Z. It now tests whether the four are equal to *each other*, which is what fitScore can actually see. The share work surfaced this. |
 
 *Also fixed in passing:* the scale landmarks were first positioned with
 `padding-left`, and absolutely positioned children resolve against the padding
 box — so they sat 78px left of the track they label. Margin, not padding.
+
+### Batch 2B.2a — the weight panel became reachable, shipped 2026-10-13
+
+Found by Jamey asking "where do the sliders show up?". The answer was: nowhere.
+The panel sat behind the sort note, the sort note only appeared once a
+non-ordinary occasion was already driving the order, and from a clean state
+there was **no entry point at all** — six steps across two tabs at best.
+
+| | |
+| --- | --- |
+| **SORT** | A sibling to FILTER in the search row. Permanent, costs no vertical space, and sits where "how is this list organised" belongs. It also makes the weighting usable on its own — *"show me cheap and easy right now"* — without naming a night first. |
+| **Bug fixed** | `renderTonight` force-hid the panel whenever the weights were even, so dragging back to level slammed it shut mid-adjustment, and opening it from a clean state would not have survived the next render. Visibility now belongs to whoever opened it. |
+| **Panels** | Filter and Sort are mutually exclusive — both open at once pushes the meals off a phone screen. The filter count stays on its button, so a collapsed filter still reports itself. |
+| **Colour** | `#filterToggle.on` used the Health green, giving a TECH colour a non-TECH meaning. Both buttons now use ink and an underline. One fewer exception for 2.5 to resolve. |
 
 ### Batch 2B.1 — shipped 2026-10-13
 

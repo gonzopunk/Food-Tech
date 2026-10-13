@@ -156,9 +156,14 @@
   #search{flex:1;min-width:0;background:none;border:none;font-family:var(--label);font-size:15px;
           letter-spacing:.05em;text-transform:uppercase;color:var(--ink);padding:8px 0;min-height:var(--tap)}
   #search::placeholder{color:var(--ink-3)}
-  #filterToggle{font-family:var(--label);font-size:12px;text-transform:uppercase;letter-spacing:.09em;
-                color:var(--ink-3);flex:none;min-height:var(--tap);display:flex;align-items:center}
-  #filterToggle.on{color:var(--tech-h);font-weight:600}
+  #filterToggle,#sortToggle{font-family:var(--label);font-size:12px;text-transform:uppercase;
+                letter-spacing:.09em;color:var(--ink-3);flex:none;min-height:var(--tap);
+                display:flex;align-items:center}
+  /* Active state is ink, not colour. Filter used the Health green, which gave a
+     TECH colour a non-TECH meaning -- the one thing the palette rule forbids.
+     Both now read the same way, and the only colour left on screen is TECH. */
+  #filterToggle.on,#sortToggle.on{color:var(--ink);font-weight:600;
+                text-decoration:underline;text-underline-offset:3px}
   .tag-filter{display:flex;flex-wrap:wrap;gap:3px 12px;padding:9px 0 4px;border-bottom:1px dotted var(--rule)}
   .tag-filter button{font-family:var(--label);font-size:12px;text-transform:uppercase;letter-spacing:.07em;
                      color:var(--ink-3);min-height:34px;display:flex;align-items:center}
@@ -456,6 +461,9 @@
     <div class="search-row">
       <input id="search" type="search" placeholder="Search meals">
       <button id="filterToggle" aria-expanded="false">Filter</button>
+      <!-- The weight panel had no entry point at all unless an occasion was
+           already driving the order. This is it. -->
+      <button id="sortToggle" aria-expanded="false">Sort</button>
     </div>
     <div class="tag-filter" id="tagFilter" hidden></div>
     <!-- Only appears once an occasion is actually driving the order. -->
@@ -1196,6 +1204,22 @@ function weightsAreEven(){
   if(hi <= 0) return true;          // all zero: fitScore ties everything
   return v.every(x=>Math.abs(x-hi) < 0.001);
 }
+/* The slider is POSITIONAL, not linear in the weight. A weight is a ratio, so
+   the travel between 0 and 1 changes the outcome far more than the travel
+   between 2 and 3 -- and 
+ormal belongs at the centre of a scale, not a
+   third of the way along. Bottom half: 0 to 1. Top half: 1 to 3. The full 0-3
+   range is kept, because narrowing it to 0-2 to centre the 1 would make 833 of
+   the repertoire's 3,332 reachable top-10 orderings unreachable. */
+function posToWeight(p){
+  const w = p <= 0.5 ? p*2 : 1 + (p-0.5)*4;
+  return Math.round(w*10)/10;
+}
+function weightToPos(w){
+  const v = Math.max(0, Math.min(3, w));
+  return v <= 1 ? v/2 : 0.5 + (v-1)/4;
+}
+
 /* Each weight's share of the decision, in percent. This is the whole content of
    a weighting: a ranking of the four fields and the spacing between them. */
 function weightShares(){
@@ -1295,7 +1319,11 @@ function renderTonight(){
   const panel = document.getElementById("weightSliders");
   const even = weightsAreEven();
   note.hidden = even;
-  if(even) panel.hidden = true;
+  // The panel's visibility belongs to whoever opened it. Auto-hiding on "even"
+  // meant dragging back to level slammed the panel shut mid-adjustment.
+  const toggle = document.getElementById("sortToggle");
+  toggle.classList.toggle("on", !even);
+  toggle.setAttribute("aria-expanded", panel.hidden ? "false" : "true");
   if(!even){
     document.getElementById("sortLabel").textContent =
       activeOccasion ? "Ordered for "+occasionLabel(activeOccasion).toLowerCase() : "Ordered by a custom weighting";
@@ -1307,12 +1335,12 @@ function renderTonight(){
       const row = document.createElement("label"); row.className = "wrow";
       row.innerHTML = '<span class="wlab"><i class="wsw" style="--tc:var('+ax.varName+')"></i>'+ax.virtue+'</span>';
       const input = document.createElement("input");
-      input.type = "range"; input.min = "0"; input.max = "3"; input.step = "0.1";
+      input.type = "range"; input.min = "0"; input.max = "1"; input.step = "0.01";
       input.id = "w_"+ax.k;
       input.title = ax.kind==="offer" ? "How much "+ax.label.toLowerCase()+" matters tonight"
                                       : "How much avoiding "+ax.label.toLowerCase()+" matters tonight";
       input.oninput = ()=>{
-        activeWeights[ax.k] = parseFloat(input.value);
+        activeWeights[ax.k] = posToWeight(parseFloat(input.value));
         activeOccasion = null;   // hand-tuned: no longer any named occasion
         render();
       };
@@ -1325,7 +1353,7 @@ function renderTonight(){
     const scale = document.createElement("div");
     scale.className = "wscale";
     scale.innerHTML = '<span style="left:0">ignore it</span>'+
-                      '<span style="left:33.3%;transform:translateX(-50%)">normal</span>'+
+                      '<span style="left:50%;transform:translateX(-50%)">normal</span>'+
                       '<span style="right:0">this is the point</span>';
     panel.appendChild(scale);
 
@@ -1348,7 +1376,7 @@ function renderTonight(){
   for(const ax of TECH_AXES){
     const input = document.getElementById("w_"+ax.k);
     // Never write to the slider being dragged; it would fight the thumb.
-    if(document.activeElement !== input) input.value = activeWeights[ax.k];
+    if(document.activeElement !== input) input.value = weightToPos(activeWeights[ax.k]);
   }
 
   // The share bar, which is what the dropped "1.4×" readout used to pretend to
@@ -2575,17 +2603,30 @@ function applyBigText(on){
 })();
 bigTextChk.onchange = ()=>applyBigText(bigTextChk.checked);
 document.getElementById("search").addEventListener("input", renderBank);
+// The two panels stack above the list, and on a phone both open at once pushes
+// the meals off screen. Opening one closes the other; the filter count stays on
+// its button, so a collapsed filter still reports itself.
+function showWeightPanel(open){
+  const panel = document.getElementById("weightSliders");
+  panel.hidden = !open;
+  document.getElementById("sortToggle").setAttribute("aria-expanded", open ? "true" : "false");
+  if(open) showFilterPanel(false);
+}
 document.getElementById("filterToggle").onclick = ()=>{
-  showFilterPanel(tagFilter.hidden);
+  const open = tagFilter.hidden;
+  showFilterPanel(open);
+  if(open) showWeightPanel(false);
+};
+document.getElementById("sortToggle").onclick = ()=>{
+  showWeightPanel(document.getElementById("weightSliders").hidden);
 };
 document.getElementById("sortAdjust").onclick = ()=>{
-  const panel = document.getElementById("weightSliders");
-  panel.hidden = !panel.hidden;
+  showWeightPanel(document.getElementById("weightSliders").hidden);
 };
 document.getElementById("sortClear").onclick = ()=>{
   activeOccasion = DEFAULT_OCCASION;
   activeWeights = Object.assign({}, occasionWeights(DEFAULT_OCCASION));
-  document.getElementById("weightSliders").hidden = true;
+  showWeightPanel(false);
   render();
 };
 document.querySelectorAll("dialog [data-close]").forEach(b=>b.onclick = ()=>b.closest("dialog").close());
