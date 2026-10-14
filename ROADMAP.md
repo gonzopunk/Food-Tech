@@ -13,11 +13,15 @@ Last updated 2026-10-14.
 
 ## Start here
 
-**Batch 2.5 is now the lead, and it starts with structure, not typography.**
+**Batch 2.5 is the lead, and it starts with structure, not typography.**
 Raised 2026-10-14, after a day away from the app was enough for its author to
-lose track of where the priority sliders live. Nothing else should be built on
-the current layout until that conversation happens — see Batch 2.5 below, which
-has been rewritten as an agenda rather than a list of fixes.
+lose track of where the priority sliders live.
+
+**2.5A now has a direction** — two verb tabs, **Plan** and **Cook**; browsing and
+choosing as two orderings of one list rather than two places; Deck absorbed; the
+priority sliders moved into the picker. Two open items remain under it, both
+schema-shaped, and they should be settled before any code. **2.5B–2.5E are still
+open.** Nothing else should be built on the current layout meanwhile.
 
 **2B is parked at 2B.2a.** Occasions moved from days to meal slots, empty slots
 stopped existing, occasions became editable data, weights read as proportions,
@@ -88,13 +92,16 @@ offered but still renders where already used, so history keeps its meaning.
 Outright deletion only when nothing references it, past or future. The data layer
 for this shipped with 2B.1 and is tested — only the controls are missing.
 
-### 2B.5 · Save the current weighting as an occasion *(parked, with 2B.3)*
+### 2B.5 · Save the current weighting as an occasion *(relocated to 2.5A)*
 
-A third action beside *adjust* and *clear* in the sort note. Tune the bank until
-the list looks like the kind of night you mean, then name it.
+Tune until the list looks like the kind of night you mean, then name it. Still
+the best creation path, precisely because no preview is involved — you are
+looking at the real list, not a model of it.
 
-This is the best creation path precisely because no preview is involved — you are
-looking at the real list, not a model of it. Nearly free once 2B.3 exists.
+**Its home changed on 2026-10-14.** It was specced as a third action beside
+*adjust* and *clear* in the sort note — and the sort note sits in the surface
+2.5A dissolves. It now belongs in the picker, beside the one-off priority
+setting; see "Where the sliders go". Kept here so the reasoning is not lost.
 
 ---
 
@@ -117,7 +124,7 @@ Jamey's own summary, which belongs in the record:
 > If I have trouble finding and understanding what the app is doing, a different
 > user stands no chance.
 
-### 2.5A · The Meals tab is doing two unrelated jobs *(the lead question)*
+### 2.5A · The Meals tab is doing two unrelated jobs *(direction set 2026-10-14)*
 
 | Managing the repertoire | Choosing what to cook |
 | --- | --- |
@@ -131,43 +138,108 @@ One list, two readings, nothing naming either. The priority sliders are a
 lives in the Meals tab" feels wrong. It is wrong, and signposting cannot fix it.
 
 **The tab bar is already asking "what do you want to do?" — it is just answering
-with nouns.** Plan, Meals and Deck are places. A candidate:
+with nouns.** Plan, Meals and Deck are places; a cook arrives with a question.
+
+### The direction, decided 2026-10-14
+
+**Two tabs, both verbs.**
 
 | Tab | The question it answers |
 | --- | --- |
-| **Plan** | What's the week? |
-| **Tonight** | What should I cook *now*? |
-| **Meals** | What's in my repertoire? |
+| **Plan** | What's the week? — the calendar |
+| **Cook** | What should I make? — the meals, with filtering, sorting and priorities |
 
-Deck probably folds into Tonight — on-deck dishes are literally "what I want to
-cook soon", which is the first thing a *what should I cook* surface should show.
-That keeps the count at three.
+*Tonight* was considered and rejected: it is a noun pretending to be a mode, and
+it mortgages breakfast and lunch, which became first-class in 2A.
 
-**Open questions, genuinely open:**
+**Browsing the repertoire does not earn a tab.** Choosing and browsing are not
+two places — they are **the same list under two orderings**:
 
-- Is "Tonight" the right frame, or does it over-commit to dinner? Breakfast and
-  lunch are now first-class after 2A.
-- **Does the bank's copy of the priority tool deserve to exist at all?** Choosing
-  already happens in the *picker*, where the occasion drives the order and the
-  subtitle changes it. That path may already be the good one, which would make
-  the Meals-tab copy the redundant one rather than the badly-placed one.
-- Jamey's proposal was a greeting — *"What do you want to do? Plan a menu /
-  Choose a meal"* — possibly as a hero section. The instinct is right. The
-  reservation is that a question you have answered two hundred times becomes a
-  door to open with your hands full, and that a signpost above a confusing
-  structure is not the same as fixing it. A one-time orientation for new users is
-  a different and probably better use of the same idea.
+| Mode | Ordering |
+| --- | --- |
+| **Choosing** *(the default)* | on deck first, then due, then fit |
+| **Browsing** | A–Z, everything |
 
-### 2.5B · "Sort" is the wrong word, twice
+So **the sort control is the mode switch.** That promotes 2.5B from a naming
+quibble to the mechanism that lets one tab do both jobs — see below.
 
-It mislabels the panel — *sort* means one key, and a multi-criteria relevance
-weighting is a different species. **"Priorities"** is the honest name.
+**Cook opens in choosing mode.** *(Decided.)* The known cost: a list that
+reorders itself between visits can feel untrustworthy, and the browse ordering
+has to be one obvious tap away to compensate.
 
-Worse, it spends the one obvious word on the feature least entitled to it. The
+**Deck folds in** as the top of the choosing order. An on-deck dish is one you
+have already decided you want, so it outranks anything the app merely computed.
+Its count needs a home — probably a section heading inside Cook rather than the
+tab badge it loses.
+
+**New and Map stay as header actions.** They are repertoire *verbs*, not a
+destination, and they are already where they belong.
+
+**The greeting is not built.** Jamey's *"What do you want to do? Plan a menu /
+Choose a meal"* was the instinct that produced all of the above, and two verb
+tabs answer it permanently, for free, in a control already on screen. A
+question answered two hundred times becomes a door to open with your hands full.
+Keep the idea for a **one-time orientation for new users**, where it is genuinely
+useful and where the beta-tester page already does half the job.
+
+### The two-copies finding
+
+Established 2026-10-14 by reproduction, and it is worse than "the tool is in the
+wrong tab". There is one slider UI but **two independent weight states**:
+
+| | Reads | Persisted? |
+| --- | --- | --- |
+| **Bank** (Meals tab) | `fitScore(m, activeWeights)` — a transient global | no |
+| **Picker** (from Plan) | `fitScore(m, occasionWeights(slotOccasion(…)))` | yes, on the slot |
+
+With the sliders pushed hard to cheap-and-easy, the bank led with *Lentil soup,
+Tuscan bean soup, Thai curry*. Opening the picker for a dinner at that same
+moment gave *Beans & greens, Burgers, Caesar salad* — plain A–Z. **The picker
+never sees the sliders.** The coupling is one-way and partial: choosing a named
+occasion sets both; dragging sets only the bank's.
+
+The picker's is the real one — persisted, attached to a specific meal, and with
+tiers the bank lacks (slot tag, then slot use count).
+
+### Where the sliders go *(decided)*
+
+**Into the picker.** The occasion sheet offers the presets *and* a way to open
+the sliders, for either:
+
+- a **one-time priority setting** for this meal, or
+- **defining a new occasion** from what you just tuned — which is 2B.5 arriving
+  at its natural home rather than in the sort note.
+
+This puts the sliders where choosing happens, which is the whole fix.
+
+**Two things it leaves open, to settle before building:**
+
+1. **A one-off weighting needs somewhere to live.** `plan[date].occasions[slot]`
+   currently holds an occasion id, a plain string. An unnamed weighting means
+   either a union type there, a parallel `slotWeights` key, or an anonymous
+   entry in `state.occasions` hidden from the offered list. This is a schema
+   decision and it revises 2B.1's model — decide it before writing code.
+2. **Does the Cook tab still need a weighting of its own?** Cook is choosing but
+   is not bound to a slot, so the transient `activeWeights` may still be right
+   there. If so the two states survive, just honestly scoped — and they must stop
+   silently disagreeing. Putting the sliders in the picker fixes *reachability*;
+   it does not by itself resolve *duplication*.
+
+### 2.5B · "Sort" is the wrong word — and the real sort is load-bearing
+
+It mislabels the panel: *sort* means one key, and a multi-criteria relevance
+weighting is a different species. **"Priorities"** is the honest name, and after
+the decision above the panel's home is the picker anyway.
+
+Worse, it spent the one obvious word on the feature least entitled to it. The
 sorts a cook would actually want — A–Z, never cooked, most overdue, most often
 cooked, recently cooked — **are not accessible anywhere.** "Due" is a partial
-answer behind a button that opens a dialog. A real sort control is a genuine gap,
-and naming it correctly is a prerequisite for filling it.
+answer behind a button that opens a dialog.
+
+**And 2.5A promotes this from a gap to a requirement.** If Cook does both jobs by
+reordering one list, the sort control *is* the mode switch: A–Z is the browse
+mode. It stops being a nicety and becomes the thing that makes two tabs possible
+instead of three.
 
 ### 2.5C · The TECH marks are hard to parse
 
