@@ -7,26 +7,38 @@ Items are grouped by **surface** rather than by where the idea came from, becaus
 that's how they get built — one batch per area. Sizes are rough: *minutes*,
 *afternoon*, *a day*, *a week*, *a project*.
 
-Last updated 2026-10-13.
+Last updated 2026-10-14.
 
 ---
 
 ## Start here
 
-**2A, 2A.1, 2B.1 and 2B.2 are done.** Occasions moved from days to meal slots,
-empty slots stopped existing, occasions became editable data, and weights now
-read as proportions. Schema v8, verified against the real 63-meal / 43-day
-backup with nothing lost.
+**Batch 2.5 is now the lead, and it starts with structure, not typography.**
+Raised 2026-10-14, after a day away from the app was enough for its author to
+lose track of where the priority sliders live. Nothing else should be built on
+the current layout until that conversation happens — see Batch 2.5 below, which
+has been rewritten as an agenda rather than a list of fixes.
 
-**2B.3–2B.5 (the editor) wait for evidence.** They are scoped and ready, but
-occasions have been set only five times in 43 days — and that number is not
-trustworthy, since it spans a desktop-only stretch and a mobile rebuild, and the
-control was buried in a day dropdown for most of it. 2A and 2A.1 just made it
-far more reachable. Give it a week of normal use and look again.
+**2B is parked at 2B.2a.** Occasions moved from days to meal slots, empty slots
+stopped existing, occasions became editable data, weights read as proportions,
+and the weight panel finally got an entry point. Schema v8, verified against the
+real 63-meal / 43-day backup with nothing lost. The remaining items —
 
-**The strongest alternative if 2B stalls is 3C — does this dish earn its place.**
-Unlike the rest of Batch 3 it is *not* waiting on rating history; it needs TECH
-magnitudes, which already exist and are substantially hand-set.
+**2B.3–2B.5 — are parked, not waiting.** They are scoped and ready, but every one of
+them assumes occasions are reached the way they are reached today — and that is
+precisely the assumption Batch 2.5 now puts in question. Building an editor for
+a control whose home is about to move means building it twice.
+
+(The usage figure that first prompted caution — occasions set five times in 43
+days — is not trustworthy on its own: it spans a desktop-only stretch and a
+mobile rebuild, and the control was buried in a day dropdown for most of it. But
+the structural argument stands without it.)
+
+**3C — does this dish earn its place — is the one build still safely available.**
+It reads magnitudes, which already exist and are substantially hand-set, and it
+answers a question no current surface answers, so it does not depend on how the
+surfaces get rearranged. If something needs building before 2.5 is settled, it is
+this.
 
 **Two things to watch:**
 
@@ -54,47 +66,11 @@ back; an analysis view on thin data shows nothing and wrongly discredits the ide
 
 ## Batch 2 — occasions
 
-**2A, 2A.1 and 2B.1 shipped 2026-10-13** and are recorded under Done. What's left
-is one small item that should be done next, and three that should wait.
+**2A through 2B.2a shipped 2026-10-13** and are recorded under Done. The three
+items below are **parked** — see "Start here". Each assumes occasions are reached
+the way they are reached today, which is the question Batch 2.5 reopens.
 
-### 2B.2 · Weights read as proportions *(an afternoon — do this next)*
-
-**This fixes a live defect, not a future feature.** `fitScore` normalises by the
-sum of the weights, so all four sliders at maximum is mathematically identical to
-all four at normal — the interface lets you spend four gestures saying nothing.
-See `DESIGN.md` §2, "A weight has no absolute size".
-
-**Revised 2026-10-13 after measuring.** The first version of this item proposed
-quantising the slider to five named steps. That was wrong: measured against the
-real repertoire, five steps reach 105 distinct top-5 lists where 0.1 steps reach
-361, and 0.05 steps reach no more than 0.1 does. **0.1 is where the signal
-actually stops** — the existing increment is right, and coarsening it would throw
-away two-thirds of what the repertoire can express. See `DESIGN.md` §2.
-
-So the problem was never the stored number. It was printing `1.4×` as though a
-tenth were a readable quantity.
-
-- **Keep the slider continuous at 0.1.** No change to its mechanics.
-- **Drop the `1.4×` readout.** That is the false precision — a display claim, not
-  a storage one.
-- **Put the shares in its place.** *Taste 42% · Effort 41% · Cost 9% · Health 8%*,
-  as a bar. All-at-maximum then visibly becomes a flat bar, identical to
-  all-at-normal, which is the truth. It answers "how are these ranked, and how
-  far apart", which is the whole content of a weighting.
-- **Words as landmarks on the track, not as detents** — *ignore it · normal ·
-  this is the point* under the slider, so the vocabulary is there without
-  quantising anything.
-
-The feedback loop then closes properly: the shares show what you asked for, and
-the meal list right below shows what it bought. A 0.1 nudge that changes nothing
-visible is itself worth seeing.
-
-This belongs here rather than inside the editor, because the sliders exist and
-are wrong *today*. 2B.3 then inherits a finished control instead of inventing one.
-It is also where the magnitude/weight distinction becomes visible — four
-independent 1–5 values look nothing like four shares of a whole.
-
-### 2B.3 · The occasion editor *(wait for evidence)*
+### 2B.3 · The occasion editor *(parked)*
 
 Label, optional hint, the four weights, and a live preview: *"across your
 repertoire this favours: X · Y · Z"*, recomputed as you adjust.
@@ -105,14 +81,14 @@ not as what you would literally see on a given night.
 
 Ordinary is not editable — see `DESIGN.md` §4.
 
-### 2B.4 · Add and retire *(with 2B.3)*
+### 2B.4 · Add and retire *(parked, with 2B.3)*
 
 Add a new occasion; **retire** rather than delete. A retired occasion stops being
 offered but still renders where already used, so history keeps its meaning.
 Outright deletion only when nothing references it, past or future. The data layer
 for this shipped with 2B.1 and is tested — only the controls are missing.
 
-### 2B.5 · Save the current weighting as an occasion *(with 2B.3)*
+### 2B.5 · Save the current weighting as an occasion *(parked, with 2B.3)*
 
 A third action beside *adjust* and *clear* in the sort note. Tune the bank until
 the list looks like the kind of night you mean, then name it.
@@ -122,34 +98,113 @@ looking at the real list, not a model of it. Nearly free once 2B.3 exists.
 
 ---
 
-## Batch 2.5 — the visual reconsideration *(needs discussion first)*
+## Batch 2.5 — what the app is for, and how it says so *(a conversation, then a project)*
 
-Raised 2026-10-12 after two weeks of use. **Do not start building any of this
-until we have talked it through** — these are connected, and fixing them one at a
-time would mean doing the work twice.
+**This is an agenda, not a plan.** Nothing below is decided. It was a list of
+three visual fixes until 2026-10-14; it is now led by a structural question that
+has to be answered first, because the visual questions are all downstream of it.
 
-**2.5A — Is "Service" too literary?** The paper ground, the serif, the
-letterpress restraint — it may be reaching for a register this app doesn't need.
-Worth re-examining as a whole rather than patching. Not urgent, and the current
-look is perfectly usable in the meantime.
+### The finding that reordered this
 
-**2.5B — The TECH marks are hard to parse.** The four sliding markers don't read
-at a glance, and the colours don't signify clearly enough to tell you which axis
-you're looking at. This is the most important item in the group: the marks are
-the one place colour is allowed, so they carry the whole motif. If they aren't
-legible, the motif isn't doing its job.
+A day away from the app was enough for its author to lose track of where the
+priority sliders live. That is after two builds aimed squarely at the problem —
+the share readout (2B.2) and the SORT button (2B.2a). Both added surface to fix
+what turns out to be a structural fault, which is why neither worked.
 
-*Connects to 4A (foreground the TECH motif) — that item should probably be
-absorbed into this discussion rather than built separately.*
+Jamey's own summary, which belongs in the record:
 
-**2.5C — The More sheet is a cluttered text list.** Should be icon-based, or at
-least visually structured rather than a stack of sentences. Small on its own, but
-it's part of the same question about how the interface wants to look.
+> We are building some sophisticated tools, but not surfacing them effectively.
+> If I have trouble finding and understanding what the app is doing, a different
+> user stands no chance.
+
+### 2.5A · The Meals tab is doing two unrelated jobs *(the lead question)*
+
+| Managing the repertoire | Choosing what to cook |
+| --- | --- |
+| **New** — add a meal | **Due** — what's overdue |
+| **Map** — asks vs offers | **Filter** — by tag |
+| the list as a browsable cookbook | the priority weighting |
+| | the list as a *ranked recommendation* |
+
+One list, two readings, nothing naming either. The priority sliders are a
+*choosing* tool living in a *managing* place — which is why "defining an occasion
+lives in the Meals tab" feels wrong. It is wrong, and signposting cannot fix it.
+
+**The tab bar is already asking "what do you want to do?" — it is just answering
+with nouns.** Plan, Meals and Deck are places. A candidate:
+
+| Tab | The question it answers |
+| --- | --- |
+| **Plan** | What's the week? |
+| **Tonight** | What should I cook *now*? |
+| **Meals** | What's in my repertoire? |
+
+Deck probably folds into Tonight — on-deck dishes are literally "what I want to
+cook soon", which is the first thing a *what should I cook* surface should show.
+That keeps the count at three.
+
+**Open questions, genuinely open:**
+
+- Is "Tonight" the right frame, or does it over-commit to dinner? Breakfast and
+  lunch are now first-class after 2A.
+- **Does the bank's copy of the priority tool deserve to exist at all?** Choosing
+  already happens in the *picker*, where the occasion drives the order and the
+  subtitle changes it. That path may already be the good one, which would make
+  the Meals-tab copy the redundant one rather than the badly-placed one.
+- Jamey's proposal was a greeting — *"What do you want to do? Plan a menu /
+  Choose a meal"* — possibly as a hero section. The instinct is right. The
+  reservation is that a question you have answered two hundred times becomes a
+  door to open with your hands full, and that a signpost above a confusing
+  structure is not the same as fixing it. A one-time orientation for new users is
+  a different and probably better use of the same idea.
+
+### 2.5B · "Sort" is the wrong word, twice
+
+It mislabels the panel — *sort* means one key, and a multi-criteria relevance
+weighting is a different species. **"Priorities"** is the honest name.
+
+Worse, it spends the one obvious word on the feature least entitled to it. The
+sorts a cook would actually want — A–Z, never cooked, most overdue, most often
+cooked, recently cooked — **are not accessible anywhere.** "Due" is a partial
+answer behind a button that opens a dialog. A real sort control is a genuine gap,
+and naming it correctly is a prerequisite for filling it.
+
+### 2.5C · The TECH marks are hard to parse
+
+The four sliding markers don't read at a glance, and the colours don't signify
+clearly enough to say which axis you're looking at. The marks are the one place
+colour is allowed, so they carry the whole motif; if they aren't legible, the
+motif isn't doing its job.
+
+Two findings from the 2B conversation feed straight into this:
+
+- **Magnitudes and weights look alike and are categorically different** (see
+  `DESIGN.md` §2). The share bar was meant to separate them. It did not fully
+  work: the weight slider was still described as "the rating range" the day after
+  it shipped.
+- **Centring *normal* on the weight slider made it look *more* like a 1–5 rating**,
+  where 3 is also the middle. That was the right call for usability and the wrong
+  direction for distinctness. The separation has to come from here, not from a
+  readout.
+
+*Absorbs 4A (foreground the TECH motif) — do not build that separately.*
+
+### 2.5D · Is "Service" too literary?
+
+The paper ground, the serif, the letterpress restraint may be reaching for a
+register this app doesn't need. **Last, deliberately.** Typography follows
+structure; restyling surfaces that 2.5A may dissolve is work done twice.
+
+### 2.5E · The More sheet is a cluttered text list
+
+Should be icon-based, or at least structured rather than a stack of sentences.
+Small, and downstream of everything above.
 
 **Open question carried forward:** are the TECH colours strictly reserved for
-TECH? Today's date currently carries a Tasty-red rule, which is the one existing
-exception. Either make it ink, or write the exception into `DESIGN.md` as a
-named rule rather than a drift.
+TECH? Today's date carries a Tasty-red rule, which is now the only remaining
+exception — `#filterToggle.on` used the Health green until 2B.2a and is now ink.
+Either make the date ink too, or write the exception into `DESIGN.md` as a named
+rule rather than a drift.
 
 ---
 
@@ -264,7 +319,9 @@ history.
 ## Waiting on evidence
 
 - **Whether the slot label and the word row read as tappable.** No affordance
-  was added on purpose; see "Start here".
+  was added on purpose; see "Start here". Note that this is the same class of
+  problem as 2.5A — reachability — and may be answered by that conversation
+  rather than on its own.
 - **Hide header on scroll** — re-ask after 1D.
 
 ---

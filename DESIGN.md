@@ -373,6 +373,21 @@ Keep it that way.
   hardest to read — scaling only the dish names and notes enlarges what was
   already legible and misses the actual problem. Large mode should also darken
   the faintest ink; size alone does not fix contrast.
+- **Adding a control will not fix a confused structure.** Discoverability of the
+  priority weighting was attacked twice — once by giving it an honest readout,
+  once by giving it a permanent button — and a day away from the app was still
+  enough to lose it. Both were additive fixes to a structural fault: the Meals
+  tab does two unrelated jobs, and the tool lives in the wrong one. Jamey,
+  2026-10-14: *"We are building some sophisticated tools, but not surfacing them
+  effectively. If I have trouble finding and understanding what the app is doing,
+  a different user stands no chance."* When a second signpost is needed, the
+  problem is the building, not the signs.
+- **Name surfaces after the question they answer, not the data they hold.** Plan,
+  Meals and Deck are places; a cook arrives with a question. A tab bar of nouns
+  is a "what do you want to do?" prompt that declines to answer.
+- **Structure first, then typography.** Restyling a surface that is about to be
+  dissolved is work done twice — which is why the visual items in Batch 2.5 now
+  sit behind the structural one.
 - **When a surface feels cluttered, look for a concept to delete before
   reaching for a setting.** Empty meal slots were going to be fixed with
   defaults — global, or indexed to the weekday. Both would have kept the
