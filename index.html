@@ -21,7 +21,13 @@
   :root{
     --paper:#F4F2EC; --paper-2:#EDEBE3; --ink:#1E1F1C; --ink-2:#5E6057; --ink-3:#8C8E84;
     --rule:#DBD8CE; --rule-2:#C8C5B8;
+    /* Fills: ticks, swatches, bars. Contrast matters little in a solid block. */
     --tech-t:#A6503F; --tech-e:#B4852C; --tech-c:#4A6E8C; --tech-h:#3F6148;
+    /* Type: the same four hues, darkened to a common ~6:1 against paper. As
+       fills these read evenly; as letters they did not -- the amber sat at
+       2.96:1 against the green's 6.22:1, so "TECH" came out lopsided and the E
+       nearly vanished. Thin strokes need contrast a solid tick does not. */
+    --tech-t-ink:#904637; --tech-e-ink:#75561D; --tech-c-ink:#405F78; --tech-h-ink:#3F6148;
     --display:"Fraunces",Georgia,serif;
     --label:"Barlow Condensed","Arial Narrow",sans-serif;
     --body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
@@ -65,8 +71,13 @@
          border-bottom:1px solid var(--ink);background:var(--paper);flex:none}
   .wordmark{display:flex;flex-direction:column;line-height:.86;flex:none}
   .wordmark .wm-food{font-family:var(--display);font-style:italic;font-weight:500;font-size:19px;letter-spacing:.01em}
-  .wordmark .wm-tech{font-family:var(--label);font-weight:600;font-size:14px;letter-spacing:.34em;
-                     color:var(--tech-t);margin-left:1px}
+  .wordmark .wm-tech{font-family:var(--label);font-weight:700;font-size:14px;letter-spacing:.26em;
+                     margin-left:1px}
+  .wordmark .wm-tech i{font-style:normal}
+  .wordmark .wm-tech i:nth-child(1){color:var(--tech-t-ink)}
+  .wordmark .wm-tech i:nth-child(2){color:var(--tech-e-ink)}
+  .wordmark .wm-tech i:nth-child(3){color:var(--tech-c-ink)}
+  .wordmark .wm-tech i:nth-child(4){color:var(--tech-h-ink)}
   .head-right{margin-left:auto;display:flex;align-items:center;gap:10px}
   .cloud-status{font-family:var(--label);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
   .cloud-status.ok{color:var(--tech-h)}
@@ -212,12 +223,19 @@
          color:var(--ink-3);padding:20px 0;line-height:1.6}
 
   /* ---------------------- TECH marks (the only colour) ------------- */
-  .tech-glyph{display:inline-flex;gap:3px;align-items:center;flex:none}
-  .tech-glyph i{position:relative;width:15px;height:2px;background:var(--rule-2);display:block}
-  .tech-glyph i::after{content:"";position:absolute;top:-3px;width:3px;height:8px;background:var(--tc);
-                       left:calc((var(--tv,3) - 1) / 4 * 12px)}
-  .tech-glyph i:nth-child(1){--tc:var(--tech-t)} .tech-glyph i:nth-child(2){--tc:var(--tech-e)}
-  .tech-glyph i:nth-child(3){--tc:var(--tech-c)} .tech-glyph i:nth-child(4){--tc:var(--tech-h)}
+  /* The mark spells TECH, and lights the fields the dish is strong in. It
+     replaced four 15px tracks whose markers moved 3px per point -- a one-point
+     difference was three pixels, and the hover text that explained the hues
+     does not exist on a phone. Three states carry 24 distinct, legible
+     patterns across a 63-meal repertoire where the tracks delivered almost
+     none; five states would reach 35 but are past what a 13px letter can hold. */
+  .tech-glyph{display:inline-flex;gap:3px;align-items:baseline;flex:none;
+              font-family:var(--label);font-size:calc(var(--fs-lab) * 1.2);
+              letter-spacing:.04em;line-height:1}
+  .tech-glyph b{display:block;width:.82em;text-align:center;color:var(--tc)}
+  .tech-glyph b.lv2{font-weight:700}                              /* most so */
+  .tech-glyph b.lv1{font-weight:500;opacity:.62}                  /* notably so */
+  .tech-glyph b.lv0{font-weight:400;opacity:.26;color:var(--ink-3)}  /* unremarkable */
 
   /* ---------------------------- deck ------------------------------ */
   .deck-item{display:flex;align-items:center;gap:10px;border-bottom:1px dotted var(--rule);min-height:var(--tap)}
@@ -414,7 +432,9 @@
 
 <header>
   <span class="wordmark" aria-label="FoodTech">
-    <span class="wm-food">food</span><span class="wm-tech">TECH</span>
+    <!-- Four letters, four axis colours: the wordmark is the legend. Nothing
+         else on screen says which hue means which axis. -->
+    <span class="wm-food">food</span><span class="wm-tech"><i>T</i><i>E</i><i>C</i><i>H</i></span>
   </span>
   <span class="head-right">
     <!-- Status earns header space only when it has something to report; signing
@@ -1000,13 +1020,23 @@ function radarSVG(m, size){
   '</svg>';
 }
 
-// A marker on a spectrum, not a filled bar: "more" is not "better" here.
+/* The list mark shows VIRTUE, not magnitude -- which fields this dish is strong
+   in, lit on the letters that name them. Magnitude stays neutral and precise in
+   the editor and the detail sheet, where you are reading facts rather than
+   choosing. Virtues are evaluative by definition, so lighting them is not the
+   "higher is better" error: it is the dominance relation, and the occasion still
+   decides which lit letters are the ones you want tonight. */
+function virtueLevel(k, v){
+  const toward = AXIS[k].kind === "offer" ? v : 6 - v;   // 5 = most virtuous
+  return toward >= 5 ? 2 : toward === 4 ? 1 : 0;
+}
 function techGlyph(m){
   const mag = techMagnitudes(m);
   let marks = "", title = [];
   for(const ax of TECH_AXES){
     const v = mag[ax.k];
-    marks += '<i class="tm" style="--tc:var('+ax.varName+');--tv:'+v+'"><b></b></i>';
+    marks += '<b class="lv'+virtueLevel(ax.k, v)+'" style="--tc:var('+ax.varName+'-ink)">'+
+             ax.virtue.charAt(0)+'</b>';
     title.push(ax.label+" "+v+" ("+ax.scale[v]+")");
   }
   return '<span class="tech-glyph" title="'+title.join(" · ")+'">'+marks+'</span>';

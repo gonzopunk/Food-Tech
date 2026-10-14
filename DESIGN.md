@@ -94,6 +94,7 @@ assumption rather than a faithful translation, and the right one: marking lunch
 | **Magnitude vs virtue** | Magnitudes are descriptive and live on the meal. Virtue is evaluative, situational, and computed. Collapsing these is the error that took three rounds to find. |
 | **Potential vs realization** | A dish's ceiling vs how close you got tonight. A 3-star salmon means "great dish, botched it" or "executed fine, it's just okay" — different diagnoses, different responses. |
 | **Demands vs offers** | Effort and cost are paid; taste and health are received. Virtue is the proportion between them, given the occasion. |
+| **Magnitude vs virtue, on screen** | The same four axes, shown two ways for two jobs. *Magnitude* is neutral and precise — markers, numbers, words — and belongs where you are reading or setting facts: the editor, the detail sheet, the Map. *Virtue* is evaluative and coarse — which fields this dish is strong in — and belongs in a list, where you are choosing. Lighting virtues is not the "higher is better" error; it is the dominance relation, and the occasion still decides which lit letters are the ones you want. |
 | **Magnitude vs weight** | Two sets of four numbers that look alike and are categorically different. A *magnitude* is a property of a dish — descriptive, absolute, 1–5. A *weight* is how much that field matters on this kind of night — a lens, not a fact, and meaningful only in proportion to the other three. The picker's whole job is to match one against the other. Found 2026-10-13; see below. |
 
 ### A weight has no absolute size
@@ -169,6 +170,41 @@ share a profile with at least one other — no weighting at any resolution can
 separate Chicken Marsala from Chicken Florentine. Giving magnitudes half-steps
 would raise distinct profiles to 42 and distinct top-5 lists from 361 to **989**.
 That is the film-review half-star argument, applied where it belongs.
+
+### Two palettes, because a tick is not a letter
+
+Found 2026-10-14. The four TECH hues were chosen as **fills** — solid 3×8px
+ticks, where contrast barely matters. Used as **type**, thin strokes need far
+more, and the set turned out to be wildly uneven against the paper:
+
+| | Fill | Contrast vs `#F4F2EC` |
+| --- | --- | --- |
+| Tasty | `#A6503F` | 4.88:1 |
+| **Easy** | `#B4852C` | **2.96:1** — fails as text |
+| Cheap | `#4A6E8C` | 4.81:1 |
+| Healthy | `#3F6148` | 6.22:1 |
+
+A 2.1× spread is why "TECH" set in those colours read as four unrelated letters
+rather than one word, with the E nearly vanishing. So there are now two sets:
+`--tech-*` for fills, and `--tech-*-ink` darkened to a common ~6:1 for type.
+
+### The colours are overloaded, which is why they do not signify
+
+Also 2026-10-14. `DESIGN.md` has always said colour appears in exactly one
+place. It does not. **Fourteen sites use a TECH colour for a non-TECH meaning:**
+
+| Hue | Should mean | Also currently means | Sites |
+| --- | --- | --- | --- |
+| Green `--tech-h` | Healthy | good / met / ok / new | 4 |
+| Red `--tech-t` | Tasty | alert / active / danger / today | 7 |
+| Amber `--tech-e` | Effort | due | 3 |
+
+Green does not read as *Healthy*; it reads as *good*, because that is what it
+means in four other places. The marks were never unclear so much as **ambiguous
+by overload** — and no amount of work on the marks themselves fixes that while
+the same hues carry other meanings elsewhere. (The Tasty red on ratings and
+stars is not erosion: that is the Tasty axis, and the rule has always allowed
+it.)
 
 ### Things that are true and easy to get wrong
 

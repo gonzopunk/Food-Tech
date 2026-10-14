@@ -20,8 +20,12 @@ lose track of where the priority sliders live.
 **2.5A now has a direction** — two verb tabs, **Plan** and **Cook**; browsing and
 choosing as two orderings of one list rather than two places; Deck absorbed; the
 priority sliders moved into the picker. Two open items remain under it, both
-schema-shaped, and they should be settled before any code. **2.5B–2.5E are still
-open.** Nothing else should be built on the current layout meanwhile.
+schema-shaped, and they should be settled before any code.
+
+**2.5C is half done.** The lettered TECH marks and the two palettes shipped
+2026-10-14. The colour cleanup under it is the next piece, and it needs
+decisions rather than edits. **2.5B, 2.5D and 2.5E are still open.** Nothing
+else should be built on the current layout meanwhile.
 
 **2B is parked at 2B.2a.** Occasions moved from days to meal slots, empty slots
 stopped existing, occasions became editable data, weights read as proportions,
@@ -241,25 +245,57 @@ reordering one list, the sort control *is* the mode switch: A–Z is the browse
 mode. It stops being a nicety and becomes the thing that makes two tabs possible
 instead of three.
 
-### 2.5C · The TECH marks are hard to parse
+### 2.5C · The TECH marks *(lettered marks shipped 2026-10-14; colour cleanup outstanding)*
 
-The four sliding markers don't read at a glance, and the colours don't signify
-clearly enough to say which axis you're looking at. The marks are the one place
-colour is allowed, so they carry the whole motif; if they aren't legible, the
-motif isn't doing its job.
+**Diagnosed, and it was two independent failures.**
 
-Two findings from the 2B conversation feed straight into this:
+*Resolution.* Each axis was a 15px track with 12px of travel across five values —
+**3px per step**. Brisket (4-5-4-2) and Butternut squash soup (5-3-3-4) differ on
+all four axes, about as far apart as two dishes in the repertoire get, and that
+was **12px of movement inside a 69px glyph**. Chicken Florentine and Chicken
+Marsala were 0px apart. The hover text that explained the hues does not exist on
+a phone.
 
-- **Magnitudes and weights look alike and are categorically different** (see
-  `DESIGN.md` §2). The share bar was meant to separate them. It did not fully
-  work: the weight slider was still described as "the rating range" the day after
-  it shipped.
-- **Centring *normal* on the weight slider made it look *more* like a 1–5 rating**,
-  where 3 is also the middle. That was the right call for usability and the wrong
-  direction for distinctness. The separation has to come from here, not from a
-  readout.
+*Encoding.* Four hues with no key anywhere, while the letters T-E-C-H — the name
+of the system, and a free mnemonic — went unused.
 
-*Absorbs 4A (foreground the TECH motif) — do not build that separately.*
+**What shipped.** The mark now spells TECH and lights the fields a dish is strong
+in, at three states: most so / notably so / unremarkable. Measured on the real
+63-meal repertoire:
+
+| | Distinct patterns | Largest cluster | Unique to one dish |
+| --- | --- | --- | --- |
+| 2 states | 14 | 16 | 3 |
+| **3 states (built)** | **24** | **8** | **12** |
+| 5 states | 35 | 8 | 25 |
+
+Three recovers 69% of the full differentiation where two recovers 40%, and the
+splits are meaningful — the 16-dish weeknight block separates into chicken,
+soups and the green smoothie. Five was rejected: a 13px letter cannot hold five
+lightness steps. The glyph also got *narrower*, 69px → 52px, and every row is the
+same width so the column aligns.
+
+**The wordmark is now the key** — T, E, C, H each in their axis colour. At 14px
+it is more signature than legend; teaching the code properly wants a larger
+instance somewhere (an About, or the beta-tester page).
+
+**Two palettes.** The hues were built as fills and failed as type — amber at
+2.96:1 against green's 6.22:1. `--tech-*-ink` is the darkened set at a common
+~6:1. See `DESIGN.md` §2.
+
+### Still outstanding under 2.5C — the colour cleanup
+
+**The marks will keep under-signifying until this is done.** Fourteen sites use a
+TECH colour for a non-TECH meaning: green reads as *good* in four places, red as
+*alert* in seven, amber as *due* in three. A reader's learned association for
+green is therefore "good", not "Healthy".
+
+This needs decisions, not just edits — what *should* carry "due", "danger",
+"today", "active tab", "sync ok"? Ink and weight cover most of it, as they did
+for `#filterToggle.on` in 2B.2a. **The roadmap previously claimed today's date
+was "the only remaining exception"; that was wrong by an order of magnitude.**
+
+*Absorbs 4A (foreground the TECH motif) — done, do not build it separately.*
 
 ### 2.5D · Is "Service" too literary?
 
@@ -272,11 +308,10 @@ structure; restyling surfaces that 2.5A may dissolve is work done twice.
 Should be icon-based, or at least structured rather than a stack of sentences.
 Small, and downstream of everything above.
 
-**Open question carried forward:** are the TECH colours strictly reserved for
-TECH? Today's date carries a Tasty-red rule, which is now the only remaining
-exception — `#filterToggle.on` used the Health green until 2B.2a and is now ink.
-Either make the date ink too, or write the exception into `DESIGN.md` as a named
-rule rather than a drift.
+**Open question, now answered and reopened as work:** the TECH colours are *not*
+reserved for TECH — fourteen sites say otherwise. See "the colour cleanup" under
+2.5C. The Tasty red on ratings and stars is not an exception to fix; that is the
+Tasty axis, and the rule has always permitted it.
 
 ---
 
