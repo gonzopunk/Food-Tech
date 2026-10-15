@@ -554,7 +554,8 @@ The look changed; nothing moved. Implements `BRIEF.md` section 9.
 
 | | |
 | --- | --- |
-| **Type** | Fraunces and Barlow Condensed out; **Spectral** for words, **Courier Prime** for apparatus. Courier runs about a third wider than the condensed face, so the label scale dropped to 10 / 9.5px and the slot column widened to 70px — without that, celebration wrapped. |
+| **Type** | Fraunces and Barlow Condensed out; **Spectral** for words, **IBM Plex Mono** for apparatus. Monospace runs about a third wider than the condensed face, so the label scale dropped to 10 / 9.5px, the slot column widened to 70px and the slot words tightened — without those, "celebration" and the add row both wrapped. Meal names went up a step, to 17px. |
+| **The apparatus face** | Courier Prime was tried first and replaced the same day: spindly at 10px, and it read as a typewriter rather than an instrument. Every monospace shares a 0.6em advance, so the swap cost nothing — "celebration" is 66px in any of them, against 49px in the old condensed face and 42px in a narrow grotesque. That 17px is the price of figures that line up. |
 | **Colour** | Near-white `#FAF9F6` ground, indigo mark ramp, vermilion signal. |
 | **Dark** | Designed, not inverted: warm charcoal ground, and the mark hue lifts to `126,144,204` because a dark hue on a dark field cannot hold five steps. Follows the phone, with an override in More. |
 | **Colour cleanup** | All fourteen overloaded sites done. Sync, goals, today, due, danger, map hover and the active tab no longer borrow an axis hue. **No CSS rule uses one any more** — the four survive only in the detail readout and the Priorities panel, where the axes are named and never compared by intensity, and both of those surfaces are still to be designed. |

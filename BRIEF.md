@@ -236,8 +236,13 @@ survive.
 
 - **Spectral** — anything read as words: dish names, day names, section titles.
   400 normal, 500 for headings.
-- **Courier Prime** — all apparatus: labels, dates, counts, tabs, the `T E C H`
-  column header, sort and filter values. 400 and 700.
+- **IBM Plex Mono** — all apparatus: labels, dates, counts, tabs, the `T E C H`
+  column header, sort and filter values. 400, 500, 600.
+
+  *Courier Prime was tried first and replaced on 2026-10-15: it went spindly at
+  10px and read as a typewriter rather than an instrument. Every monospace is
+  the same width (a 0.6em advance), so the swap cost nothing in layout. Plex was
+  drawn for technical documentation, which is what this apparatus is.*
 
 | Role | Size |
 | --- | --- |
