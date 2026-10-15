@@ -22,10 +22,13 @@ choosing as two orderings of one list rather than two places; Deck absorbed; the
 priority sliders moved into the picker. Two open items remain under it, both
 schema-shaped, and they should be settled before any code.
 
-**2.5C is half done.** The lettered TECH marks and the two palettes shipped
-2026-10-14. The colour cleanup under it is the next piece, and it needs
-decisions rather than edits. **2.5B, 2.5D and 2.5E are still open.** Nothing
-else should be built on the current layout meanwhile.
+**2.5C marks are settled.** After a round of mock-ups the marks became a
+single-hue heatmap -- four cells, one teal ramp, five steps (2026-10-15). The
+**colour cleanup** under 2.5C is the next piece and needs decisions rather than
+edits — and it is now simpler, because **the app has exactly one colour and it
+means measurement**: the marks and the wordmark share the teal ramp, so there is
+no second accent to find a home for. **2.5B, 2.5D and 2.5E are still open.**
+Nothing else should be built on the current layout meanwhile.
 
 **2B is parked at 2B.2a.** Occasions moved from days to meal slots, empty slots
 stopped existing, occasions became editable data, weights read as proportions,
@@ -259,29 +262,51 @@ a phone.
 *Encoding.* Four hues with no key anywhere, while the letters T-E-C-H — the name
 of the system, and a free mnemonic — went unused.
 
-**What shipped.** The mark now spells TECH and lights the fields a dish is strong
-in, at three states: most so / notably so / unremarkable. Measured on the real
+**Lettered marks were built and then replaced.** They failed for a reason worth
+keeping: *letters invoke reading.* The eye tries to parse a word and resents the
+variance in weight and lightness -- interference, not information. A data display
+has to be read perceptually, not linguistically.
+
+**What shipped 2026-10-15: a single-hue heatmap.** Four cells, always T E C H,
+each filled by how far toward its virtue that axis sits. Measured on the real
 63-meal repertoire:
 
-| | Distinct patterns | Largest cluster | Unique to one dish |
+| Treatment | Levels | Patterns delivered | Largest clump |
 | --- | --- | --- | --- |
-| 2 states | 14 | 16 | 3 |
-| **3 states (built)** | **24** | **8** | **12** |
-| 5 states | 35 | 8 | 25 |
+| Sliding markers *(removed)* | 5, at 3px a step | ~0 | — |
+| Letters, lit / ghosted | 2 | 14 | 16 |
+| Letters, three weights *(removed)* | 3 | 24 | 8 |
+| **Filled cells (built)** | **5** | **35** | **8** |
 
-Three recovers 69% of the full differentiation where two recovers 40%, and the
-splits are meaningful — the 16-dish weeknight block separates into chicken,
-soups and the green smoothie. Five was rejected: a 13px letter cannot hold five
-lightness steps. The glyph also got *narrower*, 69px → 52px, and every row is the
-same width so the column aligns.
+A filled cell holds five steps where a 13px letter held three, so the heatmap is
+the first treatment to deliver **every** distinction the data contains — 35
+patterns, the same number as there are distinct TECH profiles in the repertoire.
 
-**The wordmark is now the key** — T, E, C, H each in their axis colour. At 14px
-it is more signature than legend; teaching the code properly wants a larger
-instance somewhere (an About, or the beta-tester page).
+**One hue, not four.** Elizabeth: different colours make relative intensity
+harder to judge. The eye ranks intensity within a hue and cannot compare
+saturation across hues. See `DESIGN.md` §2. Teal was chosen because it is the
+only hue family not already carrying another meaning in the app, and it is five
+lines to change.
 
-**Two palettes.** The hues were built as fills and failed as type — amber at
-2.96:1 against green's 6.22:1. `--tech-*-ink` is the darkened set at a common
-~6:1. See `DESIGN.md` §2.
+**The ramp says how much, never which**, so a list has to label its columns.
+The bank list now does. **The picker and the deck do not yet** — the one known
+gap, and both are lists, so the same header works.
+
+**The wordmark went single-colour** (2026-10-15), set in the ramp's own top step
+rather than a copy of it, so recolouring the marks recolours the wordmark with
+them and the two can never drift. Its four colours had been a legend for a
+four-hue mark that no longer existed.
+
+**The app now has exactly one colour, and it means measurement** — a stricter
+version of the rule Service always claimed and never kept. That makes the colour
+cleanup below easier rather than harder: everything else goes to ink and weight,
+with no second accent to place.
+
+*Also removed:* the four type-safe hues (`--tech-*-ink`) built on 2026-10-14 to
+fix an amber sitting at 2.96:1 against green's 6.22:1. They existed only to
+colour four wordmark letters and had no other reader. The finding behind them —
+that a palette built for fills can fail as type — is kept in `DESIGN.md` §2,
+because the next accent will meet it too.
 
 ### Still outstanding under 2.5C — the colour cleanup
 

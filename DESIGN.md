@@ -171,6 +171,29 @@ separate Chicken Marsala from Chicken Florentine. Giving magnitudes half-steps
 would raise distinct profiles to 42 and distinct top-5 lists from 361 to **989**.
 That is the film-review half-star argument, applied where it belongs.
 
+### One ramp, not four hues
+
+Decided 2026-10-15, and the reason is perceptual rather than aesthetic.
+Elizabeth: **different colours make it harder to judge relative intensity.** The
+eye ranks intensity reliably *within* one hue and cannot compare saturation
+*across* hues -- a dark teal beside a dark amber says nothing about which value
+is higher. Four coloured columns asked the reader to run four scales at once.
+
+So the marks are four cells in **one hue at five steps**. Consequences worth
+holding on to:
+
+- **The ramp says how much, never which.** Axis identity lives in column
+  position, so any list showing the marks has to label its columns `T E C H`.
+  The bank list does; the picker and the deck do not yet.
+- **Teal, because it is the only family in this app that is not already spoken
+  for** -- red reads as alert in seven places, green as good in four, amber as
+  due in three. Recolouring is five lines (`--mark-hue` and its four steps).
+- **The wordmark is set in the ramp's own top step**, not a copy of it, so the
+  two cannot drift. The app has one colour, and it means measurement -- which is
+  what "colour appears in exactly one place" was always reaching for.
+- A filled cell holds five steps where a 13px letter held three, so this is also
+  the first treatment that delivers all 35 patterns the repertoire contains.
+
 ### Two palettes, because a tick is not a letter
 
 Found 2026-10-14. The four TECH hues were chosen as **fills** — solid 3×8px
