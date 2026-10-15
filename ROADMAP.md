@@ -564,12 +564,33 @@ vertically, so stretching the slot label to make the whole column tappable
 dropped its text **30px below the dish it names**. Flex-start puts it back while
 keeping the 88px tap area. Verified at both text sizes.
 
-**On compression: an empty day is still 94px, and that is the floor.** Head 25,
-add row 44, padding 22, rule 1. The add row cannot shrink without taking the tap
-target under 44px, which `BRIEF.md` forbids. The compression that *was*
-available — slot padding, the dotted slot rules, the today bar — is done, and it
-shows on days with meals rather than on empty ones. Anything further needs a
-different shape for unplanned days, not tighter spacing.
+**The add control moved onto the meal's line** (Jamey's suggestion, and the
+largest single saving available): it used to take a 44px row of its own under
+every filled slot. On the right margin of the last meal it costs nothing, and
+the label shortened to "+ add" to fit. **44px back per filled slot** — a day
+with breakfast, lunch and dinner planned gets 132px, most of a meal row.
+
+It aligns on the meal's **baseline**, not centred in its own box: the meal name
+sits near the top of its 44px target while a centred label sits in the middle,
+which read as the add being dropped a line. It is inset 10px from the margin so
+it sits in whitespace rather than hugging the screen edge.
+
+**An empty day is still 94px, and that is the floor.** Head 25, the slot-word
+row 44, padding 22, rule 1. That row cannot shrink without taking a tap target
+under 44px, which `BRIEF.md` forbids. Anything further needs a different shape
+for unplanned days, not tighter spacing.
+
+**An accessibility fault from step 1, found and fixed here.** `--ink-4` came
+out of a mockup at **2.26:1** against the ground, and `.slot-add` — a control —
+was using it. The scale now carries its jobs in a comment: ink-2 is the floor
+for anything tappable, ink-3 is for quiet metadata and never a control, ink-4 is
+hairlines only and never type. Audited every control in all three views, in both
+themes: **nothing is below 4.5:1.** The slot words and the inactive tabs were
+also under and were lifted.
+
+*Also:* the tabs are lowercase at last. Step 1 added `text-transform:lowercase`
+to a rule that declared `uppercase` four lines later, so it never applied — the
+kind of thing only a second look at the computed style catches.
 
 ### Batch 2.5 step 1 — the material, shipped 2026-10-15
 

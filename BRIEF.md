@@ -214,8 +214,8 @@ build reads this section; if the two disagree, this wins.
 | `--ground` | `#FAF9F6` | `#17160F` |
 | `--ink` | `#22231E` | `#F2F0E6` |
 | `--ink-2` | `#6E6F67` | `#CFCDC2` |
-| `--ink-3` | `#8A8B83` | `#908F85` |
-| `--ink-4` | `#A8A99F` | `#6C6B61` |
+| `--ink-3` | `#7E7F77` | `#9E9D92` |
+| `--ink-4` | `#9B9C92` | `#75746A` |
 | `--rule` | `#CFCCC1` | `#39372D` |
 | `--rule-day` | `#C9C6BA` | `#3D3B30` |
 | `--rule-strong` | `#22231E` | `#F2F0E6` |
@@ -254,6 +254,21 @@ survive.
 | Tabs | 12.5 |
 | Control value | 12 |
 | Control label, slot label | 10 / 9.5 |
+
+### What each ink level is for
+
+Contrast against the ground, and the rule that goes with it:
+
+| | Light | Job |
+| --- | --- | --- |
+| `--ink` | 15.0:1 | text |
+| `--ink-2` | 4.8:1 | secondary text, **and the floor for anything tappable** |
+| `--ink-3` | 3.7:1 | quiet metadata, never a control |
+| `--ink-4` | 2.5:1 | hairlines and dotted rules only, never type |
+
+The faintest two came out of a mockup, where nothing is tappable. Taking them
+into a real interface put a control at 2.26:1. Audit controls after any palette
+change: every button, link and input in every view, in both themes.
 
 ### Space and rules
 

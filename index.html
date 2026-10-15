@@ -26,8 +26,12 @@
      palette unreadable. See BRIEF.md section 9, which this implements.
   ========================================================================== */
   :root{
-    --paper:#FAF9F6; --paper-2:#F1F0EA; --ink:#22231E; --ink-2:#6E6F67; --ink-3:#8A8B83;
-    --ink-4:#A8A99F;
+    /* ink      15.0:1  text
+       ink-2      4.8:1  secondary text, and the floor for anything tappable
+       ink-3      3.7:1  quiet metadata, never a control
+       ink-4      2.5:1  hairlines and dotted rules only, never type */
+    --paper:#FAF9F6; --paper-2:#F1F0EA; --ink:#22231E; --ink-2:#6E6F67; --ink-3:#7E7F77;
+    --ink-4:#9B9C92;
     --rule:#CFCCC1; --rule-2:#C9C6BA;
     /* The mark ramp: one hue in five steps. The eye ranks intensity within a
        hue and cannot compare saturation across hues, so all four columns share
@@ -67,8 +71,8 @@
      on a dark field cannot hold five steps. */
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --paper:#17160F; --paper-2:#1F1E16; --ink:#F2F0E6; --ink-2:#CFCDC2; --ink-3:#908F85;
-      --ink-4:#6C6B61;
+      --paper:#17160F; --paper-2:#1F1E16; --ink:#F2F0E6; --ink-2:#CFCDC2; --ink-3:#9E9D92;
+      --ink-4:#75746A;
       --rule:#39372D; --rule-2:#3D3B30;
       --mark-hue:126,144,204;
       --signal:#E4705A;
@@ -77,8 +81,8 @@
     }
   }
   :root[data-theme="dark"]{
-    --paper:#17160F; --paper-2:#1F1E16; --ink:#F2F0E6; --ink-2:#CFCDC2; --ink-3:#908F85;
-    --ink-4:#6C6B61;
+    --paper:#17160F; --paper-2:#1F1E16; --ink:#F2F0E6; --ink-2:#CFCDC2; --ink-3:#9E9D92;
+    --ink-4:#75746A;
     --rule:#39372D; --rule-2:#3D3B30;
     --mark-hue:126,144,204;
     --signal:#E4705A;
@@ -92,7 +96,7 @@
     --cell:17px;
     --wlab-w:82px;
     /* and lift the faintest ink: size alone does not fix low contrast */
-    --ink-3:#6E6F67; --ink-4:#86877E;
+    --ink-3:#64655E; --ink-4:#7E7F76;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   [hidden]{display:none!important}
@@ -191,17 +195,28 @@
                letter-spacing:.08em;color:var(--ink-3);margin-left:6px}
   .occ-tick{flex:none;width:16px;text-align:right;color:var(--ink)}
   /* No rule under a slot. Within a day the meals belong together, and the
-     only line on this screen is the one between one day and the next. */
-  .slot-body{min-width:0}
-  .planned{display:flex;align-items:baseline;gap:8px;width:100%;text-align:left;
+     only line on this screen is the one between one day and the next.
+
+     The add control rides on the last meal's line rather than taking one of
+     its own, which is 44px back per filled slot -- three slots on a planned
+     day is 132px, most of a meal row. Meals each take a full line; the last
+     one shares its line with the add. */
+  .slot-body{min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:14px}
+  .planned{display:flex;align-items:baseline;gap:8px;flex:1 1 100%;min-width:0;text-align:left;
            min-height:var(--tap);padding:5px 0;color:inherit}
+  /* the last meal in the slot -- the add button sits after it */
+  .slot-body .planned:nth-last-child(2){flex:1 1 auto}
   .planned .pname{font-family:var(--display);font-weight:500;font-size:var(--fs-dish);line-height:1.2;flex:1;min-width:0}
   .planned.leftover .pname{font-style:italic;color:var(--ink-2)}
   .planned .marks{display:flex;align-items:center;gap:6px;flex:none;font-family:var(--label);
                   font-size:var(--fs-lab);letter-spacing:.06em;color:var(--ink-3)}
   .planned .marks .rate{color:var(--mark-5);letter-spacing:.5px}
-  .slot-add{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.09em;
-            color:var(--ink-3);min-height:var(--tap);display:flex;align-items:center;width:100%}
+  /* A control, so it sits at the ink-2 floor rather than the decorative one.
+     The left padding widens the tap target leftward inside the button, so it
+     reaches 42px without eating the gap that separates it from the meal. */
+  .slot-add{font-family:var(--label);font-size:var(--fs-lab-xs);letter-spacing:.04em;
+            color:var(--ink-2);min-height:var(--tap);display:flex;align-items:center;
+            flex:0 0 auto;white-space:nowrap;padding-left:12px;margin-right:10px}
   .slot-add:hover{color:var(--ink)}
   /* The one row that stands in for every meal not yet planned. It replaces
      three empty slot rows and the "Meals shown" line, which together made an
@@ -209,14 +224,14 @@
   .slot-adds{display:flex;flex-wrap:wrap;align-items:center;gap:0 4px;min-height:var(--tap)}
   .slot-adds .sa-plus{font-family:var(--label);font-size:var(--fs-lab);color:var(--ink-3);margin-right:2px}
   .slot-adds .sa{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.09em;
-                 color:var(--ink-3);padding:6px 4px;min-height:var(--tap);display:flex;align-items:center}
+                 color:var(--ink-2);padding:6px 4px;min-height:var(--tap);display:flex;align-items:center}
   .slot-adds .sa:hover{color:var(--ink)}
   .slot-adds .sa-sep{color:var(--rule-2);font-size:var(--fs-lab)}
   /* In the plan it is indented to line up with the dishes; in the day picker
      it starts at the edge, because there is no label column there. */
   .day .slot-adds{padding-left:calc(var(--slot-lab-w) + 8px)}
   .daytotal{font-family:var(--label);font-size:var(--fs-lab-xs);letter-spacing:.04em;
-            color:var(--ink-4);margin-top:7px}
+            color:var(--ink-3);margin-top:7px}
 
   /* --------------------------- meals ------------------------------ */
   .search-row{display:flex;gap:10px;align-items:center;padding:10px 0 6px;border-bottom:1px dotted var(--rule)}
@@ -224,7 +239,7 @@
           letter-spacing:.05em;text-transform:uppercase;color:var(--ink);padding:8px 0;min-height:var(--tap)}
   #search::placeholder{color:var(--ink-3)}
   #filterToggle,#sortToggle{font-family:var(--label);font-size:12px;text-transform:uppercase;
-                letter-spacing:.09em;color:var(--ink-3);flex:none;min-height:var(--tap);
+                letter-spacing:.09em;color:var(--ink-2);flex:none;min-height:var(--tap);
                 display:flex;align-items:center}
   /* Active state is ink, not colour. Filter used the Health green, which gave a
      TECH colour a non-TECH meaning -- the one thing the palette rule forbids.
@@ -340,10 +355,11 @@
   /* -------------------------- tab bar ----------------------------- */
   .tabbar{display:flex;border-top:3px double var(--ink);background:var(--paper);flex:none;
           padding-bottom:env(safe-area-inset-bottom,0px)}
+  /* Lowercase, and only declared once: a stray uppercase later in this rule
+     quietly beat the lowercase added in step 1, so the tabs never changed. */
   .tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
-                 text-transform:lowercase;
                  padding:9px 4px 8px;min-height:var(--tap);font-family:var(--label);font-size:var(--fs-lab);
-                 text-transform:uppercase;letter-spacing:.11em;color:var(--ink-3)}
+                 text-transform:lowercase;letter-spacing:.08em;color:var(--ink-2)}
   .tabbar button.on{color:var(--ink);font-weight:600}
   .tabbar button.on::before{content:"";position:absolute;margin-top:-9px;width:26px;height:2px;background:var(--mark-5)}
   .tabbar .tcount{font-family:var(--label);font-size:10px;letter-spacing:.04em;color:var(--ink-3)}
@@ -1816,11 +1832,11 @@ function renderSlot(dISO, slot, entries){
     body.appendChild(b);
   });
 
-  // A slot with meals offers another; a slot showing only because it carries an
-  // occasion offers its first.
+  // Short, because it now shares a line with the meal it follows.
   const add = document.createElement("button");
   add.className = "slot-add";
-  add.textContent = entries.length ? "+ add another" : "+ add";
+  add.textContent = "+ add";
+  add.setAttribute("aria-label", "Add a meal to "+slot);
   add.onclick = ()=>openMealPicker(dISO, slot);
   body.appendChild(add);
 
