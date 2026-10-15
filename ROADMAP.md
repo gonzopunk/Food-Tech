@@ -13,20 +13,26 @@ Last updated 2026-10-14.
 
 ## Start here
 
-**Batch 2.5 is the lead, and it starts with structure, not typography.**
-Raised 2026-10-14, after a day away from the app was enough for its author to
-lose track of where the priority sliders live.
+**Batch 2.5 is built.** Steps 1, 2 and 3 shipped on 2026-10-15 — the material,
+then Plan, then Cook. The app now has two verb tabs, a single-hue mark, Spectral
+against IBM Plex Mono, dark mode, six real sorts, a density toggle, and no TECH
+hue doing a job that isn't TECH. `BRIEF.md` is what it was built from and
+section 9 is the system it implements.
 
-**2.5A now has a direction** — two verb tabs, **Plan** and **Cook**; browsing and
-choosing as two orderings of one list rather than two places; Deck absorbed; the
-priority sliders moved into the picker. Two open items remain under it, both
-schema-shaped, and they should be settled before any code.
+**What is left of 2.5:**
 
-**2.5C marks are settled.** After a round of mock-ups the marks became a
-single-hue heatmap -- four cells, one teal ramp, five steps (2026-10-15). The
-**colour cleanup** under 2.5C is the next piece and needs decisions rather than
-edits. **2.5B, 2.5D and 2.5E are still open.** Nothing else should be built on
-the current layout meanwhile.
+- **2.5D — is "Service" too literary?** Largely answered by the new material,
+  but it deserves a second look once the whole thing has been lived with for a
+  week rather than judged in a screenshot.
+- **2.5E — the More sheet**, still a stack of sentences.
+- **Three surfaces the canvas never covered**: the meal picker, a meal's detail
+  sheet, and the Priorities panel. The picker is the one with a real design
+  question, because 2.5A put two different controls in it — the occasion and the
+  priority sliders.
+
+**Two schema-shaped items under 2.5A are still unsettled** and block 2B.3: where
+a one-off weighting lives, and whether Cook keeps a weighting of its own. Both
+are written up under 2.5A.
 
 **2B is parked at 2B.2a.** Occasions moved from days to meal slots, empty slots
 stopped existing, occasions became editable data, weights read as proportions,
@@ -547,6 +553,34 @@ Weights stopped pretending to be absolute quantities.
 *Also fixed in passing:* the scale landmarks were first positioned with
 `padding-left`, and absolutely positioned children resolve against the padding
 box — so they sat 78px left of the track they label. Margin, not padding.
+
+### Batch 2.5 step 3 — Cook, shipped 2026-10-15
+
+The navigation changed, not just the paint. Implements `BRIEF.md` section 3.
+
+| | |
+| --- | --- |
+| **Two tabs** | **plan** and **cook**, both verbs. The tab bar is the "what do you want to do?" question, answered — which is what the greeting screen would have asked and then made you answer again every time. |
+| **Deck folded in** | On-deck dishes lead the choosing order, flagged *on deck*. A dish you have already decided on outranks anything the app merely computed. Taking one off deck lives in the meal's own sheet, where it already was. |
+| **Sort, at last** | Six orders: *on deck then due*, *A to Z*, *most overdue*, *never made*, *recently made*, *best fit*. None of these except A–Z was reachable anywhere before. The control **names its current value** rather than saying "sort", so it tells you it exists and what it is doing in one line. |
+| **Sort is the mode switch** | *on deck, then due* is choosing; *A to Z* turns the same list into the cookbook. That is what let Cook absorb browsing without a third tab. |
+| **Density** | Compact shows one short flag, expanded the whole context line. Its own control, beside the count it governs — not tied to sort, which was my proposal and Jamey's correction. |
+| **Priorities** | The weight panel is no longer a thing you open. It appears exactly when the *best fit* sort is using it, and hides otherwise. One less control, and the panel now has an honest reason to be on screen. |
+| **"What's due" retired** | Its dialog became two sorts. The drag-to-calendar it carried never suited touch — `DESIGN.md` has said *tap, not drag* since the mobile rebuild — and the information it showed is in the expanded rows. |
+
+**Case convention settled:** uppercase is reserved for the apparatus of
+measurement and time — `SORTED BY`, `FILTER`, the `T E C H` column, dates,
+`TODAY`. Everything else is lowercase. That is most of what stops a monospace
+face reading as a terminal, which was the risk in choosing one.
+
+*Also removed:* about 2.5KB of CSS orphaned by the deck view and the due dialog
+— `.deck-item`, `.deck-open`, `.deck-off`, `.suggest-item`, `.sortnote`,
+`.tcount` and their children. Dead rules are how a stylesheet stops being
+readable.
+
+**Verified** across Plan, Cook, dark and large text: no control under 4.5:1, no
+element overflowing, nothing scrolling sideways, no console errors. All six
+sorts checked against real orderings rather than by reading the code.
 
 ### Batch 2.5 step 2 — Plan, shipped 2026-10-15
 

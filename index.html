@@ -150,9 +150,9 @@
   .view-head{display:flex;align-items:baseline;gap:10px;padding:14px 0 8px;position:sticky;top:0;
              background:var(--paper);z-index:3;border-bottom:1px solid var(--ink)}
   .view-head h2{font-family:var(--display);font-weight:600;font-size:21px;letter-spacing:-.01em}
-  .view-head .sub{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.09em;color:var(--ink-3)}
+  .view-head .sub{font-family:var(--label);font-size:var(--fs-lab);letter-spacing:.04em;color:var(--ink-3)}
   .view-head .act{margin-left:auto;display:flex;gap:14px}
-  .view-head .act button{font-family:var(--label);font-size:12.5px;text-transform:uppercase;
+  .view-head .act button{font-family:var(--label);font-size:12.5px;text-transform:lowercase;
                          letter-spacing:.09em;color:var(--ink-2);min-height:36px}
   .view-head .act button:hover{color:var(--ink)}
 
@@ -234,25 +234,32 @@
             color:var(--ink-3);margin-top:7px}
 
   /* --------------------------- meals ------------------------------ */
-  .search-row{display:flex;gap:10px;align-items:center;padding:10px 0 6px;border-bottom:1px dotted var(--rule)}
-  #search{flex:1;min-width:0;background:none;border:none;font-family:var(--label);font-size:15px;
-          letter-spacing:.05em;text-transform:uppercase;color:var(--ink);padding:8px 0;min-height:var(--tap)}
+  .view-head .density{display:flex;gap:2px;flex:none}
+  .view-head .density button{display:flex;align-items:center;justify-content:center;width:30px;
+                  min-height:var(--tap);color:var(--ink-4);cursor:pointer}
+  .view-head .density button[aria-pressed="true"]{color:var(--ink)}
+
+  .sortrow{padding:9px 0 2px}
+  .sortrow button{display:flex;align-items:baseline;gap:6px;font-family:var(--label);
+                  min-height:var(--tap);cursor:pointer;text-align:left}
+  .sr-lab{font-size:var(--fs-lab-xs);letter-spacing:.1em;color:var(--ink-3)}
+  .sr-val{font-size:var(--fs-lab);letter-spacing:.03em;color:var(--ink);
+          border-bottom:1px dotted var(--ink-3);padding-bottom:1px}
+  .sortrow button:hover .sr-val{border-bottom-color:var(--ink)}
+
+  .search-row{display:flex;gap:10px;align-items:center;padding:10px 0 6px;border-bottom:1px solid var(--rule)}
+  #search{flex:1;min-width:0;background:none;border:none;font-family:var(--label);font-size:13.5px;
+          letter-spacing:.03em;color:var(--ink);padding:8px 0;min-height:var(--tap)}
   #search::placeholder{color:var(--ink-3)}
-  #filterToggle,#sortToggle{font-family:var(--label);font-size:12px;text-transform:uppercase;
-                letter-spacing:.09em;color:var(--ink-2);flex:none;min-height:var(--tap);
-                display:flex;align-items:center}
-  /* Active state is ink, not colour. Filter used the Health green, which gave a
-     TECH colour a non-TECH meaning -- the one thing the palette rule forbids.
-     Both now read the same way, and the only colour left on screen is TECH. */
-  #filterToggle.on,#sortToggle.on{color:var(--ink);font-weight:600;
-                text-decoration:underline;text-underline-offset:3px}
+  #filterToggle{font-family:var(--label);font-size:var(--fs-lab);letter-spacing:.08em;
+                color:var(--ink-2);flex:none;min-height:var(--tap);display:flex;align-items:center}
+  /* Active carries the signal, because an active filter is the single most
+     misleading state in the app: the count is wrong until you notice it. */
+  #filterToggle.on{color:var(--signal);font-weight:700}
   .tag-filter{display:flex;flex-wrap:wrap;gap:3px 12px;padding:9px 0 4px;border-bottom:1px dotted var(--rule)}
-  .tag-filter button{font-family:var(--label);font-size:12px;text-transform:uppercase;letter-spacing:.07em;
+  .tag-filter button{font-family:var(--label);font-size:12px;letter-spacing:.03em;
                      color:var(--ink-3);min-height:34px;display:flex;align-items:center}
   .tag-filter button.on{color:var(--ink);font-weight:600;text-decoration:underline;text-underline-offset:3px}
-  .sortnote{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px dotted var(--rule);
-            font-family:var(--label);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3)}
-  .sortnote #sortLabel{flex:1;min-width:0;color:var(--ink);font-weight:600}
   .linkish{font-family:var(--label);font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;
            color:var(--ink-3);text-decoration:underline;text-underline-offset:2px;min-height:34px}
   .weights{display:flex;flex-direction:column;gap:2px;padding:6px 0 8px;border-bottom:1px dotted var(--rule)}
@@ -287,6 +294,7 @@
   .meal-row .meta{display:flex;align-items:center;gap:9px;margin-top:3px;font-family:var(--label);
                   font-size:var(--fs-lab);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);flex-wrap:wrap}
   .meal-row .meta .due{color:var(--signal);font-weight:700}
+  .meal-row .meta .ondeck{color:var(--ink);font-weight:700}
   .meal-row .mr-glyph{flex:none}
   .fitbar{height:2px;background:var(--rule);margin-top:6px}
   .fitbar div{height:100%;background:var(--ink-2)}
@@ -315,11 +323,6 @@
                     text-transform:uppercase;letter-spacing:.09em;color:var(--ink-3)}
 
   /* ---------------------------- deck ------------------------------ */
-  .deck-item{display:flex;align-items:center;gap:10px;border-bottom:1px dotted var(--rule);min-height:var(--tap)}
-  .deck-open{display:flex;align-items:baseline;gap:10px;flex:1;min-width:0;text-align:left;color:inherit;padding:10px 0}
-  .deck-off{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.08em;
-            color:var(--ink-3);flex:none;padding:10px 0 10px 8px;min-height:var(--tap)}
-  .deck-off:hover{color:var(--ink)}
   /* the unrated nudge: a quiet line, never a banner */
   .view-head .nav button{min-width:18px;text-align:center}
   .unrated{display:flex;align-items:center;gap:10px;padding:0;border-bottom:1px dotted var(--rule)}
@@ -346,11 +349,6 @@
 
   .picker-new .pk-name{color:var(--ink)}
 
-  .deck-item{display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;color:inherit;
-             padding:10px 0;border-bottom:1px dotted var(--rule);min-height:var(--tap)}
-  .deck-open .nm{font-family:var(--display);font-weight:500;font-size:var(--fs-name);flex:1;min-width:0;line-height:1.2}
-  .deck-open .why{font-family:var(--display);font-style:italic;font-size:var(--fs-note);color:var(--ink-3);
-                  display:block;margin-top:2px;font-weight:400}
 
   /* -------------------------- tab bar ----------------------------- */
   .tabbar{display:flex;border-top:3px double var(--ink);background:var(--paper);flex:none;
@@ -362,7 +360,6 @@
                  text-transform:lowercase;letter-spacing:.08em;color:var(--ink-2)}
   .tabbar button.on{color:var(--ink);font-weight:600}
   .tabbar button.on::before{content:"";position:absolute;margin-top:-9px;width:26px;height:2px;background:var(--mark-5)}
-  .tabbar .tcount{font-family:var(--label);font-size:10px;letter-spacing:.04em;color:var(--ink-3)}
 
   /* --------------------------- sheets ----------------------------- */
   dialog{border:none;padding:0;background:var(--paper);color:var(--ink);width:100%;max-width:560px;
@@ -471,16 +468,6 @@
   .repmap .mdot:hover{fill:var(--signal)}
 
   /* "What's due?" rows */
-  .suggest-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dotted var(--rule);
-                min-height:var(--tap);cursor:pointer}
-  .suggest-item:last-child{border-bottom:none}
-  .suggest-item .sname{flex:1;min-width:0;font-family:var(--display);font-weight:500;font-size:15.5px;line-height:1.2}
-  .suggest-item .swhen{font-family:var(--label);font-size:11px;text-transform:uppercase;letter-spacing:.07em;
-                       color:var(--ink-3);text-align:right;flex:none}
-  .suggest-item .swhen b{color:var(--signal)}
-  .suggest-item .sdeck{font-family:var(--label);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;
-                       color:var(--ink-2);flex:none;min-height:38px;text-decoration:underline;text-underline-offset:3px}
-  .suggest-item .sdeck:disabled{color:var(--ink-3);text-decoration:none;cursor:default}
   .goal-chip.protein-chip .status{color:var(--ink)}
 
   .estimate-panel{border-top:1px dotted var(--rule);padding-top:10px;margin-top:10px;font-size:13.5px;line-height:1.55}
@@ -497,7 +484,7 @@
     body{font-size:15px}
     .view{padding:0 26px 34px;max-width:1180px;margin:0 auto;width:100%}
     .daylist{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:0 30px;align-items:start}
-    .meal-list,.deck-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0 30px}
+    .meal-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0 30px}
     .tabbar{justify-content:center;gap:40px}
     .tabbar button{flex:none;min-width:130px}
     dialog{margin:auto;max-height:86vh;border:1px solid var(--ink)}
@@ -545,50 +532,50 @@
   </section>
 
   <!-- ------------------------------ MEALS ----------------------------- -->
-  <section class="view" id="viewMeals" hidden>
+  <section class="view" id="viewCook" hidden>
     <div class="view-head">
-      <h2>Meals</h2>
+      <h2>Cook</h2>
       <span class="sub" id="mealCount"></span>
+      <span class="density">
+        <button id="denCompact" aria-label="Compact rows" aria-pressed="true">
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" fill="none"
+               stroke="currentColor" stroke-width="1.3"><path d="M1 2.5h12M1 5.5h12M1 8.5h12M1 11.5h12"/></svg>
+        </button>
+        <button id="denExpanded" aria-label="Expanded rows" aria-pressed="false">
+          <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true" fill="none"
+               stroke="currentColor" stroke-width="1.3"><path d="M1 3.5h12M1 10.5h12"/></svg>
+        </button>
+      </span>
       <span class="act">
-        <button id="suggestBtn">Due</button>
-        <button id="mapBtn">Map</button>
-        <button id="addMealBtn">New</button>
+        <button id="mapBtn">map</button>
+        <button id="addMealBtn">new</button>
       </span>
     </div>
     <div class="search-row">
-      <input id="search" type="search" placeholder="Search meals">
-      <button id="filterToggle" aria-expanded="false">Filter</button>
-      <!-- The weight panel had no entry point at all unless an occasion was
-           already driving the order. This is it. -->
-      <button id="sortToggle" aria-expanded="false">Sort</button>
+      <input id="search" type="search" placeholder="search meals">
+      <button id="filterToggle" aria-expanded="false">FILTER</button>
     </div>
     <div class="tag-filter" id="tagFilter" hidden></div>
-    <!-- Only appears once an occasion is actually driving the order. -->
-    <div class="sortnote" id="sortNote" hidden>
-      <span id="sortLabel"></span>
-      <button class="linkish" id="sortAdjust">adjust</button>
-      <button class="linkish" id="sortClear">clear</button>
+    <!-- Sort names its value, so the control says both that it exists and what
+         it is doing. "Sort" alone said neither. -->
+    <div class="sortrow">
+      <button id="sortToggle"><span class="sr-lab">SORTED BY</span><span class="sr-val" id="sortValue"></span></button>
     </div>
+    <!-- Only when the fit sort is running: the weighting it is fitting to. -->
     <div class="weights" id="weightSliders" hidden></div>
     <div class="bank-head"><span class="bh-sp" id="bankHeadLabel"></span></div>
     <div class="meal-list" id="bankList"></div>
   </section>
 
   <!-- ------------------------------ DECK ------------------------------ -->
-  <section class="view" id="viewDeck" hidden>
-    <div class="view-head">
-      <h2>On deck</h2>
-      <span class="sub" id="deckSub"></span>
-    </div>
-    <div class="deck-list" id="deckList"></div>
-  </section>
-
 </div>
 
+<!-- Two tabs, both verbs: the tab bar is the "what do you want to do?" question,
+     answered. Deck folded into Cook, where the dishes you have already decided
+     you want belong at the top of the order. -->
 <nav class="tabbar" id="tabbar">
-  <button data-view="plan" class="on">Plan</button>
-  <button data-view="meals">Meals</button>
-  <button data-view="deck">Deck<span class="tcount" id="deckCount"></span></button>
+  <button data-view="plan" class="on">plan</button>
+  <button data-view="cook">cook</button>
 </nav>
 
 <!-- pick a meal for a given day and slot -->
@@ -630,6 +617,18 @@
     <button class="sheet-x" data-close>Close</button>
   </div>
   <div class="modal-body"><div id="occList"></div></div>
+</dialog>
+
+<!-- how the repertoire is ordered -->
+<dialog id="sortDlg">
+  <div class="modal-head">
+    <div style="flex:1;min-width:0">
+      <h3>Sort</h3>
+      <div class="hint" style="margin-top:2px">What comes first</div>
+    </div>
+    <button class="sheet-x" data-close>Close</button>
+  </div>
+  <div class="modal-body"><div id="sortList"></div></div>
 </dialog>
 
 <!-- meals cooked but not yet rated -->
@@ -757,13 +756,6 @@
     <button id="iRemoveBtn" style="color:var(--tomato);border-color:var(--tomato-soft)">Remove from this day</button>
     <div class="right"><button id="iRecipeBtn">View recipe</button></div>
   </div>
-</dialog>
-
-<!-- suggestions -->
-<dialog id="suggestDlg">
-  <div class="modal-head"><h3>What&rsquo;s due?</h3><button class="sheet-x" data-close>Close</button></div>
-  <div class="modal-body" id="suggestBody"></div>
-  <div class="modal-foot"><div class="right"><button data-close>Close</button></div></div>
 </dialog>
 
 <!-- repertoire map -->
@@ -1386,7 +1378,7 @@ const PLAN_DAYS = 7;           // a week: the unit the goals measure
 
 function setView(name){
   currentView = name;
-  for(const [id,v] of [["viewPlan","plan"],["viewMeals","meals"],["viewDeck","deck"]]){
+  for(const [id,v] of [["viewPlan","plan"],["viewCook","cook"]]){
     document.getElementById(id).hidden = (v !== name);
   }
   document.querySelectorAll("#tabbar button").forEach(b=>{
@@ -1396,54 +1388,9 @@ function setView(name){
 }
 
 /* ============================== on deck ============================== */
-function renderOnDeck(){
-  const deck = deckList();
-  const holder = document.getElementById("deckList");
-  holder.innerHTML = "";
-  const count = document.getElementById("deckCount");
-  const sub = document.getElementById("deckSub");
-  count.textContent = deck.length ? " " + deck.length : "";
-  sub.textContent = deck.length ? deck.length + (deck.length===1?" waiting":" waiting") : "";
-
-  if(!deck.length){
-    holder.innerHTML = '<div class="empty">Nothing queued.<br>Open a meal and choose &ldquo;On deck&rdquo; when a dish gets asked for.</div>';
-    return;
-  }
-  deck.forEach(item=>{
-    const m = mealById(item.mealId); if(!m) return;
-    const row = document.createElement("div");
-    row.className = "deck-item";
-    const open = document.createElement("button");
-    open.className = "deck-open";
-    open.innerHTML = '<span class="nm">'+esc(m.name)+
-      (item.note? '<span class="why">'+esc(item.note)+'</span>' : '')+'</span>'+
-      techGlyph(m);
-    open.onclick = ()=>openDetail(item.mealId);
-    const off = document.createElement("button");
-    off.className = "deck-off";
-    off.textContent = "remove";
-    off.setAttribute("aria-label","Take "+m.name+" off deck");
-    off.onclick = ()=>{ removeFromDeck(item.id); render(); };
-    row.appendChild(open); row.appendChild(off);
-    holder.appendChild(row);
-  });
-}
-
 
 function renderTonight(){
-  const note = document.getElementById("sortNote");
   const panel = document.getElementById("weightSliders");
-  const even = weightsAreEven();
-  note.hidden = even;
-  // The panel's visibility belongs to whoever opened it. Auto-hiding on "even"
-  // meant dragging back to level slammed the panel shut mid-adjustment.
-  const toggle = document.getElementById("sortToggle");
-  toggle.classList.toggle("on", !even);
-  toggle.setAttribute("aria-expanded", panel.hidden ? "false" : "true");
-  if(!even){
-    document.getElementById("sortLabel").textContent =
-      activeOccasion ? "Ordered for "+occasionLabel(activeOccasion).toLowerCase() : "Ordered by a custom weighting";
-  }
   // Built once and then only updated: rebuilding on every render would replace
   // the slider under the cursor mid-drag.
   if(!panel.dataset.built){
@@ -1532,7 +1479,7 @@ function renderTagFilter(){
   }
   // The button carries the filter count, so a collapsed panel still reports itself.
   const toggle = document.getElementById("filterToggle");
-  toggle.textContent = activeTags.size ? "Filter · "+activeTags.size : "Filter";
+  toggle.textContent = activeTags.size ? "FILTER · "+activeTags.size : "FILTER";
   toggle.classList.toggle("on", activeTags.size>0);
   if(activeTags.size && tagFilter.hidden) showFilterPanel(true);
 }
@@ -1543,7 +1490,7 @@ function showFilterPanel(open){
 
 
 function render(){
-  renderOnDeck(); renderTonight(); renderTagFilter(); renderBank();
+  renderTonight(); renderTagFilter(); renderBank();
   renderDayList(); renderGoals();
   saveState();
 }
@@ -1559,6 +1506,55 @@ function cardMeta(m){
   return bits.join('<span aria-hidden="true">·</span>');
 }
 
+/* The orders a cook actually wants. Until now the only one reachable was
+   alphabetical, with "best fit" arriving sideways through an occasion. Sort is
+   also the mode switch: choosing puts what you decided on first, A to Z turns
+   the same list into the cookbook. */
+const SORTS = [
+  {id:"choosing", label:"on deck, then due", hint:"what you decided on, then what is overdue"},
+  {id:"az",       label:"A to Z",            hint:"the repertoire as a cookbook"},
+  {id:"overdue",  label:"most overdue",      hint:"furthest past its target first"},
+  {id:"never",    label:"never made",        hint:"still waiting for a first turn"},
+  {id:"recent",   label:"recently made",     hint:"what you have been cooking lately"},
+  {id:"fit",      label:"best fit",          hint:"ordered by the priorities below"}
+];
+const SORT_KEY = "foodtech-sort", DENSITY_KEY = "foodtech-density";
+let bankSort = "choosing";
+let bankDensity = "compact";
+try{
+  const a = localStorage.getItem(SORT_KEY); if(a && SORTS.some(x=>x.id===a)) bankSort = a;
+  const b = localStorage.getItem(DENSITY_KEY); if(b==="compact"||b==="expanded") bankDensity = b;
+}catch(e){}
+
+function sortLabel(id){ const s = SORTS.find(x=>x.id===id); return s ? s.label : SORTS[0].label; }
+
+/* How overdue a dish is, as a number that sorts. -1 means it has no target. */
+function overdueRank(m){
+  const d = dueInfo(m);
+  if(!d) return -1;
+  return d.never ? 99 : d.ratio;
+}
+function sortedBank(){
+  const ms = [...state.meals];
+  const queued = new Set(deckList().map(d=>d.mealId));
+  const byName = (a,b)=>a.name.localeCompare(b.name);
+  const made = m => lastMade(m.id) || "";
+  switch(bankSort){
+    case "az":      return ms.sort(byName);
+    case "overdue": return ms.sort((a,b)=> overdueRank(b)-overdueRank(a) || byName(a,b));
+    case "never":   return ms.sort((a,b)=> (made(a)?1:0)-(made(b)?1:0) || byName(a,b));
+    case "recent":  return ms.sort((a,b)=> made(b).localeCompare(made(a)) || byName(a,b));
+    case "fit":     return ms.sort((a,b)=> fitScore(b,activeWeights)-fitScore(a,activeWeights) || byName(a,b));
+    default:
+      // On deck first: a dish you have already chosen outranks anything the
+      // app merely computed.
+      return ms.sort((a,b)=>
+        (queued.has(b.id)?1:0)-(queued.has(a.id)?1:0)
+        || overdueRank(b)-overdueRank(a)
+        || byName(a,b));
+  }
+}
+
 function renderBank(){
   const q = document.getElementById("search").value.trim().toLowerCase();
   const list = document.getElementById("bankList");
@@ -1566,12 +1562,10 @@ function renderBank(){
   // The ramp says how much, never which; the column letters say which.
   const head = document.querySelector(".bank-head");
   if(head && !head.querySelector(".mark-head")) head.insertAdjacentHTML("beforeend", markHead());
-  const byFit = !weightsAreEven();
-  const meals = [...state.meals].sort((a,b)=>
-    byFit ? fitScore(b,activeWeights)-fitScore(a,activeWeights) || a.name.localeCompare(b.name)
-          : a.name.localeCompare(b.name));
+  const byFit = bankSort === "fit";
+  const queued = new Set(deckList().map(d=>d.mealId));
   let shown = 0;
-  for(const m of meals){
+  for(const m of sortedBank()){
     if(activeTags.size){
       const mealTags = m.tags||[];
       const matches = matchAllTags ? [...activeTags].every(t=>mealTags.includes(t)) : mealTags.some(t=>activeTags.has(t));
@@ -1579,23 +1573,64 @@ function renderBank(){
     }
     if(q && !m.name.toLowerCase().includes(q) && !(m.tags||[]).some(t=>t.includes(q))) continue;
     shown++;
+    // Compact carries one short flag; expanded carries the whole context line.
+    const di = dueInfo(m);
+    const flag = queued.has(m.id) ? '<span class="ondeck">on deck</span>'
+               : (di && di.due ? '<span class="due">'+(di.never?"never made":"due")+'</span>' : "");
+    const meta = bankDensity === "expanded" ? cardMeta(m) : flag;
     const row = document.createElement("button");
     row.className = "meal-row";
     row.innerHTML = '<span class="mr-main"><span class="name">'+esc(m.name)+'</span>'+
-                    '<span class="meta">'+cardMeta(m)+'</span>'+
+                    (meta ? '<span class="meta">'+meta+'</span>' : '')+
                     (byFit? '<span class="fitbar"><div style="width:'+Math.round(fitScore(m,activeWeights)*100)+'%"></div></span>':'')+
                     '</span><span class="mr-glyph">'+techGlyph(m)+'</span>';
     row.onclick = ()=>openDetail(m.id);
     list.appendChild(row);
   }
   document.getElementById("mealCount").textContent = shown + (shown===1?" meal":" meals");
+  document.getElementById("sortValue").textContent = sortLabel(bankSort);
+  // The priorities only mean anything while the fit sort is using them.
+  document.getElementById("weightSliders").hidden = !byFit;
+  for(const [id,v] of [["denCompact","compact"],["denExpanded","expanded"]]){
+    document.getElementById(id).setAttribute("aria-pressed", bankDensity===v ? "true" : "false");
+  }
   if(!shown){
     // An empty bank and a filtered-to-nothing bank need different words.
     list.innerHTML = state.meals.length
       ? '<div class="empty">Nothing matches.<br>Clear the search or the filter.</div>'
-      : '<div class="empty">No meals yet.<br><br>Tap <b>New</b> above to add the first one &mdash; a name and a couple of tags is enough to start.</div>';
+      : '<div class="empty">No meals yet.<br><br>Tap <b>new</b> above to add the first one &mdash; a name and a couple of tags is enough to start.</div>';
   }
 }
+
+/* ---------------------- choosing an order ---------------------- */
+const sortDlg = document.getElementById("sortDlg");
+function renderSortList(){
+  const list = document.getElementById("sortList");
+  list.innerHTML = "";
+  for(const o of SORTS){
+    const row = document.createElement("button");
+    row.className = "picker-row occ-row"+(o.id===bankSort?" on":"");
+    row.innerHTML = '<span class="pk-main"><span class="pk-name">'+esc(o.label)+'</span>'+
+                    '<span class="pk-sub">'+esc(o.hint)+'</span></span>'+
+                    '<span class="occ-tick" aria-hidden="true">'+(o.id===bankSort?"\u2713":"")+'</span>';
+    row.onclick = ()=>{
+      bankSort = o.id;
+      try{ localStorage.setItem(SORT_KEY, bankSort); }catch(e){}
+      sortDlg.close();
+      render();
+    };
+    list.appendChild(row);
+  }
+}
+document.getElementById("sortToggle").onclick = ()=>{ renderSortList(); sortDlg.showModal(); };
+
+function setDensity(d){
+  bankDensity = d;
+  try{ localStorage.setItem(DENSITY_KEY, d); }catch(e){}
+  renderBank();
+}
+document.getElementById("denCompact").onclick = ()=>setDensity("compact");
+document.getElementById("denExpanded").onclick = ()=>setDensity("expanded");
 
 /* ============================== the plan ==============================
    A run of days from wherever you have scrolled to, today first by default.
@@ -2583,47 +2618,6 @@ document.getElementById("iRecipeBtn").onclick = ()=>{
   if(entry) openDetail(entry.mealId);
 };
 
-/* ============================== suggestions ============================== */
-const suggestDlg = document.getElementById("suggestDlg");
-document.getElementById("suggestBtn").onclick = ()=>{
-  const rows = [];
-  for(const m of state.meals){
-    const di = dueInfo(m);
-    if(di && di.due) rows.push({m, di});
-  }
-  rows.sort((a,b)=>{
-    if(a.di.never!==b.di.never) return a.di.never?1:-1;   // overdue first, never-made after
-    return b.di.ratio-a.di.ratio;
-  });
-  const body = document.getElementById("suggestBody");
-  if(!rows.length){ body.innerHTML = '<div class="empty">Nothing is due &mdash; the rotation is fresh.</div>'; }
-  else{
-    body.innerHTML = '<div class="hint" style="margin-bottom:6px">Drag a row straight onto a calendar day, or put it on deck to decide the night later.</div>';
-    for(const {m,di} of rows){
-      const row = document.createElement("div");
-      row.className = "suggest-item"; row.draggable = true;
-      row.style.borderLeft = "2px solid var(--rule-2)"; row.style.paddingLeft = "8px";
-      row.innerHTML = '<span class="sname">'+esc(m.name)+'</span>'+
-        '<span class="swhen">'+(di.never? 'never made &middot; target '+freqLabel(m.freq)
-          : '<b>'+di.days+'d</b> since last &middot; target '+freqLabel(m.freq))+'</span>';
-      const deckBtn = document.createElement("button");
-      const queued = deckList().some(d=>d.mealId===m.id);
-      deckBtn.className = "sdeck"; deckBtn.textContent = queued ? "on deck" : "+ deck";
-      deckBtn.disabled = queued;
-      deckBtn.title = "Queue this without choosing a night yet";
-      deckBtn.onclick = ev=>{ ev.stopPropagation(); addToDeck(m.id); render(); deckBtn.textContent = "on deck"; deckBtn.disabled = true; };
-      row.appendChild(deckBtn);
-      row.addEventListener("dragstart", ev=>{
-        ev.dataTransfer.setData("text/plain", JSON.stringify({mealId:m.id}));
-        suggestDlg.close();
-      });
-      row.addEventListener("click", ()=>{ suggestDlg.close(); openDetail(m.id); });
-      body.appendChild(row);
-    }
-  }
-  suggestDlg.showModal();
-};
-
 /* ============================== goals editor ============================== */
 const goalsDlg = document.getElementById("goalsDlg");
 function goalRow(g){
@@ -2740,32 +2734,13 @@ function applyDark(on){
 })();
 darkChk.onchange = ()=>applyDark(darkChk.checked);
 document.getElementById("search").addEventListener("input", renderBank);
-// The two panels stack above the list, and on a phone both open at once pushes
-// the meals off screen. Opening one closes the other; the filter count stays on
-// its button, so a collapsed filter still reports itself.
-function showWeightPanel(open){
-  const panel = document.getElementById("weightSliders");
-  panel.hidden = !open;
-  document.getElementById("sortToggle").setAttribute("aria-expanded", open ? "true" : "false");
-  if(open) showFilterPanel(false);
-}
+// The priorities panel is no longer something you open: it appears exactly when
+// the fit sort is using it, which renderBank decides. So the only panel left to
+// toggle here is the filter.
 document.getElementById("filterToggle").onclick = ()=>{
-  const open = tagFilter.hidden;
-  showFilterPanel(open);
-  if(open) showWeightPanel(false);
+  showFilterPanel(tagFilter.hidden);
 };
-document.getElementById("sortToggle").onclick = ()=>{
-  showWeightPanel(document.getElementById("weightSliders").hidden);
-};
-document.getElementById("sortAdjust").onclick = ()=>{
-  showWeightPanel(document.getElementById("weightSliders").hidden);
-};
-document.getElementById("sortClear").onclick = ()=>{
-  activeOccasion = DEFAULT_OCCASION;
-  activeWeights = Object.assign({}, occasionWeights(DEFAULT_OCCASION));
-  showWeightPanel(false);
-  render();
-};
+
 document.querySelectorAll("dialog [data-close]").forEach(b=>b.onclick = ()=>b.closest("dialog").close());
 
 // The More sheet is a menu: every item hands off to something else, so it
