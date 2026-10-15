@@ -151,7 +151,7 @@ with nouns.** Plan, Meals and Deck are places; a cook arrives with a question.
 
 | Tab | The question it answers |
 | --- | --- |
-| **Plan** | What's the week? — the calendar |
+| **Plan** | What does the week look like? — the calendar |
 | **Cook** | What should I make? — the meals, with filtering, sorting and priorities |
 
 *Tonight* was considered and rejected: it is a noun pretending to be a mode, and
@@ -547,6 +547,24 @@ Weights stopped pretending to be absolute quantities.
 *Also fixed in passing:* the scale landmarks were first positioned with
 `padding-left`, and absolutely positioned children resolve against the padding
 box — so they sat 78px left of the track they label. Margin, not padding.
+
+### Batch 2.5 step 1 — the material, shipped 2026-10-15
+
+The look changed; nothing moved. Implements `BRIEF.md` section 9.
+
+| | |
+| --- | --- |
+| **Type** | Fraunces and Barlow Condensed out; **Spectral** for words, **Courier Prime** for apparatus. Courier runs about a third wider than the condensed face, so the label scale dropped to 10 / 9.5px and the slot column widened to 70px — without that, celebration wrapped. |
+| **Colour** | Near-white `#FAF9F6` ground, indigo mark ramp, vermilion signal. |
+| **Dark** | Designed, not inverted: warm charcoal ground, and the mark hue lifts to `126,144,204` because a dark hue on a dark field cannot hold five steps. Follows the phone, with an override in More. |
+| **Colour cleanup** | All fourteen overloaded sites done. Sync, goals, today, due, danger, map hover and the active tab no longer borrow an axis hue. **No CSS rule uses one any more** — the four survive only in the detail readout and the Priorities panel, where the axes are named and never compared by intensity, and both of those surfaces are still to be designed. |
+| **Tag colours** | The seventeen are gone. They reached one surface — the edge of a Due row, now a hairline — while the Map computed one per dot and drew them all in ink. |
+
+*Verified:* no element overflows and the page does not scroll sideways on a
+375px screen, in either theme and at both text sizes; both faces load.
+
+**Steps 2 and 3 remain:** Plan (rules between days, compression, the slot
+affordance) and Cook (two tabs, Deck folded in, search / filter / sort, density).
 
 ### Batch 2B.2a — the weight panel became reachable, shipped 2026-10-13
 

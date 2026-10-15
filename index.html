@@ -5,42 +5,48 @@
 <title>FoodTech</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;1,400&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#F4F2EC">
+<meta name="theme-color" content="#FAF9F6" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17160F" media="(prefers-color-scheme: dark)">
 <style>
-  /* ===================== FoodTech — "Service" =====================
-     The kitchen's own paperwork: prep lists, ticket rails, the board above
-     the pass. Structure comes from rules and type, not boxes. There are no
-     cards and no shadows anywhere.
+  /* ============== FoodTech — a natural philosopher makes dinner ==============
+     Space organises; lines punctuate. The double rule appears twice a screen
+     and nowhere else. No cards, no shadows, no radii.
 
-     Colour appears in exactly one place — the Food TECH marks and the Tasty
-     stars, which are the same axis. Everything else is ink on paper, so the
-     only coloured thing on screen is the only real measurement.
-  ================================================================= */
+     Two faces: Spectral for anything read as words, Courier Prime for all
+     apparatus -- labels, dates, counts, the measurement column. Franklin's
+     century with Einstein's.
+
+     Two colours: a mark ramp and a signal. The marks are the measurement; the
+     signal is anything wanting attention. Nothing else is coloured, and the
+     signal never borrows an axis hue -- that overloading is what made the old
+     palette unreadable. See BRIEF.md section 9, which this implements.
+  ========================================================================== */
   :root{
-    --paper:#F4F2EC; --paper-2:#EDEBE3; --ink:#1E1F1C; --ink-2:#5E6057; --ink-3:#8C8E84;
-    --rule:#DBD8CE; --rule-2:#C8C5B8;
-    /* Fills: ticks, swatches, bars. Contrast matters little in a solid block. */
-    --tech-t:#A6503F; --tech-e:#B4852C; --tech-c:#4A6E8C; --tech-h:#3F6148;
-    /* The mark ramp. ONE hue in five steps, because the eye can rank intensity
-       within a hue and cannot compare saturation across hues -- four coloured
-       columns made the reader judge four scales instead of one. Teal because it
-       is the only family in this app that does not already mean something else:
-       red reads as alert, green as good, amber as due. Recolouring the marks
-       later is these five lines and nothing more. */
-    --mark-hue:29,111,107;
+    --paper:#FAF9F6; --paper-2:#F1F0EA; --ink:#22231E; --ink-2:#6E6F67; --ink-3:#8A8B83;
+    --ink-4:#A8A99F;
+    --rule:#CFCCC1; --rule-2:#C9C6BA;
+    /* The mark ramp: one hue in five steps. The eye ranks intensity within a
+       hue and cannot compare saturation across hues, so all four columns share
+       it. Indigo against vermilion is an old pairing rather than a picked one. */
+    --mark-hue:46,60,100;
     --mark-1:rgba(var(--mark-hue),.10); --mark-2:rgba(var(--mark-hue),.28);
     --mark-3:rgba(var(--mark-hue),.48); --mark-4:rgba(var(--mark-hue),.72);
     --mark-5:rgba(var(--mark-hue),1);
+    --signal:#C0452B;
+    /* The four axis hues survive only where the axes are named and never
+       compared by intensity: the detail readout and the Priorities panel.
+       Both of those surfaces are still to be designed. */
+    --tech-t:#A6503F; --tech-e:#B4852C; --tech-c:#4A6E8C; --tech-h:#3F6148;
     --cell:15px;
-    --display:"Fraunces",Georgia,serif;
-    --label:"Barlow Condensed","Arial Narrow",sans-serif;
-    --body:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --display:"Spectral",Georgia,serif;
+    --label:"Courier Prime",ui-monospace,"Courier New",monospace;
+    --body:"Spectral",Georgia,serif;
     --tap:44px;
     /* The slot label column. It has to hold an occasion name under the slot
        name, so it grows with the label type rather than staying fixed. */
-    --slot-lab-w:66px;
+    --slot-lab-w:70px;
     --wlab-w:70px;      /* the weight panel's label column */
     /* Type scale. Large mode scales the uppercase labels too: they are the
        smallest, lightest text on screen and so the hardest to read. */
@@ -48,17 +54,43 @@
     --fs-name:16px;     /* a meal name in a list */
     --fs-note:14px;     /* notes and log entries */
     --fs-body:15px;     /* sheet body text */
-    --fs-lab:11px;      /* uppercase labels and metadata */
-    --fs-lab-xs:10.5px; /* the smallest labels */
+    --fs-lab:10px;      /* apparatus: labels and metadata. Courier runs about a
+                           third wider than the condensed face it replaced, so
+                           the scale drops to keep the same columns. */
+    --fs-lab-xs:9.5px;  /* the smallest apparatus */
+  }
+
+  /* Dark is designed, not inverted: the ground is a warm charcoal because the
+     light ground is warm, and the mark hue has to lift a long way -- a dark hue
+     on a dark field cannot hold five steps. */
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#17160F; --paper-2:#1F1E16; --ink:#F2F0E6; --ink-2:#CFCDC2; --ink-3:#908F85;
+      --ink-4:#6C6B61;
+      --rule:#39372D; --rule-2:#3D3B30;
+      --mark-hue:126,144,204;
+      --signal:#E4705A;
+      --tech-t:#D4745F; --tech-e:#D6A745; --tech-c:#7BA3C4; --tech-h:#71A481;
+      color-scheme:dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#17160F; --paper-2:#1F1E16; --ink:#F2F0E6; --ink-2:#CFCDC2; --ink-3:#908F85;
+    --ink-4:#6C6B61;
+    --rule:#39372D; --rule-2:#3D3B30;
+    --mark-hue:126,144,204;
+    --signal:#E4705A;
+    --tech-t:#D4745F; --tech-e:#D6A745; --tech-c:#7BA3C4; --tech-h:#71A481;
+    color-scheme:dark;
   }
   :root.big-text{
     --fs-dish:18.5px; --fs-name:19px; --fs-note:16.5px; --fs-body:17px;
-    --fs-lab:13px; --fs-lab-xs:12.5px;
-    --slot-lab-w:80px;
+    --fs-lab:11.5px; --fs-lab-xs:11px;
+    --slot-lab-w:82px;
     --cell:17px;
     --wlab-w:82px;
     /* and lift the faintest ink: size alone does not fix low contrast */
-    --ink-3:#6E7066;
+    --ink-3:#6E6F67; --ink-4:#86877E;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   [hidden]{display:none!important}
@@ -85,8 +117,8 @@
                      color:var(--mark-5);margin-left:1px}
   .head-right{margin-left:auto;display:flex;align-items:center;gap:10px}
   .cloud-status{font-family:var(--label);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3)}
-  .cloud-status.ok{color:var(--tech-h)}
-  .cloud-status.warn{color:var(--tech-t)}
+  .cloud-status.ok{color:var(--ink-3)}
+  .cloud-status.warn{color:var(--signal)}
   .icon-btn{font-family:var(--label);font-size:12px;letter-spacing:.09em;text-transform:uppercase;
             color:var(--ink-2);padding:6px 2px;min-height:var(--tap);display:flex;align-items:center}
   .icon-btn:hover{color:var(--ink)}
@@ -99,8 +131,8 @@
   .goal-chip{display:flex;align-items:baseline;gap:6px;white-space:nowrap;
              font-family:var(--label);font-size:var(--fs-lab);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
   .goal-chip .status{font-weight:600;color:var(--ink)}
-  .goal-chip.met .status{color:var(--tech-h)}
-  .goal-chip.broken .status{color:var(--tech-t)}
+  .goal-chip.met .status{color:var(--ink)}
+  .goal-chip.broken .status{color:var(--signal)}
   .goals-strip .empty{font-family:var(--label);font-size:12px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.07em}
 
   /* --------------------------- views ------------------------------ */
@@ -119,20 +151,23 @@
   /* ---------------------------- days ------------------------------ */
   .daylist{display:flex;flex-direction:column}
   .day{border-bottom:1px solid var(--rule);padding:12px 0 10px}
-  .day.today{border-left:3px solid var(--tech-t);margin-left:-9px;padding-left:6px}
+  .day.today{border-left:3px solid var(--signal);margin-left:-9px;padding-left:6px}
   .day-head{display:flex;align-items:baseline;gap:8px;margin-bottom:7px}
   .day-head .dw{font-family:var(--display);font-weight:600;font-size:16.5px}
   .day.today .day-head .dw::after{content:"today";font-family:var(--label);font-size:10px;
-        letter-spacing:.1em;color:var(--tech-t);margin-left:7px;vertical-align:2px}
+        letter-spacing:.1em;color:var(--signal);margin-left:7px;vertical-align:2px}
   .day-head .dt{font-family:var(--label);font-size:var(--fs-lab);letter-spacing:.07em;color:var(--ink-3);text-transform:uppercase}
   .slot{display:grid;grid-template-columns:var(--slot-lab-w) 1fr;gap:8px;align-items:start;padding:3px 0}
   /* The label doubles as the occasion control. Normally it just names the slot;
      set to anything but ordinary it names the occasion underneath, in full ink,
      because that is then the more interesting fact about the meal. */
-  .slot-label{font-family:var(--label);font-size:var(--fs-lab-xs);text-transform:uppercase;letter-spacing:.1em;
-              color:var(--ink-3);padding:7px 0 0;text-align:left;display:block;line-height:1.2;
+  /* Courier is monospace, so letterspacing costs real width here: .1em put
+     "celebration" over the column and wrapped it. Lowercase, tighter, and the
+     occasion no longer shouts down the slot it belongs to. */
+  .slot-label{font-family:var(--label);font-size:var(--fs-lab-xs);letter-spacing:.04em;
+              color:var(--ink-2);padding:7px 0 0;text-align:left;display:block;line-height:1.25;
               overflow-wrap:anywhere;align-self:stretch}
-  .slot-label .sl-occ{display:block;letter-spacing:.05em;color:var(--ink);font-weight:600;margin-top:2px}
+  .slot-label .sl-occ{display:block;letter-spacing:.01em;color:var(--ink);font-weight:400;margin-top:2px}
   .slot-label:hover{color:var(--ink-2)}
   .slot-label:hover .sl-occ{color:var(--ink)}
   .occ-row.on .pk-name{font-weight:600}
@@ -148,7 +183,7 @@
   .planned.leftover .pname{font-style:italic;color:var(--ink-2)}
   .planned .marks{display:flex;align-items:center;gap:6px;flex:none;font-family:var(--label);
                   font-size:var(--fs-lab);letter-spacing:.06em;color:var(--ink-3)}
-  .planned .marks .rate{color:var(--tech-t);letter-spacing:.5px}
+  .planned .marks .rate{color:var(--mark-5);letter-spacing:.5px}
   .slot-add{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.09em;
             color:var(--ink-3);min-height:var(--tap);display:flex;align-items:center;width:100%}
   .slot-add:hover{color:var(--ink)}
@@ -220,7 +255,7 @@
   .meal-row .name{font-family:var(--display);font-weight:500;font-size:var(--fs-name);line-height:1.2}
   .meal-row .meta{display:flex;align-items:center;gap:9px;margin-top:3px;font-family:var(--label);
                   font-size:var(--fs-lab);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);flex-wrap:wrap}
-  .meal-row .meta .due{color:var(--tech-e);font-weight:600}
+  .meal-row .meta .due{color:var(--signal);font-weight:700}
   .meal-row .mr-glyph{flex:none}
   .fitbar{height:2px;background:var(--rule);margin-top:6px}
   .fitbar div{height:100%;background:var(--ink-2)}
@@ -278,7 +313,7 @@
              text-underline-offset:3px}
   .rate-note:hover{color:var(--ink)}
 
-  .picker-new .pk-name{color:var(--tech-h)}
+  .picker-new .pk-name{color:var(--ink)}
 
   .deck-item{display:flex;align-items:baseline;gap:10px;width:100%;text-align:left;color:inherit;
              padding:10px 0;border-bottom:1px dotted var(--rule);min-height:var(--tap)}
@@ -290,10 +325,11 @@
   .tabbar{display:flex;border-top:1px solid var(--ink);background:var(--paper);flex:none;
           padding-bottom:env(safe-area-inset-bottom,0px)}
   .tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+                 text-transform:lowercase;
                  padding:9px 4px 8px;min-height:var(--tap);font-family:var(--label);font-size:var(--fs-lab);
                  text-transform:uppercase;letter-spacing:.11em;color:var(--ink-3)}
   .tabbar button.on{color:var(--ink);font-weight:600}
-  .tabbar button.on::before{content:"";position:absolute;margin-top:-9px;width:26px;height:2px;background:var(--tech-t)}
+  .tabbar button.on::before{content:"";position:absolute;margin-top:-9px;width:26px;height:2px;background:var(--mark-5)}
   .tabbar .tcount{font-family:var(--label);font-size:10px;letter-spacing:.04em;color:var(--ink-3)}
 
   /* --------------------------- sheets ----------------------------- */
@@ -319,7 +355,7 @@
   .modal-foot button{font-family:var(--label);font-size:13px;text-transform:uppercase;letter-spacing:.09em;
                      color:var(--ink-2);min-height:var(--tap);display:flex;align-items:center}
   .modal-foot button.primary{color:var(--ink);font-weight:700;text-decoration:underline;text-underline-offset:4px}
-  .modal-foot button.danger{color:var(--tech-t)}
+  .modal-foot button.danger{color:var(--signal)}
   .modal-foot button:disabled{color:var(--ink-3);text-decoration:none;cursor:default}
   .hint{font-family:var(--body);font-size:12.5px;color:var(--ink-3);line-height:1.5;margin-top:5px}
 
@@ -337,7 +373,7 @@
   .inline-check input{accent-color:var(--ink);margin:0}
 
   .stars{display:flex;align-items:center;gap:2px}
-  .stars .star{font-size:30px;line-height:1;color:var(--tech-t);padding:2px 5px;min-height:var(--tap);
+  .stars .star{font-size:30px;line-height:1;color:var(--mark-5);padding:2px 5px;min-height:var(--tap);
                display:flex;align-items:center}
   .stars .star-label{font-family:var(--label);font-size:11px;text-transform:uppercase;letter-spacing:.08em;
                      color:var(--ink-3);margin-left:8px}
@@ -359,7 +395,7 @@
   /* ----------------------- detail & history ----------------------- */
   .detail-meta{display:flex;flex-wrap:wrap;gap:4px 14px;margin-bottom:12px;font-family:var(--label);
                font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3)}
-  .detail-meta .due{color:var(--tech-e);font-weight:600}
+  .detail-meta .due{color:var(--signal);font-weight:700}
   .detail-profile{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
   .detail-profile-side{flex:1;min-width:170px}
   .tech-readout{display:flex;flex-direction:column;gap:5px;font-family:var(--label);font-size:var(--fs-lab);
@@ -377,7 +413,7 @@
   .history-head{display:flex;align-items:baseline;gap:9px;font-family:var(--label);font-size:var(--fs-lab);
                 text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3)}
   .history-head .hdate{font-weight:600;color:var(--ink)}
-  .history-head .hrate{color:var(--tech-t);letter-spacing:1px}
+  .history-head .hrate{color:var(--mark-5);letter-spacing:1px}
   .history-item .hnote{font-family:var(--display);font-style:italic;font-size:var(--fs-note);color:var(--ink-2);
                        margin-top:3px;white-space:pre-wrap;line-height:1.45}
   h4.sect{font-family:var(--label);font-size:11.5px;text-transform:uppercase;letter-spacing:.1em;
@@ -400,7 +436,7 @@
   .repmap .maxis{stroke:var(--ink);stroke-width:1}
   .repmap .mtitle{font-family:var(--label);font-size:10.5px;fill:var(--ink-3);letter-spacing:.09em;text-transform:uppercase}
   .repmap .mdot{fill:var(--ink);cursor:pointer}
-  .repmap .mdot:hover{fill:var(--tech-t)}
+  .repmap .mdot:hover{fill:var(--signal)}
 
   /* "What's due?" rows */
   .suggest-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dotted var(--rule);
@@ -409,11 +445,11 @@
   .suggest-item .sname{flex:1;min-width:0;font-family:var(--display);font-weight:500;font-size:15.5px;line-height:1.2}
   .suggest-item .swhen{font-family:var(--label);font-size:11px;text-transform:uppercase;letter-spacing:.07em;
                        color:var(--ink-3);text-align:right;flex:none}
-  .suggest-item .swhen b{color:var(--tech-e)}
+  .suggest-item .swhen b{color:var(--signal)}
   .suggest-item .sdeck{font-family:var(--label);font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;
                        color:var(--ink-2);flex:none;min-height:38px;text-decoration:underline;text-underline-offset:3px}
   .suggest-item .sdeck:disabled{color:var(--ink-3);text-decoration:none;cursor:default}
-  .goal-chip.protein-chip .status{color:var(--tech-h)}
+  .goal-chip.protein-chip .status{color:var(--ink)}
 
   .estimate-panel{border-top:1px dotted var(--rule);padding-top:10px;margin-top:10px;font-size:13.5px;line-height:1.55}
   .estimate-panel input[type=number]{width:62px;background:none;border:none;border-bottom:1px solid var(--rule-2);padding:3px 0}
@@ -586,6 +622,11 @@
       <span class="pk-sub">Downloads everything as a file</span></span></button>
     <button class="picker-row" id="importBtn"><span class="pk-main"><span class="pk-name">Import a backup</span>
       <span class="pk-sub">Replaces everything on this device</span></span></button>
+    <label class="picker-row" for="darkChk" style="cursor:pointer">
+      <span class="pk-main"><span class="pk-name">Dark</span>
+      <span class="pk-sub">On this device. Left off, FoodTech follows your phone</span></span>
+      <input type="checkbox" id="darkChk" style="accent-color:var(--ink);width:20px;height:20px;flex:none">
+    </label>
     <label class="picker-row" for="bigTextChk" style="cursor:pointer">
       <span class="pk-main"><span class="pk-name">Large text</span>
       <span class="pk-sub">Bigger dish names and notes, on this device only</span></span>
@@ -862,12 +903,10 @@ function saveState(){
   }
 }
 
-const TAG_COLORS = {
-  fish:"#4E7FA8", seafood:"#57969B", chicken:"#C9973F", beef:"#A65A4C", pork:"#B77E6A",
-  vegetarian:"#6F9A5D", beans:"#7A8A4A", salad:"#8FAE5D", soup:"#5F8D7B", pasta:"#C2A45A",
-  grain:"#A8934F", pizza:"#C46A55", grill:"#6E6A62", takeout:"#8B6FA8", breakfast:"#D9A441",
-  brunch:"#D9A441", dessert:"#B76A8E"
-};
+/* The seventeen tag colours were retired on 2026-10-15. They reached exactly
+   one surface -- the left edge of a Due row -- and the Map computed one for
+   every dot and then drew all of them in ink, so sixteen of the seventeen
+   never reached a pixel. */
 /* A day has no "open" slots. A slot row exists only while it holds a meal or
    carries an occasion; everything else is offered by one line of words. Three
    standing empty rows made an untouched day as tall as a planned one, and the
@@ -1150,7 +1189,7 @@ function fmtShort(d){ return d.toLocaleDateString(undefined,{month:"short",day:"
 
 /* ============================== helpers ============================== */
 function mealById(id){ return state.meals.find(m=>m.id===id); }
-function tagColor(m){ for(const t of (m.tags||[])) if(TAG_COLORS[t]) return TAG_COLORS[t]; return "#B9B6A8"; }
+
 function intervalDays(freq){
   if(!freq||!freq.per) return null;
   const t = Math.max(1, freq.times||1);
@@ -2406,7 +2445,7 @@ function renderMap(){
     const py = y(Math.max(0,Math.min(1, offerOf(m)+jitter(m.id,13))));
     const g = techMagnitudes(m);
     svg += '<circle class="mdot" data-id="'+m.id+'" cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="6" '+
-           'style="--tagc:'+tagColor(m)+'"><title>'+esc(m.name)+
+           '><title>'+esc(m.name)+
            ' — asks: effort '+g.e+', cost '+g.c+' · offers: taste '+g.t+', nourish '+g.h+'</title></circle>';
   }
   svg += '</svg>';
@@ -2531,7 +2570,7 @@ document.getElementById("suggestBtn").onclick = ()=>{
     for(const {m,di} of rows){
       const row = document.createElement("div");
       row.className = "suggest-item"; row.draggable = true;
-      row.style.borderLeft = "4px solid "+tagColor(m); row.style.paddingLeft = "8px";
+      row.style.borderLeft = "2px solid var(--rule-2)"; row.style.paddingLeft = "8px";
       row.innerHTML = '<span class="sname">'+esc(m.name)+'</span>'+
         '<span class="swhen">'+(di.never? 'never made &middot; target '+freqLabel(m.freq)
           : '<b>'+di.days+'d</b> since last &middot; target '+freqLabel(m.freq))+'</span>';
@@ -2650,6 +2689,24 @@ function applyBigText(on){
   applyBigText(saved === "1");
 })();
 bigTextChk.onchange = ()=>applyBigText(bigTextChk.checked);
+
+/* Dark follows the phone unless this says otherwise. Same reasoning as large
+   text: it belongs to the screen you are holding, not to the cook, so it stays
+   out of the synced state. */
+const DARK_KEY = "foodtech-dark";
+const darkChk = document.getElementById("darkChk");
+function applyDark(on){
+  if(on) document.documentElement.setAttribute("data-theme","dark");
+  else document.documentElement.removeAttribute("data-theme");
+  darkChk.checked = on;
+  try{ localStorage.setItem(DARK_KEY, on ? "1" : "0"); }catch(e){}
+}
+(function initDark(){
+  let saved = "0";
+  try{ saved = localStorage.getItem(DARK_KEY) || "0"; }catch(e){}
+  applyDark(saved === "1");
+})();
+darkChk.onchange = ()=>applyDark(darkChk.checked);
 document.getElementById("search").addEventListener("input", renderBank);
 // The two panels stack above the list, and on a phone both open at once pushes
 // the meals off screen. Opening one closes the other; the filter count stays on
