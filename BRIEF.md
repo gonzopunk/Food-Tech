@@ -70,6 +70,58 @@ Not a look. Three commitments, each of which the app can honour:
 - **No congratulation.** No streaks, no celebrations, no "you hit your goal".
   The app records and reflects. It never performs enthusiasm.
 
+### Kintsugi — the gold, and the one test it has to pass
+
+Raised 2026-10-15. Kintsugi mends broken ceramic with gold, and the object is
+worth more afterwards than it was before. The gold is not ornament: **it is a
+record of a repair**, and its line is irregular because the break was.
+
+That gives the idea its own test, and the test is what keeps it from being
+ostentation:
+
+> **Could the gold appear on something that never broke?**
+> If yes, it is decoration, and no amount of restraint in the execution saves it.
+
+That single question rules out every "add a gold accent somewhere" version while
+leaving the real idea intact.
+
+**Where the breaks are in this app.** Not on screen — in the data:
+
+- **A dish rated badly and later rated well.** A 2★ followed months later by a
+  5★ is the kintsugi story exactly: the dish is *more* interesting for having
+  been fixed than if it had always been fine. `mealHistory` already holds every
+  rating with its date, so this needs no new data and no new field.
+- **A rotation that lapsed and resumed.** Cooked weekly, dropped for four
+  months, returned to. A line with a break in it — but **nothing in the app
+  draws that line yet.**
+
+**The technical constraint, measured.** Gold is a dark-ground colour:
+
+| | On `#FAF9F6` | On `#17160F` |
+| --- | --- | --- |
+| Leaf gold `#D4AF37` | **2.00:1** | 8.62:1 |
+| Kintsugi lacquer `#B8860B` | 3.09:1 | 5.57:1 |
+| Dark enough for light `#8A6A14` | 4.80:1 | 3.59:1 |
+
+To make gold legible on the light ground you have to darken it until it reads as
+olive-brown and stops being gold. So this is either a **dark-mode** idea, or it
+is a **fill** rather than type — a fill can sit lighter because it is not made
+of thin strokes. Do not try it as small light-mode type and conclude that gold
+does not work; that is the amber at 2.96:1 all over again.
+
+**When to build it.** Not yet, and in this order:
+
+1. **The plain version first.** *Use leaves a mark*, above, is the same idea in
+   ink. If patina works in ink, gold is a refinement of something already
+   earning its place. If patina does not work in ink, gold was never going to
+   rescue it.
+2. **Then the surface.** The only honest home is where time is drawn — **3A, the
+   aggregate view**, which does not exist. The smaller true version belongs in
+   the cooking log on a meal's detail sheet, which is also still undesigned.
+
+Holding it until both of those exist is not timidity. Gold applied to a surface
+with no history on it is the difference between a repair and a brag.
+
 ---
 
 ## 3. Structure — decided, not open
