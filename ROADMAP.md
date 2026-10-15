@@ -548,6 +548,29 @@ Weights stopped pretending to be absolute quantities.
 `padding-left`, and absolutely positioned children resolve against the padding
 box — so they sat 78px left of the track they label. Margin, not padding.
 
+### Batch 2.5 step 2 — Plan, shipped 2026-10-15
+
+Structure, on one surface. Implements `BRIEF.md` section 3.
+
+| | |
+| --- | --- |
+| **The double rule** | Under the header and above the tab bar, and nowhere else in the app. Reserved is what makes it mean something. |
+| **One rule per day** | Cook is a list and gets no rules; Plan is not a list, so each day gets a thin one. The dotted rule that used to sit under every *slot* is gone — within a day the meals belong together. |
+| **The today bar retired** | A 3px signal-coloured bar sat beside today while the heading already said "today" in the same colour. Two marks for one fact, and the bar was the louder and less informative of them. |
+| **The slot affordance** | A dotted underline on the slot word, the width of the word and not of the column. It is the only one in the app, which is what keeps it readable as a signal rather than as decoration. |
+
+**Bug found and fixed in the same pass:** a `<button>` centres its content
+vertically, so stretching the slot label to make the whole column tappable
+dropped its text **30px below the dish it names**. Flex-start puts it back while
+keeping the 88px tap area. Verified at both text sizes.
+
+**On compression: an empty day is still 94px, and that is the floor.** Head 25,
+add row 44, padding 22, rule 1. The add row cannot shrink without taking the tap
+target under 44px, which `BRIEF.md` forbids. The compression that *was*
+available — slot padding, the dotted slot rules, the today bar — is done, and it
+shows on days with meals rather than on empty ones. Anything further needs a
+different shape for unplanned days, not tighter spacing.
+
 ### Batch 2.5 step 1 — the material, shipped 2026-10-15
 
 The look changed; nothing moved. Implements `BRIEF.md` section 9.

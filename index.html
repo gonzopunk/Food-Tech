@@ -107,9 +107,11 @@
   .lab{font-family:var(--label);text-transform:uppercase;letter-spacing:.11em;font-weight:500}
 
   /* ---------------------------- header ---------------------------- */
+  /* The double rule appears exactly twice a screen -- here and above the tab
+     bar -- and nowhere else. Reserved is what makes it mean something. */
   header{display:flex;align-items:center;gap:12px;padding:10px 16px 8px;
          padding-top:calc(10px + env(safe-area-inset-top,0px));
-         border-bottom:1px solid var(--ink);background:var(--paper);flex:none}
+         border-bottom:3px double var(--ink);background:var(--paper);flex:none}
   .wordmark{display:flex;flex-direction:column;line-height:.86;flex:none}
   .wordmark .wm-food{font-family:var(--display);font-style:italic;font-weight:500;font-size:19px;letter-spacing:.01em}
   /* The full-strength step of the mark ramp, and the same token the darkest
@@ -152,33 +154,45 @@
 
   /* ---------------------------- days ------------------------------ */
   .daylist{display:flex;flex-direction:column}
-  .day{border-bottom:1px solid var(--rule);padding:12px 0 10px}
-  .day.today{border-left:3px solid var(--signal);margin-left:-9px;padding-left:6px}
-  .day-head{display:flex;align-items:baseline;gap:8px;margin-bottom:7px}
+  /* Cook is a list and gets no rules. Plan is NOT a list: these are separate
+     days, so each gets one thin rule. The "today" word in the heading already
+     marks today, so the 3px bar that used to sit beside it is gone -- two marks
+     for one fact, and the bar was the louder and less informative of them. */
+  .day{border-bottom:1px solid var(--rule-2);padding:10px 0 11px}
+  .day-head{display:flex;align-items:baseline;gap:8px;margin-bottom:4px}
   .day-head .dw{font-family:var(--display);font-weight:600;font-size:16.5px}
   .day.today .day-head .dw::after{content:"today";font-family:var(--label);font-size:10px;
         letter-spacing:.1em;color:var(--signal);margin-left:7px;vertical-align:2px}
   .day-head .dt{font-family:var(--label);font-size:var(--fs-lab);letter-spacing:.07em;color:var(--ink-3);text-transform:uppercase}
-  .slot{display:grid;grid-template-columns:var(--slot-lab-w) 1fr;gap:8px;align-items:start;padding:3px 0}
+  .slot{display:grid;grid-template-columns:var(--slot-lab-w) 1fr;gap:10px;align-items:start;padding:0}
   /* The label doubles as the occasion control. Normally it just names the slot;
      set to anything but ordinary it names the occasion underneath, in full ink,
      because that is then the more interesting fact about the meal. */
   /* Courier is monospace, so letterspacing costs real width here: .1em put
      "celebration" over the column and wrapped it. Lowercase, tighter, and the
      occasion no longer shouts down the slot it belongs to. */
+  /* A button centres its content vertically, so stretching it for a bigger tap
+     target dropped the label 30px below the dish it names. Flex-start puts it
+     back on the dish while keeping the whole column tappable. */
   .slot-label{font-family:var(--label);font-size:var(--fs-lab-xs);letter-spacing:.04em;
-              color:var(--ink-2);padding:7px 0 0;text-align:left;display:block;line-height:1.25;
-              overflow-wrap:anywhere;align-self:stretch}
-  .slot-label .sl-occ{display:block;letter-spacing:.01em;color:var(--ink);font-weight:400;margin-top:2px}
-  .slot-label:hover{color:var(--ink-2)}
-  .slot-label:hover .sl-occ{color:var(--ink)}
+              color:var(--ink-2);padding:12px 0 0;text-align:left;line-height:1.25;
+              overflow-wrap:anywhere;align-self:stretch;
+              display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start}
+  /* The one affordance on this screen: a dotted underline means a choice sits
+     here. It is the width of the word, never of the column, and nothing else
+     on the page carries one -- which is what keeps it legible as a signal. */
+  .slot-label .sl-slot{border-bottom:1px dotted var(--ink-4);padding-bottom:1px;
+                       display:inline-block}
+  .slot-label .sl-occ{display:block;letter-spacing:.01em;color:var(--ink);font-weight:400;margin-top:3px}
+  .slot-label:hover .sl-slot{border-bottom-color:var(--ink-2);color:var(--ink)}
   .occ-row.on .pk-name{font-weight:600}
   .occ-row.retired .pk-name{color:var(--ink-2)}
   .occ-retired{font-family:var(--label);font-size:var(--fs-lab-xs);text-transform:uppercase;
                letter-spacing:.08em;color:var(--ink-3);margin-left:6px}
   .occ-tick{flex:none;width:16px;text-align:right;color:var(--ink)}
-  .slot-body{min-width:0;border-bottom:1px dotted var(--rule);padding-bottom:3px}
-  .slot:last-child .slot-body{border-bottom:none}
+  /* No rule under a slot. Within a day the meals belong together, and the
+     only line on this screen is the one between one day and the next. */
+  .slot-body{min-width:0}
   .planned{display:flex;align-items:baseline;gap:8px;width:100%;text-align:left;
            min-height:var(--tap);padding:5px 0;color:inherit}
   .planned .pname{font-family:var(--display);font-weight:500;font-size:var(--fs-dish);line-height:1.2;flex:1;min-width:0}
@@ -201,8 +215,8 @@
   /* In the plan it is indented to line up with the dishes; in the day picker
      it starts at the edge, because there is no label column there. */
   .day .slot-adds{padding-left:calc(var(--slot-lab-w) + 8px)}
-  .daytotal{font-family:var(--label);font-size:var(--fs-lab);letter-spacing:.06em;text-transform:uppercase;
-            color:var(--ink-3);margin-top:5px}
+  .daytotal{font-family:var(--label);font-size:var(--fs-lab-xs);letter-spacing:.04em;
+            color:var(--ink-4);margin-top:7px}
 
   /* --------------------------- meals ------------------------------ */
   .search-row{display:flex;gap:10px;align-items:center;padding:10px 0 6px;border-bottom:1px dotted var(--rule)}
@@ -324,7 +338,7 @@
                   display:block;margin-top:2px;font-weight:400}
 
   /* -------------------------- tab bar ----------------------------- */
-  .tabbar{display:flex;border-top:1px solid var(--ink);background:var(--paper);flex:none;
+  .tabbar{display:flex;border-top:3px double var(--ink);background:var(--paper);flex:none;
           padding-bottom:env(safe-area-inset-bottom,0px)}
   .tabbar button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
                  text-transform:lowercase;
@@ -1781,7 +1795,7 @@ function renderSlot(dISO, slot, entries){
   const occ = slotOccasion(dISO, slot);
   const lab = document.createElement("button");
   lab.className = "slot-label";
-  lab.innerHTML = esc(slot)+
+  lab.innerHTML = '<span class="sl-slot">'+esc(slot)+'</span>'+
     (occ!==DEFAULT_OCCASION ? '<span class="sl-occ">'+esc(occasionLabel(occ))+'</span>' : '');
   const occRec = occ!==DEFAULT_OCCASION ? occasionById(occ) : null;
   lab.title = occRec
