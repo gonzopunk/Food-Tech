@@ -25,10 +25,8 @@ schema-shaped, and they should be settled before any code.
 **2.5C marks are settled.** After a round of mock-ups the marks became a
 single-hue heatmap -- four cells, one teal ramp, five steps (2026-10-15). The
 **colour cleanup** under 2.5C is the next piece and needs decisions rather than
-edits — and it is now simpler, because **the app has exactly one colour and it
-means measurement**: the marks and the wordmark share the teal ramp, so there is
-no second accent to find a home for. **2.5B, 2.5D and 2.5E are still open.**
-Nothing else should be built on the current layout meanwhile.
+edits. **2.5B, 2.5D and 2.5E are still open.** Nothing else should be built on
+the current layout meanwhile.
 
 **2B is parked at 2B.2a.** Occasions moved from days to meal slots, empty slots
 stopped existing, occasions became editable data, weights read as proportions,
@@ -297,16 +295,29 @@ rather than a copy of it, so recolouring the marks recolours the wordmark with
 them and the two can never drift. Its four colours had been a legend for a
 four-hue mark that no longer existed.
 
-**The app now has exactly one colour, and it means measurement** — a stricter
-version of the rule Service always claimed and never kept. That makes the colour
-cleanup below easier rather than harder: everything else goes to ink and weight,
-with no second accent to place.
+**Correction (2026-10-15):** this was first written up as "the app now has
+exactly one colour". That is true of the *meal list* and false of the app, which
+uses about twenty-nine — eight neutrals, the teal ramp, the four axis hues in
+their legitimate legend roles, and seventeen tag hues in the Map and the Due
+list. The full audit is below.
 
 *Also removed:* the four type-safe hues (`--tech-*-ink`) built on 2026-10-14 to
 fix an amber sitting at 2.96:1 against green's 6.22:1. They existed only to
 colour four wordmark letters and had no other reader. The finding behind them —
 that a palette built for fills can fail as type — is kept in `DESIGN.md` §2,
 because the next accent will meet it too.
+
+### Every colour the app uses *(audited 2026-10-15)*
+
+| Group | Count | Where |
+| --- | --- | --- |
+| Neutrals | 8 | paper ×2, ink ×3, rule ×2, plus the dialog backdrop |
+| Mark ramp | 1 hue, 5 steps | the meal marks and the wordmark |
+| Axis hues, as axis identity | 4 | detail readout swatches, Priorities sliders, share bar — labelled, never compared by intensity, so Elizabeth's objection does not reach them |
+| Axis hues, overloaded | — | 14 sites; see below |
+| Tag hues | 17 | the Map's dots and the left edge of Due rows, nowhere else |
+
+Blue is the only one of the four axis hues that still means only what it should.
 
 ### Still outstanding under 2.5C — the colour cleanup
 
@@ -316,9 +327,23 @@ TECH colour for a non-TECH meaning: green reads as *good* in four places, red as
 green is therefore "good", not "Healthy".
 
 This needs decisions, not just edits — what *should* carry "due", "danger",
-"today", "active tab", "sync ok"? Ink and weight cover most of it, as they did
-for `#filterToggle.on` in 2B.2a. **The roadmap previously claimed today's date
-was "the only remaining exception"; that was wrong by an order of magnitude.**
+"today", "active tab", "sync ok"?
+
+**And the obvious answer is probably wrong.** The first plan was to send all
+fourteen to ink and weight, as `#filterToggle.on` went in 2B.2a. But those
+fourteen sites are now the app's *only* warmth outside the Map, and Jamey has
+said plainly he does not want to live in an all-teal app. Clearing them to ink
+would make the interface **less** colourful, not more — the opposite of the
+direction 2.5 is meant to go.
+
+So the cleanup is not "remove colour". It is "**stop the axis hues from doing
+double duty**", which can equally be solved by giving those states hues of their
+own — a due-amber that is not the Effort amber, an alert that is not the Tasty
+red. Same ambiguity fixed, liveliness kept. Decide that before touching any of
+the fourteen.
+
+*(The roadmap previously called today's date "the only remaining exception". That
+was wrong by an order of magnitude.)*
 
 *Absorbs 4A (foreground the TECH motif) — done, do not build it separately.*
 
@@ -450,6 +475,13 @@ history.
 
 ## Waiting on evidence
 
+- **Teal, or red, for the wordmark.** *Check back around 2026-10-20.* First
+  impression on 2026-10-15 was that the old Tasty red read better as the
+  wordmark than the new teal, and that an all-teal app is not what is wanted.
+  Living with it for a few days first, deliberately. If teal has not grown on
+  him, the wordmark can go back to red while the marks stay teal — they only
+  share a token today because nothing yet argued for separating them, and
+  `--mark-hue` plus one wordmark colour is a two-line change.
 - **Whether the slot label and the word row read as tappable.** No affordance
   was added on purpose; see "Start here". Note that this is the same class of
   problem as 2.5A — reachability — and may be answered by that conversation

@@ -189,8 +189,15 @@ holding on to:
   for** -- red reads as alert in seven places, green as good in four, amber as
   due in three. Recolouring is five lines (`--mark-hue` and its four steps).
 - **The wordmark is set in the ramp's own top step**, not a copy of it, so the
-  two cannot drift. The app has one colour, and it means measurement -- which is
-  what "colour appears in exactly one place" was always reaching for.
+  two cannot drift.
+
+**The claim that followed from this was too strong and is withdrawn.** The *meal
+list* has one colour. The app has about twenty-nine: eight neutrals, the teal
+ramp, the four axis hues (legitimately, in the readout swatches, the Priorities
+sliders and the share bar, where they are labelled and never compared by
+intensity), and **seventeen tag hues** that colour the Map's dots and the left
+edge of Due rows. "Colour appears in exactly one place" has never been true of
+this app and is not true now; see the overload audit below.
 - A filled cell holds five steps where a 13px letter held three, so this is also
   the first treatment that delivers all 35 patterns the repertoire contains.
 
