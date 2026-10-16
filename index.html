@@ -318,8 +318,10 @@
   .mark-head{display:flex;gap:2px;flex:none}
   .mark-head span{width:var(--cell);text-align:center;font-family:var(--label);
                   font-size:var(--fs-lab-xs);font-weight:700;letter-spacing:.03em;color:var(--ink-3)}
-  .bank-head{display:flex;align-items:flex-end;gap:10px;padding:2px 0 5px;
-             border-bottom:1px solid var(--rule-2)}
+  /* Sticky: a column header that scrolls away stops labelling anything. */
+  .bank-head{display:flex;align-items:flex-end;gap:10px;padding:6px 0 5px;
+             border-bottom:1px solid var(--rule-2);
+             position:sticky;top:0;background:var(--paper);z-index:2}
   .bank-head .bh-sp{flex:1;min-width:0;font-family:var(--label);font-size:var(--fs-lab-xs);
                     text-transform:uppercase;letter-spacing:.09em;color:var(--ink-3)}
 
@@ -379,7 +381,7 @@
   .modal-head .sheet-x{font-family:var(--label);font-size:13px;letter-spacing:.09em;text-transform:uppercase;
                        color:var(--ink-3);min-height:36px;padding:0 2px;flex:none}
   .modal-body{padding:14px 16px;overflow-y:auto;flex:1;min-height:0;-webkit-overflow-scrolling:touch}
-  .modal-foot{display:flex;align-items:center;gap:14px;padding:11px 16px;border-top:1px solid var(--rule);flex:none;
+  .modal-foot{display:flex;align-items:center;gap:26px;padding:11px 16px;border-top:1px solid var(--rule);flex:none;
               padding-bottom:calc(11px + env(safe-area-inset-bottom,0px));flex-wrap:wrap}
   .modal-foot .right{display:flex;gap:16px;margin-left:auto;align-items:center}
   .modal-foot button{font-family:var(--label);font-size:13px;text-transform:uppercase;letter-spacing:.09em;
@@ -412,8 +414,8 @@
   .picker-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;color:inherit;
               padding:11px 0;border-bottom:1px dotted var(--rule);min-height:var(--tap)}
   .picker-row .pk-main{flex:1;min-width:0}
-  .picker-row .pk-name{font-family:var(--display);font-weight:500;font-size:var(--fs-name);line-height:1.2}
-  .picker-row .pk-sub{font-family:var(--label);font-size:var(--fs-lab);text-transform:uppercase;letter-spacing:.07em;
+  .picker-row .pk-name{display:block;font-family:var(--display);font-weight:500;font-size:var(--fs-name);line-height:1.2}
+  .picker-row .pk-sub{display:block;font-family:var(--label);font-size:var(--fs-lab);letter-spacing:.04em;
                       color:var(--ink-3);margin-top:2px}
   /* The day picker stacks: the day and what is on it, then the slot words. */
   .picker-row.pickday{flex-direction:column;align-items:stretch;gap:0}
@@ -432,7 +434,10 @@
   .tech-readout{display:flex;flex-direction:column;gap:5px;font-family:var(--label);font-size:var(--fs-lab);
                 text-transform:uppercase;letter-spacing:.06em}
   .tech-readout .ax{display:flex;align-items:baseline;gap:7px;color:var(--ink-2)}
-  .tech-readout .swatch{width:6px;height:6px;background:var(--tc);flex:none;align-self:center}
+  .tech-readout .swatch{width:12px;height:12px;flex:none;align-self:center}
+  .tech-readout .swatch.lv1{background:var(--mark-1)} .tech-readout .swatch.lv2{background:var(--mark-2)}
+  .tech-readout .swatch.lv3{background:var(--mark-3)} .tech-readout .swatch.lv4{background:var(--mark-4)}
+  .tech-readout .swatch.lv5{background:var(--mark-5)}
   .tech-readout .axval{font-weight:700;color:var(--ink)}
   .tech-readout .axmuted{color:var(--ink-3);letter-spacing:.05em}
   .axkind{font-family:var(--label);font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
@@ -484,9 +489,11 @@
   /* --------------------------- wide screens ----------------------- */
   @media (min-width:760px){
     body{font-size:15px}
-    .view{padding:0 26px 34px;max-width:1180px;margin:0 auto;width:100%}
-    .daylist{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:0 30px;align-items:start}
-    .meal-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0 30px}
+    /* One column, and not a wide one. The T E C H header sits over a single
+       column of marks; spread across three it labelled only the last. Days
+       likewise now read downward, one rule between each, which a multi-column
+       grid breaks. A phone-first app on a desktop is a column, not a spread. */
+    .view{padding:0 26px 34px;max-width:680px;margin:0 auto;width:100%}
     .tabbar{justify-content:center;gap:40px}
     .tabbar button{flex:none;min-width:130px}
     dialog{margin:auto;max-height:86vh;border:1px solid var(--ink)}
@@ -673,8 +680,8 @@
 <!-- meal editor -->
 <dialog id="editDlg">
   <div class="modal-head">
-    <button class="sheet-x" data-close>Cancel</button>
     <h3 id="editTitle" class="head-title">New meal</h3>
+    <button class="sheet-x" data-close>Cancel</button>
     <button class="sheet-x act-save" id="saveMealBtn">Save</button>
   </div>
   <div class="modal-body">
@@ -709,12 +716,15 @@
         <select id="fPer"><option value="">None</option><option value="week">Per week</option><option value="month">Per month</option><option value="quarter">Per quarter</option></select></div>
       <div class="field"><label for="fTimes">Times</label><input id="fTimes" type="number" min="1" max="7" value="1"></div>
     </div>
+    <!-- One line each: "Calories / serving" wrapped and dropped its input a
+         line below the other three. The serving note moved under the row. -->
     <div class="row">
-      <div class="field"><label for="fCal">Calories / serving</label><input id="fCal" type="number" min="0" placeholder="&mdash;"></div>
-      <div class="field"><label for="fP">Protein g</label><input id="fP" type="number" min="0" placeholder="&mdash;"></div>
-      <div class="field"><label for="fF">Fat g</label><input id="fF" type="number" min="0" placeholder="&mdash;"></div>
-      <div class="field"><label for="fC">Carbs g</label><input id="fC" type="number" min="0" placeholder="&mdash;"></div>
+      <div class="field"><label for="fCal">kcal</label><input id="fCal" type="number" min="0" placeholder="&mdash;"></div>
+      <div class="field"><label for="fP">protein g</label><input id="fP" type="number" min="0" placeholder="&mdash;"></div>
+      <div class="field"><label for="fF">fat g</label><input id="fF" type="number" min="0" placeholder="&mdash;"></div>
+      <div class="field"><label for="fC">carbs g</label><input id="fC" type="number" min="0" placeholder="&mdash;"></div>
     </div>
+    <div class="hint" style="margin:-8px 0 14px">Per serving.</div>
     <div class="field"><label for="fRecipe">Recipe (paste from a website or type from a cookbook)</label><textarea id="fRecipe"></textarea>
       <div style="margin-top:6px"><button type="button" id="estimateBtn">Estimate macros from recipe</button></div>
       <div class="hint">Rough estimate only &mdash; scans ingredient lines like &ldquo;2 cups rice&rdquo; against a built-in list of ~100 common foods (including fruits, plant milks, nut butters, and sweeteners) and adds them up. Won&rsquo;t catch everything; review before using.</div>
@@ -1047,12 +1057,13 @@ function techReadout(m){
     const v = mag[ax.k];
     const extra = ax.k==="t" && real.n
       ? '<span class="axmuted">made '+real.mean.toFixed(1)+'★, best '+real.best+'★</span>' : "";
-    return '<span class="ax"><span class="swatch" style="--tc:var('+ax.varName+')"></span>'+
+    return '<span class="ax"><span class="swatch lv'+virtueStrength(ax.k, v)+'"></span>'+
            ax.label+' <span class="axval">'+v+'</span><span class="axmuted">'+ax.scale[v]+'</span>'+extra+'</span>';
   }).join("");
-  return '<div class="tech-readout">'+cells+'</div>'+
-         '<div class="hint" style="margin:-4px 0 10px">'+
-         'What it asks: effort, cost. What it offers: taste, nourishment. Whether that was the right call depends on the night.</div>';
+  // The standing explainer that used to sit here was onboarding in the wrong
+  // place: useful once, noise on the hundredth reading. Teaching belongs in a
+  // real onboarding and help surface -- see the roadmap.
+  return '<div class="tech-readout">'+cells+'</div>';
 }
 /* --- radar: offers occupy the top half, demands the bottom, so a generous
        dish reads top-heavy and a costly one bottom-heavy at a glance. ---   */
@@ -1519,7 +1530,7 @@ const SORTS = [
   {id:"overdue",  label:"most overdue",      hint:"furthest past its target first"},
   {id:"never",    label:"never made",        hint:"still waiting for a first turn"},
   {id:"recent",   label:"recently made",     hint:"what you have been cooking lately"},
-  {id:"fit",      label:"best fit",          hint:"ordered by the priorities below"}
+  {id:"fit",      label:"best fit",          hint:"ordered by what matters most tonight"}
 ];
 const SORT_KEY = "foodtech-sort", DENSITY_KEY = "foodtech-density";
 let bankSort = "choosing";

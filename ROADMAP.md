@@ -85,7 +85,43 @@ back; an analysis view on thin data shows nothing and wrongly discredits the ide
 items below are **parked** — see "Start here". Each assumes occasions are reached
 the way they are reached today, which is the question Batch 2.5 reopens.
 
-### 2B.3 · The occasion editor *(parked)*
+### 2B is unparked, and 2B.3 is the next build
+
+*2026-10-16, from a day of real use.* The structural question that parked these
+is answered — 2.5 is built — and a day with the finished app produced three
+failures that are all the same missing feature.
+
+**1. You cannot define an occasion at the moment you would want to.** Adding a
+meal for the weekend is exactly when the occasion is worth setting, and the
+picker offers only the six presets. No way to tune one there.
+
+**2. Every custom weighting is a one-off.** Tune the sliders and there is
+nowhere to name what you tuned. The same Saturday has to be re-tuned every time.
+This is 2B.5, and the data layer for it shipped with 2B.1 — occasions are
+already editable records with stable ids.
+
+**3. The only path to the sliders runs through Sort.** Decide to sort, read down
+six options, choose *best fit*, and only then does the panel appear. Jamey,
+having built the thing, found it "still a little tricky" the next day.
+
+*Fixed immediately:* that option's hint read **"ordered by the priorities
+below"** while nothing was below — the panel appears only once you pick it. It
+now reads "ordered by what matters most tonight".
+
+**The requirement this adds to 2B.3:** the sliders must be reachable **from the
+occasion sheet**, which is to say from the picker, which is to say from the
+moment of choosing. Reaching them through a sort control is the tail wagging the
+dog — sorting the bank is the *lesser* use of a weighting; aiming tonight's
+choice is the greater one.
+
+**Worth keeping:** the share bar's four axis colours. Jamey, same day: *"the
+picker is where the colors still matter: the percentage bar uses them rather
+elegantly."* That is the one place four hues earn their keep — four quantities
+compared inside a single bar have to be told apart, which is exactly the case
+the single ramp does not cover. The detail readout, which only lists four
+labelled values, moved to the mark ramp on 2026-10-16.
+
+### 2B.3 · The occasion editor *(next)*
 
 Label, optional hint, the four weights, and a live preview: *"across your
 repertoire this favours: X · Y · Z"*, recomputed as you adjust.
@@ -96,7 +132,7 @@ not as what you would literally see on a given night.
 
 Ordinary is not editable — see `DESIGN.md` §4.
 
-### 2B.4 · Add and retire *(parked, with 2B.3)*
+### 2B.4 · Add and retire *(with 2B.3)*
 
 Add a new occasion; **retire** rather than delete. A retired occasion stops being
 offered but still renders where already used, so history keeps its meaning.
@@ -470,6 +506,7 @@ history.
 | **4C** | **Print / fridge view** | a day | The cheapest way to include Elizabeth, whatever happens with D1. |
 | **4D** | **Say why a dish was surfaced** — *"low effort · not made in five weeks"* | afternoon | The fit logic is good and invisible, which makes it feel like magic rather than reasoning you can disagree with. |
 | **4L** | **Kintsugi — gold that marks a repair** | a day, after 3A | A dish rated badly and later rated well is a real break and a real repair, in data that already exists. Gold needs a dark ground to read as gold, and it needs a surface where time is drawn — so this waits for 3A and for the plain ink version of *use leaves a mark* to prove itself first. The test and the contrast numbers are in `BRIEF.md`. |
+| **4O** | **Onboarding and in-app help** — a first run, and a reference you can consult | a project | See below. The standing explainers have to go somewhere; "nowhere" is what we have now. |
 | **4M** | **Cookbook chapters** — group the browsing list the way a cookbook does | a day + a decision | See below: the biggest open question in the sort work, and the browsing mode is wrong until it is answered. |
 | **4N** | **Tag management** — rename, merge and delete a tag across every meal | an afternoon | Tags can only be edited one meal at a time, as free text. The real data already carries **`burger` and `burgers` as separate tags**, which is one typo becoming a permanent split. 31 tags across 63 meals, 14 of them used exactly once. Chapters (4M) depend on this: you cannot group by a vocabulary you cannot tidy. |
 | **4K** | **Half-steps for meal magnitudes** — the film-review argument | a day | Measured 2026-10-13: 38 of 63 meals share a TECH profile with another, so no weighting can tell them apart. Half-steps would lift distinct profiles 35→42 and distinct top-5 lists 361→989. More expressive power than anything in Batch 2B, but it touches every meal's stored values and the editor's dropdowns, and it should wait until 2.5 settles how TECH is displayed. |
@@ -481,6 +518,36 @@ history.
 | **4J** | **On deck → SmartList** | a day, after 4I | The targeted bridge: a dish goes on deck, its missing ingredients go to the list. Needs no change to SmartList. |
 
 ---
+
+### 4O in full — onboarding and in-app help
+
+**Raised 2026-10-16, and it is bigger than the line that prompted it.** A
+standing explainer sat under every meal's TECH readout — *"What it asks: effort,
+cost. What it offers: taste, nourishment…"* — useful the first time and noise on
+the hundredth. It has been removed, which fixes the symptom and leaves the
+disease.
+
+**The principle this app needs:** teaching that repeats forever is not teaching,
+it is clutter. Explanation should be **available on demand and offered once by
+default**, never permanently resident.
+
+The app has a lot to explain and currently explains almost none of it: what the
+four axes mean and why higher is not better; what an occasion is and why it
+belongs to a meal rather than a day; what the marks are reading; why some dishes
+are flagged due. A new user — the beta-tester case — meets all of it at once
+with no guide, which is precisely the situation `BRIEF.md` describes as the
+test of whether the design works.
+
+Two surfaces, probably:
+
+- **A first run that orients**, once, skippable, and never seen again.
+- **A help surface you can consult** — reachable from More, written as reference
+  rather than as tooltips scattered through the interface.
+
+This supersedes any instinct to add explanatory text next to controls. The
+dotted underline, the named sort value and the column header are the model: the
+interface should explain itself by *being legible*, and the help surface carries
+what legibility cannot.
 
 ### 4M in full — the cookbook problem
 
