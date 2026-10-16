@@ -470,6 +470,8 @@ history.
 | **4C** | **Print / fridge view** | a day | The cheapest way to include Elizabeth, whatever happens with D1. |
 | **4D** | **Say why a dish was surfaced** — *"low effort · not made in five weeks"* | afternoon | The fit logic is good and invisible, which makes it feel like magic rather than reasoning you can disagree with. |
 | **4L** | **Kintsugi — gold that marks a repair** | a day, after 3A | A dish rated badly and later rated well is a real break and a real repair, in data that already exists. Gold needs a dark ground to read as gold, and it needs a surface where time is drawn — so this waits for 3A and for the plain ink version of *use leaves a mark* to prove itself first. The test and the contrast numbers are in `BRIEF.md`. |
+| **4M** | **Cookbook chapters** — group the browsing list the way a cookbook does | a day + a decision | See below: the biggest open question in the sort work, and the browsing mode is wrong until it is answered. |
+| **4N** | **Tag management** — rename, merge and delete a tag across every meal | an afternoon | Tags can only be edited one meal at a time, as free text. The real data already carries **`burger` and `burgers` as separate tags**, which is one typo becoming a permanent split. 31 tags across 63 meals, 14 of them used exactly once. Chapters (4M) depend on this: you cannot group by a vocabulary you cannot tidy. |
 | **4K** | **Half-steps for meal magnitudes** — the film-review argument | a day | Measured 2026-10-13: 38 of 63 meals share a TECH profile with another, so no weighting can tell them apart. Half-steps would lift distinct profiles 35→42 and distinct top-5 lists 361→989. More expressive power than anything in Batch 2B, but it touches every meal's stored values and the editor's dropdowns, and it should wait until 2.5 settles how TECH is displayed. |
 | **4E** | **Seasonality as a real field** | a day | Your own seed notes say "Summer only" and "3-4x/month in summer" in free text the app can't read. |
 | **4F** | **Occasion defaults by weekday** | afternoon | Most Tuesdays are ordinary; most Saturdays aren't. Partly superseded by 2A — reassess after. |
@@ -480,15 +482,60 @@ history.
 
 ---
 
+### 4M in full — the cookbook problem
+
+**A to Z is not a cookbook.** No cookbook lists every recipe alphabetically; it
+has chapters. The browsing mode shipped as a flat alphabetical list, and that is
+the thing it most obviously is not.
+
+The obvious fix does not work, and Jamey named why: **a cookbook does not put
+the same recipe in six chapters.** Group naively by tag and *Salmon rice* appears
+under fish and under grain.
+
+**What the real vocabulary looks like** (63 meals, surveyed 2026-10-16):
+
+| | |
+| --- | --- |
+| Distinct tags | 31 |
+| Meals with 1 tag | 27 |
+| Meals with 2 | 25 |
+| Meals with 3 or more | 8 |
+| Meals with none | 3 |
+| Tags used exactly once | 14 |
+
+So duplication is a real but *bounded* problem: most meals carry one or two tags.
+
+**The harder half is that the tags mix at least seven organising axes.** Protein
+(chicken, beef, fish, pork) · form (soup, salad, pasta, pizza, sandwich) ·
+cuisine (asian) · source (restaurant, takeout, angela, h4p) · occasion (sunday,
+brunch) · method (grill, pressure cooker) · ingredient (kale, shrimp, gochujang)
+· season (autumn). A cookbook picks **one** axis and sticks to it.
+
+**The approach I would try**, because it needs no data entry and the codebase
+already contains the pattern: a **designated, ordered list of chapter tags**, and
+each meal belongs to the first one it matches. The retired `tagColor()` did
+exactly this — walk a meal's tags, take the first that is in the table. The order
+*is* the editorial judgement, and it is one short list to tune rather than 63
+decisions to make.
+
+Open questions before building:
+
+- **Which axis?** Most cookbooks use course or protein. The tags support either,
+  but not both at once.
+- **What about the rest?** Tags outside the chapter list keep working as filters
+  — source, season and method are useful to filter by and useless as chapters.
+- **Where do the untagged go?** Three meals have no tags at all. A closing
+  chapter, or left out of browsing entirely.
+- **Does 4N come first?** Probably. Grouping by a vocabulary containing both
+  `burger` and `burgers` produces two chapters of one recipe each.
+
 ## Waiting on evidence
 
-- **Teal, or red, for the wordmark.** *Check back around 2026-10-20.* First
-  impression on 2026-10-15 was that the old Tasty red read better as the
-  wordmark than the new teal, and that an all-teal app is not what is wanted.
-  Living with it for a few days first, deliberately. If teal has not grown on
-  him, the wordmark can go back to red while the marks stay teal — they only
-  share a token today because nothing yet argued for separating them, and
-  `--mark-hue` plus one wordmark colour is a two-line change.
+- ~~**Teal, or red, for the wordmark.**~~ *Retired 2026-10-16: moot.* The
+  redesign replaced the whole palette — the marks and the wordmark are indigo
+  against a vermilion signal now, and teal is not in the app. If the indigo
+  wants revisiting it is the same two-line change, but there is no open question
+  waiting on a date.
 - **Whether the slot label and the word row read as tappable.** No affordance
   was added on purpose; see "Start here". Note that this is the same class of
   problem as 2.5A — reachability — and may be answered by that conversation
@@ -554,6 +601,23 @@ Weights stopped pretending to be absolute quantities.
 *Also fixed in passing:* the scale landmarks were first positioned with
 `padding-left`, and absolutely positioned children resolve against the padding
 box — so they sat 78px left of the track they label. Margin, not padding.
+
+### Fix — "never made" was only half true, 2026-10-16
+
+Reported as the *never made* sort misbehaving: an alphabetical run containing
+both flagged and unflagged meals, then a second alphabetical run.
+
+**The sort was right; the flag was lying.** Both runs were correct — never-made
+first, each group alphabetical, the second run being everything already cooked.
+What was wrong is that the flag came from `dueInfo()`, which returns `null`
+for any meal without a frequency target. So a dish you had never cooked went
+unmarked unless you had *also* told the app how often you meant to cook it.
+
+"Never made" now reads `lastMade()` directly, in the rows and in the detail
+sheet, and it is set in ink rather than the signal: **due** is an alert — you
+said you would cook this and have not — while **never made** is a fact about a
+dish you have not got to. Verified against the repertoire: no never-made row
+unflagged, no flagged row that has actually been cooked.
 
 ### Batch 2.5 step 3 — Cook, shipped 2026-10-15
 

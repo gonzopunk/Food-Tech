@@ -294,6 +294,7 @@
   .meal-row .meta{display:flex;align-items:center;gap:9px;margin-top:3px;font-family:var(--label);
                   font-size:var(--fs-lab);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3);flex-wrap:wrap}
   .meal-row .meta .due{color:var(--signal);font-weight:700}
+  .meal-row .meta .never{color:var(--ink-2)}
   .meal-row .meta .ondeck{color:var(--ink);font-weight:700}
   .meal-row .mr-glyph{flex:none}
   .fitbar{height:2px;background:var(--rule);margin-top:6px}
@@ -425,6 +426,7 @@
   .detail-meta{display:flex;flex-wrap:wrap;gap:4px 14px;margin-bottom:12px;font-family:var(--label);
                font-size:11.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-3)}
   .detail-meta .due{color:var(--signal);font-weight:700}
+  .detail-meta .never{color:var(--ink-2)}
   .detail-profile{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
   .detail-profile-side{flex:1;min-width:170px}
   .tech-readout{display:flex;flex-direction:column;gap:5px;font-family:var(--label);font-size:var(--fs-lab);
@@ -1499,7 +1501,8 @@ function cardMeta(m){
   const bits = [];
   if(m.freq && m.freq.per) bits.push(freqLabel(m.freq));
   const di = dueInfo(m);
-  if(di && di.due) bits.push('<span class="due">'+(di.never?"never made":"due")+'</span>');
+  if(!lastMade(m.id)) bits.push('<span class="never">never made</span>');
+  else if(di && di.due) bits.push('<span class="due">due</span>');
   const real = realizedTaste(m);
   if(real.n) bits.push("★".repeat(Math.round(real.mean)));
   if(m.recipe) bits.push("recipe");
@@ -1542,6 +1545,8 @@ function sortedBank(){
   switch(bankSort){
     case "az":      return ms.sort(byName);
     case "overdue": return ms.sort((a,b)=> overdueRank(b)-overdueRank(a) || byName(a,b));
+    // Never-made first, each group alphabetical. This reads as two alphabetical
+    // runs, which is correct: the second run is everything you have cooked.
     case "never":   return ms.sort((a,b)=> (made(a)?1:0)-(made(b)?1:0) || byName(a,b));
     case "recent":  return ms.sort((a,b)=> made(b).localeCompare(made(a)) || byName(a,b));
     case "fit":     return ms.sort((a,b)=> fitScore(b,activeWeights)-fitScore(a,activeWeights) || byName(a,b));
@@ -1576,7 +1581,8 @@ function renderBank(){
     // Compact carries one short flag; expanded carries the whole context line.
     const di = dueInfo(m);
     const flag = queued.has(m.id) ? '<span class="ondeck">on deck</span>'
-               : (di && di.due ? '<span class="due">'+(di.never?"never made":"due")+'</span>' : "");
+               : !lastMade(m.id)  ? '<span class="never">never made</span>'
+               : (di && di.due    ? '<span class="due">due</span>' : "");
     const meta = bankDensity === "expanded" ? cardMeta(m) : flag;
     const row = document.createElement("button");
     row.className = "meal-row";
