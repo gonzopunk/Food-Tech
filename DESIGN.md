@@ -448,12 +448,23 @@ Keep it that way.
   effectively. If I have trouble finding and understanding what the app is doing,
   a different user stands no chance."* When a second signpost is needed, the
   problem is the building, not the signs.
+
+  **A third attempt failed the same way.** Making the sort control the mode
+  switch gave the weighting a named, permanent home and a day of real use on
+  2026-10-16 still produced *"it is still too hard to find"*. Three routes, one
+  wrong address. The rule the three of them earn:
+
+  > A tool is reachable when it sits inside the task, not when a route to it
+  > exists.
+
+  Sorting a list is the smaller half of what a weighting is for; aiming
+  tonight's choice is the larger half, and that happens in the picker.
 - **Name surfaces after the question they answer, not the data they hold.** Plan,
   Meals and Deck are places; a cook arrives with a question. A tab bar of nouns
   is a "what do you want to do?" prompt that declines to answer.
 - **Structure first, then typography.** Restyling a surface that is about to be
-  dissolved is work done twice — which is why the visual items in Batch 2.5 now
-  sit behind the structural one.
+  dissolved is work done twice — which is why the redesign's visual questions
+  waited behind the structural one, and why they were cheap once it was settled.
 - **When a surface feels cluttered, look for a concept to delete before
   reaching for a setting.** Empty meal slots were going to be fixed with
   defaults — global, or indexed to the weekday. Both would have kept the

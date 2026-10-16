@@ -1,438 +1,194 @@
 # FoodTech — roadmap
 
-Companion to `DESIGN.md`. That document says what the app is and what it refuses
-to be; this one says what happens next.
+Companion to `DESIGN.md`, which says what the app is and what it refuses to be,
+and to `BRIEF.md`, which says how it should look. This one says what happens
+next.
 
-Items are grouped by **surface** rather than by where the idea came from, because
-that's how they get built — one batch per area. Sizes are rough: *minutes*,
-*afternoon*, *a day*, *a week*, *a project*.
+**Last reviewed 2026-10-16.**
 
-Last updated 2026-10-14.
+## How this document is organised
 
----
+**Live work has names, not numbers.** The batch numbers served their purpose and
+then stopped serving it: `2B.3` sat inside Batch 2 while depending on Batch 2.5,
+which was written later; `4A` through `4O` were a queue in letter order that had
+not matched the real order for a week. Numbers imply a sequence, and the
+sequence kept changing while the numbers could not. Names do not rot.
 
-## Start here
+The numbers survive in **Done**, where they are history and renaming them would
+falsify the record, and in the **concordance** below, so that anything said in
+conversation still resolves.
 
-**Batch 2.5 is built.** Steps 1, 2 and 3 shipped on 2026-10-15 — the material,
-then Plan, then Cook. The app now has two verb tabs, a single-hue mark, Spectral
-against IBM Plex Mono, dark mode, six real sorts, a density toggle, and no TECH
-hue doing a job that isn't TECH. `BRIEF.md` is what it was built from and
-section 9 is the system it implements.
+Items sit in one of four places:
 
-**What is left of 2.5:**
+| | |
+| --- | --- |
+| **Now** | being built, or next up |
+| **Next** | scoped, ready, waiting its turn |
+| **Later** | worth doing, not yet urgent |
+| **Open questions** | needs a decision before it can be scoped |
 
-- **2.5D — is "Service" too literary?** Largely answered by the new material,
-  but it deserves a second look once the whole thing has been lived with for a
-  week rather than judged in a screenshot.
-- **2.5E — the More sheet**, still a stack of sentences.
-- **Three surfaces the canvas never covered**: the meal picker, a meal's detail
-  sheet, and the Priorities panel. The picker is the one with a real design
-  question, because 2.5A put two different controls in it — the occasion and the
-  priority sliders.
+Sizes are rough: *minutes*, *afternoon*, *a day*, *a week*, *a project*.
 
-**Two schema-shaped items under 2.5A are still unsettled** and block 2B.3: where
-a one-off weighting lives, and whether Cook keeps a weighting of its own. Both
-are written up under 2.5A.
+### Concordance — old number to current name
 
-**2B is parked at 2B.2a.** Occasions moved from days to meal slots, empty slots
-stopped existing, occasions became editable data, weights read as proportions,
-and the weight panel finally got an entry point. Schema v8, verified against the
-real 63-meal / 43-day backup with nothing lost. The remaining items —
-
-**2B.3–2B.5 — are parked, not waiting.** They are scoped and ready, but every one of
-them assumes occasions are reached the way they are reached today — and that is
-precisely the assumption Batch 2.5 now puts in question. Building an editor for
-a control whose home is about to move means building it twice.
-
-(The usage figure that first prompted caution — occasions set five times in 43
-days — is not trustworthy on its own: it spans a desktop-only stretch and a
-mobile rebuild, and the control was buried in a day dropdown for most of it. But
-the structural argument stands without it.)
-
-**3C — does this dish earn its place — is the one build still safely available.**
-It reads magnitudes, which already exist and are substantially hand-set, and it
-answers a question no current surface answers, so it does not depend on how the
-surfaces get rearranged. If something needs building before 2.5 is settled, it is
-this.
-
-**Two things to watch:**
-
-- The slot label carries no visual hint that it is tappable, and neither does
-  the word row. Deliberate — the alternative is decoration repeated twenty-one
-  times a screen — but if it proves undiscoverable, say so and it gets one.
-- Setting an occasion on a meal you have not planned yet now happens inside the
-  meal picker, from its subtitle. That is the right moment for it, but it is a
-  less obvious place than a control sitting on the day.
-
-**Batch 2.5 needs a conversation before any code.** Three connected visual
-questions, raised after two weeks of use. Not urgent, and the app is perfectly
-usable meanwhile — but doing any one of them alone means doing the work twice.
-
-**Batch 3A (the aggregate view) wants more data first.** 25 of 63 planned
-instances now carry a rating, and inline rating only landed on 2026-10-12, so the
-rate should climb. Give it a few weeks before building anything that reads it
-back; an analysis view on thin data shows nothing and wrongly discredits the idea.
-**3C is the exception** — it reads magnitudes, not ratings, and is ready now.
-
-**One decision stands open:** D1, multi-user — answered "not for now", with 3B
-(record who cooked) still worth doing cheaply to keep the option alive.
+| Was | Is now | Where |
+| --- | --- | --- |
+| 2B.3 | The occasion editor | **Now** |
+| 2B.4 | Add and retire occasions | Next |
+| 2B.5 | Name a weighting you have tuned | **Now** — folded into the occasion editor |
+| 2.5A | *built: two verb tabs* · its two schema questions | Open questions |
+| 2.5B | *built: six sorts* · the panel is still unnamed | Next |
+| 2.5C | *built: the single-hue mark, and the colour cleanup* | Done |
+| 2.5D | *moot: the redesign replaced "Service"* | Done |
+| 2.5E | The More sheet | Later |
+| 3A | The aggregate view | Later — waiting on data |
+| 3B | Record who cooked | Later |
+| 3C | Does this dish earn its place | Next |
+| 4A | *built: absorbed by the mark work* | Done |
+| 4B | *built: dark mode shipped with the redesign* | Done |
+| 4C | Print / fridge view | Later |
+| 4D | Say why a dish was surfaced | Later |
+| 4E | Seasonality as a real field | Later |
+| 4F | Occasion defaults by weekday | Later |
+| 4G | Restore from backup in the interface | Later |
+| 4H | Retire the protein-target UI | Later |
+| 4I | Key ingredients | Later |
+| 4J | On deck to SmartList | Later |
+| 4K | Half-steps for magnitudes | Later — now unblocked |
+| 4L | Kintsugi | Later |
+| 4M | Cookbook chapters | Later |
+| 4N | Tag management | Later |
+| 4O | Onboarding and in-app help | Next |
+| D1 | Multi-user | Open questions |
 
 ---
 
-## Batch 2 — occasions
+## Where things stand
 
-**2A through 2B.2a shipped 2026-10-13** and are recorded under Done. The three
-items below are **parked** — see "Start here". Each assumes occasions are reached
-the way they are reached today, which is the question Batch 2.5 reopens.
+**The redesign is built.** Three steps shipped 2026-10-15 — the material, then
+Plan, then Cook — and `BRIEF.md` is what they were built from. The app now has
+two verb tabs, a single-hue mark, Spectral against IBM Plex Mono, dark mode, six
+real sorts, a density toggle, and no TECH hue doing a job that is not TECH.
 
-### 2B is unparked, and 2B.3 is the next build
+**A first full day of use produced fifteen fixes**, all shipped 2026-10-16 and
+recorded under Done, and one finding that matters more than any of them.
 
-*2026-10-16, from a day of real use.* The structural question that parked these
-is answered — 2.5 is built — and a day with the finished app produced three
-failures that are all the same missing feature.
+**The finding: reachability is not a signposting problem, and we have now
+established that three times.** The share readout, then the SORT button, then
+sort-as-mode-switch all aimed at the same complaint — *I cannot find the
+priority sliders* — and the complaint survived all three. Each added a **route**
+to the tool. What is wrong is the tool's **address**: the sliders live inside a
+sorting control, and sorting a list is the smaller half of what a weighting is
+for. Aiming tonight's choice is the larger half, and that happens in the picker.
 
-**1. You cannot define an occasion at the moment you would want to.** Adding a
-meal for the weekend is exactly when the occasion is worth setting, and the
-picker offers only the six presets. No way to tune one there.
+> A tool is reachable when it sits inside the task, not when a route to it
+> exists.
 
-**2. Every custom weighting is a one-off.** Tune the sliders and there is
-nowhere to name what you tuned. The same Saturday has to be re-tuned every time.
-This is 2B.5, and the data layer for it shipped with 2B.1 — occasions are
-already editable records with stable ids.
+That is the principle the occasion editor is built on, and it is the one to test
+any future *"let's add a way to get to it"* against.
 
-**3. The only path to the sliders runs through Sort.** Decide to sort, read down
-six options, choose *best fit*, and only then does the panel appear. Jamey,
-having built the thing, found it "still a little tricky" the next day.
+**Nothing is blocked on data except the aggregate view.** Everything else in Now
+and Next can start today.
 
-*Fixed immediately:* that option's hint read **"ordered by the priorities
-below"** while nothing was below — the panel appears only once you pick it. It
-now reads "ordered by what matters most tonight".
+---
 
-**The requirement this adds to 2B.3:** the sliders must be reachable **from the
+## Now
+
+### The occasion editor
+
+*A day.* Formerly 2B.3, and it absorbs 2B.5.
+
+Three failures reported on 2026-10-16 are one missing feature:
+
+1. **You cannot define an occasion at the moment you would want to.** Adding a
+   meal for the weekend is exactly when the occasion is worth setting, and the
+   picker offers only the six presets.
+2. **Every custom weighting is a one-off.** Tune the sliders and there is
+   nowhere to name what you tuned, so the same Saturday is re-tuned every time.
+3. **The only path to the sliders runs through Sort** — decide to sort, read
+   down six options, choose *best fit*, and only then does the panel appear.
+
+What it is: label, optional hint, the four weights, and a live preview —
+*"across your repertoire this favours: X · Y · Z"* — recomputed as you adjust.
+
+**The requirement that reorders it:** the sliders must be reachable **from the
 occasion sheet**, which is to say from the picker, which is to say from the
-moment of choosing. Reaching them through a sort control is the tail wagging the
-dog — sorting the bank is the *lesser* use of a weighting; aiming tonight's
-choice is the greater one.
+moment of choosing.
 
-**Worth keeping:** the share bar's four axis colours. Jamey, same day: *"the
-picker is where the colors still matter: the percentage bar uses them rather
-elegantly."* That is the one place four hues earn their keep — four quantities
-compared inside a single bar have to be told apart, which is exactly the case
-the single ramp does not cover. The detail readout, which only lists four
-labelled values, moved to the mark ramp on 2026-10-16.
+**Naming a tuned weighting belongs here too** (was 2B.5). Tune until the list
+looks like the kind of night you mean, then name it. That is the best creation
+path precisely because no preview is involved — you are looking at the real
+list, not a model of it. It was first specced as a third action beside *adjust*
+and *clear* in the sort note, and the sort note no longer exists.
 
-### 2B.3 · The occasion editor *(next)*
+**One honesty constraint:** the preview is pure `fitScore`, while the picker
+actually orders by slot-tag tier, then slot use, then fit. Label it as what a
+weighting *favours*, not as what you would literally see on a given night.
 
-Label, optional hint, the four weights, and a live preview: *"across your
-repertoire this favours: X · Y · Z"*, recomputed as you adjust.
+**Ordinary is not editable** — see `DESIGN.md` §4.
 
-One honesty constraint: that list is pure `fitScore`, while the picker actually
-orders by slot-tag tier → slot use → fit. Label it as what a weighting *favours*,
-not as what you would literally see on a given night.
+**Blocked on two schema decisions** — see Open questions. Both are small, and
+both should be settled in conversation before any code.
 
-Ordinary is not editable — see `DESIGN.md` §4.
-
-### 2B.4 · Add and retire *(with 2B.3)*
-
-Add a new occasion; **retire** rather than delete. A retired occasion stops being
-offered but still renders where already used, so history keeps its meaning.
-Outright deletion only when nothing references it, past or future. The data layer
-for this shipped with 2B.1 and is tested — only the controls are missing.
-
-### 2B.5 · Save the current weighting as an occasion *(relocated to 2.5A)*
-
-Tune until the list looks like the kind of night you mean, then name it. Still
-the best creation path, precisely because no preview is involved — you are
-looking at the real list, not a model of it.
-
-**Its home changed on 2026-10-14.** It was specced as a third action beside
-*adjust* and *clear* in the sort note — and the sort note sits in the surface
-2.5A dissolves. It now belongs in the picker, beside the one-off priority
-setting; see "Where the sliders go". Kept here so the reasoning is not lost.
+**Keep the share bar's four axis colours.** Jamey, 2026-10-16: *"the picker is
+where the colors still matter: the percentage bar uses them rather elegantly."*
+That is the one place four hues earn their keep — four quantities compared
+**inside a single bar** have to be told apart, which is exactly the case the
+single ramp does not cover. The detail readout, which only *lists* four labelled
+values, moved to the mark ramp the same day.
 
 ---
 
-## Batch 2.5 — what the app is for, and how it says so *(a conversation, then a project)*
+## Next
 
-**This is an agenda, not a plan.** Nothing below is decided. It was a list of
-three visual fixes until 2026-10-14; it is now led by a structural question that
-has to be answered first, because the visual questions are all downstream of it.
+### Onboarding and in-app help
 
-### The finding that reordered this
+*A project.* Formerly 4O. Raised 2026-10-16, and bigger than the line that
+prompted it.
 
-A day away from the app was enough for its author to lose track of where the
-priority sliders live. That is after two builds aimed squarely at the problem —
-the share readout (2B.2) and the SORT button (2B.2a). Both added surface to fix
-what turns out to be a structural fault, which is why neither worked.
+A standing explainer sat under every meal's TECH readout — *"What it asks:
+effort, cost. What it offers: taste, nourishment…"* — useful the first time and
+noise on the hundredth. It has been removed, which fixed the symptom and left
+the disease.
 
-Jamey's own summary, which belongs in the record:
+> Teaching that repeats forever is not teaching, it is clutter.
 
-> We are building some sophisticated tools, but not surfacing them effectively.
-> If I have trouble finding and understanding what the app is doing, a different
-> user stands no chance.
+Explanation should be **available on demand and offered once by default**, never
+permanently resident.
 
-### 2.5A · The Meals tab is doing two unrelated jobs *(direction set 2026-10-14)*
+The app has a lot to explain and currently explains almost none of it: what the
+four axes mean and why higher is not better; what an occasion is and why it
+belongs to a meal rather than a day; what the marks are reading; why some dishes
+are flagged due. A new user meets all of it at once with no guide, which is
+exactly the situation `BRIEF.md` names as the test of whether the design works.
 
-| Managing the repertoire | Choosing what to cook |
-| --- | --- |
-| **New** — add a meal | **Due** — what's overdue |
-| **Map** — asks vs offers | **Filter** — by tag |
-| the list as a browsable cookbook | the priority weighting |
-| | the list as a *ranked recommendation* |
+Two surfaces, probably:
 
-One list, two readings, nothing naming either. The priority sliders are a
-*choosing* tool living in a *managing* place — which is why "defining an occasion
-lives in the Meals tab" feels wrong. It is wrong, and signposting cannot fix it.
+- **A first run that orients** — once, skippable, never seen again. This is
+  where the greeting screen idea belongs: *"What do you want to do? Plan a menu
+  / Choose a meal"* was the instinct that produced the two verb tabs, and a
+  question answered two hundred times becomes a door to open with your hands
+  full. Asked **once**, it is genuinely useful.
+- **A help surface you can consult** — reachable from More, written as reference
+  rather than as tooltips scattered through the interface.
 
-**The tab bar is already asking "what do you want to do?" — it is just answering
-with nouns.** Plan, Meals and Deck are places; a cook arrives with a question.
+This supersedes any instinct to add explanatory text beside a control. The
+dotted underline, the named sort value and the column header are the model: the
+interface explains itself by **being legible**, and help carries what legibility
+cannot.
 
-### The direction, decided 2026-10-14
+### Does this dish earn its place
 
-**Two tabs, both verbs.**
+*A day. Ready now, and it depends on nothing in flight.* Formerly 3C.
 
-| Tab | The question it answers |
-| --- | --- |
-| **Plan** | What does the week look like? — the calendar |
-| **Cook** | What should I make? — the meals, with filtering, sorting and priorities |
-
-*Tonight* was considered and rejected: it is a noun pretending to be a mode, and
-it mortgages breakfast and lunch, which became first-class in 2A.
-
-**Browsing the repertoire does not earn a tab.** Choosing and browsing are not
-two places — they are **the same list under two orderings**:
-
-| Mode | Ordering |
-| --- | --- |
-| **Choosing** *(the default)* | on deck first, then due, then fit |
-| **Browsing** | A–Z, everything |
-
-So **the sort control is the mode switch.** That promotes 2.5B from a naming
-quibble to the mechanism that lets one tab do both jobs — see below.
-
-**Cook opens in choosing mode.** *(Decided.)* The known cost: a list that
-reorders itself between visits can feel untrustworthy, and the browse ordering
-has to be one obvious tap away to compensate.
-
-**Deck folds in** as the top of the choosing order. An on-deck dish is one you
-have already decided you want, so it outranks anything the app merely computed.
-Its count needs a home — probably a section heading inside Cook rather than the
-tab badge it loses.
-
-**New and Map stay as header actions.** They are repertoire *verbs*, not a
-destination, and they are already where they belong.
-
-**The greeting is not built.** Jamey's *"What do you want to do? Plan a menu /
-Choose a meal"* was the instinct that produced all of the above, and two verb
-tabs answer it permanently, for free, in a control already on screen. A
-question answered two hundred times becomes a door to open with your hands full.
-Keep the idea for a **one-time orientation for new users**, where it is genuinely
-useful and where the beta-tester page already does half the job.
-
-### The two-copies finding
-
-Established 2026-10-14 by reproduction, and it is worse than "the tool is in the
-wrong tab". There is one slider UI but **two independent weight states**:
-
-| | Reads | Persisted? |
-| --- | --- | --- |
-| **Bank** (Meals tab) | `fitScore(m, activeWeights)` — a transient global | no |
-| **Picker** (from Plan) | `fitScore(m, occasionWeights(slotOccasion(…)))` | yes, on the slot |
-
-With the sliders pushed hard to cheap-and-easy, the bank led with *Lentil soup,
-Tuscan bean soup, Thai curry*. Opening the picker for a dinner at that same
-moment gave *Beans & greens, Burgers, Caesar salad* — plain A–Z. **The picker
-never sees the sliders.** The coupling is one-way and partial: choosing a named
-occasion sets both; dragging sets only the bank's.
-
-The picker's is the real one — persisted, attached to a specific meal, and with
-tiers the bank lacks (slot tag, then slot use count).
-
-### Where the sliders go *(decided)*
-
-**Into the picker.** The occasion sheet offers the presets *and* a way to open
-the sliders, for either:
-
-- a **one-time priority setting** for this meal, or
-- **defining a new occasion** from what you just tuned — which is 2B.5 arriving
-  at its natural home rather than in the sort note.
-
-This puts the sliders where choosing happens, which is the whole fix.
-
-**Two things it leaves open, to settle before building:**
-
-1. **A one-off weighting needs somewhere to live.** `plan[date].occasions[slot]`
-   currently holds an occasion id, a plain string. An unnamed weighting means
-   either a union type there, a parallel `slotWeights` key, or an anonymous
-   entry in `state.occasions` hidden from the offered list. This is a schema
-   decision and it revises 2B.1's model — decide it before writing code.
-2. **Does the Cook tab still need a weighting of its own?** Cook is choosing but
-   is not bound to a slot, so the transient `activeWeights` may still be right
-   there. If so the two states survive, just honestly scoped — and they must stop
-   silently disagreeing. Putting the sliders in the picker fixes *reachability*;
-   it does not by itself resolve *duplication*.
-
-### 2.5B · "Sort" is the wrong word — and the real sort is load-bearing
-
-It mislabels the panel: *sort* means one key, and a multi-criteria relevance
-weighting is a different species. **"Priorities"** is the honest name, and after
-the decision above the panel's home is the picker anyway.
-
-Worse, it spent the one obvious word on the feature least entitled to it. The
-sorts a cook would actually want — A–Z, never cooked, most overdue, most often
-cooked, recently cooked — **are not accessible anywhere.** "Due" is a partial
-answer behind a button that opens a dialog.
-
-**And 2.5A promotes this from a gap to a requirement.** If Cook does both jobs by
-reordering one list, the sort control *is* the mode switch: A–Z is the browse
-mode. It stops being a nicety and becomes the thing that makes two tabs possible
-instead of three.
-
-### 2.5C · The TECH marks *(lettered marks shipped 2026-10-14; colour cleanup outstanding)*
-
-**Diagnosed, and it was two independent failures.**
-
-*Resolution.* Each axis was a 15px track with 12px of travel across five values —
-**3px per step**. Brisket (4-5-4-2) and Butternut squash soup (5-3-3-4) differ on
-all four axes, about as far apart as two dishes in the repertoire get, and that
-was **12px of movement inside a 69px glyph**. Chicken Florentine and Chicken
-Marsala were 0px apart. The hover text that explained the hues does not exist on
-a phone.
-
-*Encoding.* Four hues with no key anywhere, while the letters T-E-C-H — the name
-of the system, and a free mnemonic — went unused.
-
-**Lettered marks were built and then replaced.** They failed for a reason worth
-keeping: *letters invoke reading.* The eye tries to parse a word and resents the
-variance in weight and lightness -- interference, not information. A data display
-has to be read perceptually, not linguistically.
-
-**What shipped 2026-10-15: a single-hue heatmap.** Four cells, always T E C H,
-each filled by how far toward its virtue that axis sits. Measured on the real
-63-meal repertoire:
-
-| Treatment | Levels | Patterns delivered | Largest clump |
-| --- | --- | --- | --- |
-| Sliding markers *(removed)* | 5, at 3px a step | ~0 | — |
-| Letters, lit / ghosted | 2 | 14 | 16 |
-| Letters, three weights *(removed)* | 3 | 24 | 8 |
-| **Filled cells (built)** | **5** | **35** | **8** |
-
-A filled cell holds five steps where a 13px letter held three, so the heatmap is
-the first treatment to deliver **every** distinction the data contains — 35
-patterns, the same number as there are distinct TECH profiles in the repertoire.
-
-**One hue, not four.** Elizabeth: different colours make relative intensity
-harder to judge. The eye ranks intensity within a hue and cannot compare
-saturation across hues. See `DESIGN.md` §2. Teal was chosen because it is the
-only hue family not already carrying another meaning in the app, and it is five
-lines to change.
-
-**The ramp says how much, never which**, so a list has to label its columns.
-The bank list now does. **The picker and the deck do not yet** — the one known
-gap, and both are lists, so the same header works.
-
-**The wordmark went single-colour** (2026-10-15), set in the ramp's own top step
-rather than a copy of it, so recolouring the marks recolours the wordmark with
-them and the two can never drift. Its four colours had been a legend for a
-four-hue mark that no longer existed.
-
-**Correction (2026-10-15):** this was first written up as "the app now has
-exactly one colour". That is true of the *meal list* and false of the app, which
-uses about twenty-nine — eight neutrals, the teal ramp, the four axis hues in
-their legitimate legend roles, and seventeen tag hues in the Map and the Due
-list. The full audit is below.
-
-*Also removed:* the four type-safe hues (`--tech-*-ink`) built on 2026-10-14 to
-fix an amber sitting at 2.96:1 against green's 6.22:1. They existed only to
-colour four wordmark letters and had no other reader. The finding behind them —
-that a palette built for fills can fail as type — is kept in `DESIGN.md` §2,
-because the next accent will meet it too.
-
-### Every colour the app uses *(audited 2026-10-15)*
-
-| Group | Count | Where |
-| --- | --- | --- |
-| Neutrals | 8 | paper ×2, ink ×3, rule ×2, plus the dialog backdrop |
-| Mark ramp | 1 hue, 5 steps | the meal marks and the wordmark |
-| Axis hues, as axis identity | 4 | detail readout swatches, Priorities sliders, share bar — labelled, never compared by intensity, so Elizabeth's objection does not reach them |
-| Axis hues, overloaded | — | 14 sites; see below |
-| Tag hues | 17 | the Map's dots and the left edge of Due rows, nowhere else |
-
-Blue is the only one of the four axis hues that still means only what it should.
-
-### Still outstanding under 2.5C — the colour cleanup
-
-**The marks will keep under-signifying until this is done.** Fourteen sites use a
-TECH colour for a non-TECH meaning: green reads as *good* in four places, red as
-*alert* in seven, amber as *due* in three. A reader's learned association for
-green is therefore "good", not "Healthy".
-
-This needs decisions, not just edits — what *should* carry "due", "danger",
-"today", "active tab", "sync ok"?
-
-**And the obvious answer is probably wrong.** The first plan was to send all
-fourteen to ink and weight, as `#filterToggle.on` went in 2B.2a. But those
-fourteen sites are now the app's *only* warmth outside the Map, and Jamey has
-said plainly he does not want to live in an all-teal app. Clearing them to ink
-would make the interface **less** colourful, not more — the opposite of the
-direction 2.5 is meant to go.
-
-So the cleanup is not "remove colour". It is "**stop the axis hues from doing
-double duty**", which can equally be solved by giving those states hues of their
-own — a due-amber that is not the Effort amber, an alert that is not the Tasty
-red. Same ambiguity fixed, liveliness kept. Decide that before touching any of
-the fourteen.
-
-*(The roadmap previously called today's date "the only remaining exception". That
-was wrong by an order of magnitude.)*
-
-*Absorbs 4A (foreground the TECH motif) — done, do not build it separately.*
-
-### 2.5D · Is "Service" too literary?
-
-The paper ground, the serif, the letterpress restraint may be reaching for a
-register this app doesn't need. **Last, deliberately.** Typography follows
-structure; restyling surfaces that 2.5A may dissolve is work done twice.
-
-### 2.5E · The More sheet is a cluttered text list
-
-Should be icon-based, or at least structured rather than a stack of sentences.
-Small, and downstream of everything above.
-
-**Open question, now answered and reopened as work:** the TECH colours are *not*
-reserved for TECH — fourteen sites say otherwise. See "the colour cleanup" under
-2.5C. The Tasty red on ratings and stars is not an exception to fix; that is the
-Tasty axis, and the rule has always permitted it.
-
----
-
-## Batch 3 — the tracker half *(a week)*
-
-### 3A · The aggregate view
-
-Still the biggest hole in the project. `DESIGN.md` says virtue appears only over
-time, and nothing in the app shows time. Occasions, ratings and notes are all
-recorded faithfully and never read back.
-
-Over months: are you reaching for demanding dishes only when the occasion
-warrants it? Has the weeknight-heroes quadrant grown? Which dishes do you plan
-and never cook? How does your best bolognese compare with your typical one?
-
-**Do 1B.3 first.** An analysis view built on sparse data shows nothing and
-convinces you the idea doesn't work, when the real problem was friction in
-recording.
-
-### 3C · Does this dish earn its place *(a day — ready now)*
-
-Jamey's original motivation for Food TECH, and the one question the app has never
+The original motivation for Food TECH, and the one question the app has never
 asked: not *what should I cook tonight* (occasion-relative, built and working)
-but *which dishes are worth their place in the repertoire* — which is
-occasion-**free**.
+but **which dishes are worth their place in the repertoire** — which is
+occasion-*free*.
 
 The clean formulation is **dominance**: a dish is dominated when something else
-in the repertoire beats it on all four axes at once. No occasion rescues a
-dominated dish. These are the inertia-meals.
+beats it on all four axes at once. No occasion rescues a dominated dish. These
+are the inertia-meals.
 
 Tested against the real backup on 2026-10-13, and it discriminates:
 
@@ -444,120 +200,96 @@ Tested against the real backup on 2026-10-13, and it discriminates:
 | Weakly dominated | 34 | 42 |
 
 Three of 63 is a signal, not noise. One of them — *Chicken and gnocchi soup*,
-the only taste-2 dish in the bank — is beaten by sixteen others. Two more fall to
-*Butternut squash soup* (t5), which raises exactly the right question: is that
-soup really tastier than brisket, or is one of those two numbers wrong? **The
-value of this view is that it turns a vague unease into a specific question.**
+the only taste-2 dish in the bank — is beaten by sixteen others. Two more fall
+to *Butternut squash soup* (t5), which raises exactly the right question: is
+that soup really tastier than brisket, or is one of those two numbers wrong?
+**The value of this view is that it turns a vague unease into a specific
+question.**
 
 Build notes:
 
-- Use **strict** dominance (beaten on all four). Weak dominance fires on 42 of 63
-  and would read as "most of your food is bad", which is an artefact of a
-  5-point scale, not a finding.
+- Use **strict** dominance. Weak dominance fires on 42 of 63 and would read as
+  "most of your food is bad", which is an artefact of a 5-point scale, not a
+  finding.
 - Say *who* beats it and by what, never a verdict. The answer may be that the
   rating is wrong, and the view should invite that reading.
 - Related and possibly more interesting: **26 of 63 meals have never been
-  planned at all.** A dish nobody reaches for is a different kind of dead weight,
-  and it needs no TECH data to detect.
-- Two of the three dominated dishes hang on a single `t5`. The signal will firm
-  up as more dishes are judged; don't over-present it early.
+  planned at all.** A dish nobody reaches for is a different kind of dead
+  weight, and it needs no TECH data to detect.
+- Two of the three hang on a single `t5`. Do not over-present it early.
 
-### 3B · Record who cooked *(an afternoon)*
+### Add and retire occasions
 
-One field per instance. Makes 3A sharper, answers "whose virtue is this", and is
-the cheap half of the multi-user decision below. Elizabeth now uses the app, so
-this has gone from hypothetical to real.
+*An afternoon, alongside the occasion editor.* Formerly 2B.4.
 
----
+Add a new occasion; **retire** rather than delete. A retired occasion stops
+being offered but still renders where already used, so history keeps its
+meaning. Outright deletion only when nothing references it, past or future.
 
-## Open decision
+The data layer shipped with 2B.1 and is tested — only the controls are missing.
 
-**D1 — multi-user, and when.** *Decided 2026-10-12: stay single-user for now.*
-Elizabeth's usage is sparse enough that separate spaces are fine in practice.
+### The three surfaces the canvas never covered
 
-The reason to still do **3B (record who cooked)** is therefore not that it's
-needed today — it's that it keeps the option open cheaply. Treat it as insurance,
-not as a step toward a shared kitchen, and don't let it pull other multi-user
-work along behind it.
+*An afternoon each.* The redesign was drawn for Plan and Cook. Three surfaces
+were never designed, and now look it:
 
-The rest of this section is kept for whenever the question reopens.
-
-Data lives at `menuBoard/{uid}`, single-user by construction. A shared kitchen
-wants a container with a `members` array — SmartList's shape — and that is a
-migration touching every path. Cheaper to decide before there's a year of
-history.
-
-- **Stay single-user.** Separate spaces; a printed menu (4C) is the shared
-  artefact.
-- **Record who cooked now, share later** (3B) — nearly free, preserves the option.
-- **Shared kitchen properly** *(a week)* — one repertoire, one plan, per-cook
-  ratings.
-
-*Recommendation unchanged: the middle one, now with more reason to do it soon.*
+- **The meal picker** — the one with a real design question, because the
+  occasion editor puts two different controls in it. Its missing `T E C H`
+  column header was fixed on 2026-10-16, so what is left here is layout, not a
+  gap in what it says.
+- **A meal's detail sheet** — improved 2026-10-16, never drawn.
+- **The Priorities panel** — and it is still not called anything. The rename
+  from "Sort" was decided under 2.5B and only half-applied: the sort control now
+  names its value, but the weight panel carries **no heading at all**. One line
+  of markup, and it is the cheapest piece of the reachability problem.
 
 ---
 
-## Batch 4 — when there's appetite
+## Later
 
-| | What | Size | Note |
-| --- | --- | --- | --- |
-| **4A** | **Foreground the TECH motif** — lettered marks, lettered radar axes | afternoon | Nothing on screen tells a newcomer the axes spell anything. Best done alongside 3A, since both touch presentation. |
-| **4B** | **Dark mode** | a day | Service is a light, papery design. A dark version needs real care, not an inversion. |
-| **4C** | **Print / fridge view** | a day | The cheapest way to include Elizabeth, whatever happens with D1. |
-| **4D** | **Say why a dish was surfaced** — *"low effort · not made in five weeks"* | afternoon | The fit logic is good and invisible, which makes it feel like magic rather than reasoning you can disagree with. |
-| **4L** | **Kintsugi — gold that marks a repair** | a day, after 3A | A dish rated badly and later rated well is a real break and a real repair, in data that already exists. Gold needs a dark ground to read as gold, and it needs a surface where time is drawn — so this waits for 3A and for the plain ink version of *use leaves a mark* to prove itself first. The test and the contrast numbers are in `BRIEF.md`. |
-| **4O** | **Onboarding and in-app help** — a first run, and a reference you can consult | a project | See below. The standing explainers have to go somewhere; "nowhere" is what we have now. |
-| **4M** | **Cookbook chapters** — group the browsing list the way a cookbook does | a day + a decision | See below: the biggest open question in the sort work, and the browsing mode is wrong until it is answered. |
-| **4N** | **Tag management** — rename, merge and delete a tag across every meal | an afternoon | Tags can only be edited one meal at a time, as free text. The real data already carries **`burger` and `burgers` as separate tags**, which is one typo becoming a permanent split. 31 tags across 63 meals, 14 of them used exactly once. Chapters (4M) depend on this: you cannot group by a vocabulary you cannot tidy. |
-| **4K** | **Half-steps for meal magnitudes** — the film-review argument | a day | Measured 2026-10-13: 38 of 63 meals share a TECH profile with another, so no weighting can tell them apart. Half-steps would lift distinct profiles 35→42 and distinct top-5 lists 361→989. More expressive power than anything in Batch 2B, but it touches every meal's stored values and the editor's dropdowns, and it should wait until 2.5 settles how TECH is displayed. |
-| **4E** | **Seasonality as a real field** | a day | Your own seed notes say "Summer only" and "3-4x/month in summer" in free text the app can't read. |
-| **4F** | **Occasion defaults by weekday** | afternoon | Most Tuesdays are ordinary; most Saturdays aren't. Partly superseded by 2A — reassess after. |
-| **4G** | **Restore-from-backup in the interface** | a day | Backups are written faithfully but reachable only through devtools. |
-| **4H** | **Retire the leftover protein-target UI** | afternoon | Superseded by the Health axis; still sitting in the goals sheet. |
-| **4I** | **Key ingredients, two to four per meal** | a day + typing | Blocks every version of the SmartList bridge. Below the rest because it needs data entry before it pays off. |
-| **4J** | **On deck → SmartList** | a day, after 4I | The targeted bridge: a dish goes on deck, its missing ingredients go to the list. Needs no change to SmartList. |
+| What | Size | Note |
+| --- | --- | --- |
+| **Tag management** — rename, merge and delete a tag across every meal | afternoon | Tags are editable one meal at a time, as free text. The real data already carries **`burger` and `burgers` as separate tags** — one typo becoming a permanent split. 31 tags across 63 meals, 14 used exactly once. Cookbook chapters depend on this: you cannot group by a vocabulary you cannot tidy. *(4N)* |
+| **Cookbook chapters** — group the browsing list the way a cookbook does | a day + a decision | See below. The browsing mode is wrong until this is answered. Do tag management first. *(4M)* |
+| **Half-steps for magnitudes** — the film-review argument | a day | **Now unblocked**: it was waiting on the redesign to settle how TECH is displayed, and the redesign settled it. Measured 2026-10-13 — 38 of 63 meals share a TECH profile with another, so no weighting can tell them apart. Half-steps lift distinct profiles 35→42 and distinct top-5 lists 361→989. More expressive power than anything else on this list, but it touches every stored value and the editor's dropdowns. *(4K)* |
+| **Say why a dish was surfaced** — *"low effort · not made in five weeks"* | afternoon | The fit logic is good and invisible, which makes it feel like magic rather than reasoning you can disagree with. *(4D)* |
+| **The More sheet** | afternoon | Still a stack of sentences. Should be structured, or icon-led. *(2.5E)* |
+| **Retire the protein-target UI** | afternoon | Superseded by the Health axis; still sitting in the goals sheet, still computing a weekly average nobody asked for. *(4H)* |
+| **The aggregate view** | a week | Still the biggest hole in the project — see below. **Waiting on data.** *(3A)* |
+| **Record who cooked** | afternoon | One field per instance. Makes the aggregate view sharper, answers "whose virtue is this", and is the cheap half of the multi-user question. Elizabeth now uses the app, so this is real rather than hypothetical. *(3B)* |
+| **Print / fridge view** | a day | The cheapest way to include Elizabeth, whatever happens with multi-user. *(4C)* |
+| **Restore from backup in the interface** | a day | Backups are written faithfully but reachable only through devtools. *(4G)* |
+| **Seasonality as a real field** | a day | The seed notes say "Summer only" and "3-4x/month in summer" in free text the app cannot read. *(4E)* |
+| **Occasion defaults by weekday** | afternoon | Most Tuesdays are ordinary; most Saturdays are not. Reassess once occasions are actually being set — the usage that would justify it does not exist yet. *(4F)* |
+| **Kintsugi — gold that marks a repair** | a day, after the aggregate view | A dish rated badly and later rated well is a real break and a real repair, in data that already exists. Gold needs a dark ground to read as gold, and a surface where time is drawn — so it waits for the aggregate view, and for the plain ink version of *use leaves a mark* to prove itself first. The test and the contrast numbers are in `BRIEF.md`. *(4L)* |
+| **Key ingredients, two to four per meal** | a day + typing | Blocks every version of the SmartList bridge. Low because it needs data entry before it pays off. *(4I)* |
+| **On deck → SmartList** | a day, after key ingredients | A dish goes on deck, its missing ingredients go to the list. Needs no change to SmartList. *(4J)* |
 
----
+### The aggregate view, in full
 
-### 4O in full — onboarding and in-app help
+`DESIGN.md` says virtue appears only over time, and nothing in the app shows
+time. Occasions, ratings and notes are all recorded faithfully and never read
+back.
 
-**Raised 2026-10-16, and it is bigger than the line that prompted it.** A
-standing explainer sat under every meal's TECH readout — *"What it asks: effort,
-cost. What it offers: taste, nourishment…"* — useful the first time and noise on
-the hundredth. It has been removed, which fixes the symptom and leaves the
-disease.
+Over months: are you reaching for demanding dishes only when the occasion
+warrants it? Has the weeknight-heroes quadrant grown? Which dishes do you plan
+and never cook? How does your best bolognese compare with your typical one?
 
-**The principle this app needs:** teaching that repeats forever is not teaching,
-it is clutter. Explanation should be **available on demand and offered once by
-default**, never permanently resident.
+**Waiting on data, deliberately.** 25 of 63 planned instances carry a rating,
+and inline rating only landed 2026-10-12, so the rate should climb. An analysis
+view on thin data shows nothing and wrongly discredits the idea. Give it a few
+more weeks. *Does this dish earn its place* is the exception — it reads
+magnitudes, not ratings, and is ready now.
 
-The app has a lot to explain and currently explains almost none of it: what the
-four axes mean and why higher is not better; what an occasion is and why it
-belongs to a meal rather than a day; what the marks are reading; why some dishes
-are flagged due. A new user — the beta-tester case — meets all of it at once
-with no guide, which is precisely the situation `BRIEF.md` describes as the
-test of whether the design works.
-
-Two surfaces, probably:
-
-- **A first run that orients**, once, skippable, and never seen again.
-- **A help surface you can consult** — reachable from More, written as reference
-  rather than as tooltips scattered through the interface.
-
-This supersedes any instinct to add explanatory text next to controls. The
-dotted underline, the named sort value and the column header are the model: the
-interface should explain itself by *being legible*, and the help surface carries
-what legibility cannot.
-
-### 4M in full — the cookbook problem
+### Cookbook chapters, in full
 
 **A to Z is not a cookbook.** No cookbook lists every recipe alphabetically; it
-has chapters. The browsing mode shipped as a flat alphabetical list, and that is
+has chapters. The browsing mode shipped as a flat alphabetical list, which is
 the thing it most obviously is not.
 
 The obvious fix does not work, and Jamey named why: **a cookbook does not put
-the same recipe in six chapters.** Group naively by tag and *Salmon rice* appears
-under fish and under grain.
+the same recipe in six chapters.** Group naively by tag and *Salmon rice*
+appears under fish and under grain.
 
 **What the real vocabulary looks like** (63 meals, surveyed 2026-10-16):
 
@@ -570,7 +302,7 @@ under fish and under grain.
 | Meals with none | 3 |
 | Tags used exactly once | 14 |
 
-So duplication is a real but *bounded* problem: most meals carry one or two tags.
+So duplication is real but **bounded**: most meals carry one or two tags.
 
 **The harder half is that the tags mix at least seven organising axes.** Protein
 (chicken, beef, fish, pork) · form (soup, salad, pasta, pizza, sandwich) ·
@@ -578,36 +310,116 @@ cuisine (asian) · source (restaurant, takeout, angela, h4p) · occasion (sunday
 brunch) · method (grill, pressure cooker) · ingredient (kale, shrimp, gochujang)
 · season (autumn). A cookbook picks **one** axis and sticks to it.
 
-**The approach I would try**, because it needs no data entry and the codebase
-already contains the pattern: a **designated, ordered list of chapter tags**, and
-each meal belongs to the first one it matches. The retired `tagColor()` did
-exactly this — walk a meal's tags, take the first that is in the table. The order
-*is* the editorial judgement, and it is one short list to tune rather than 63
-decisions to make.
+**The approach to try**, because it needs no data entry and the codebase already
+contains the pattern: a **designated, ordered list of chapter tags**, each meal
+belonging to the first one it matches. The retired `tagColor()` did exactly this
+— walk a meal's tags, take the first in the table. The order **is** the
+editorial judgement, and it is one short list to tune rather than 63 decisions
+to make.
 
-Open questions before building:
+Open before building:
 
 - **Which axis?** Most cookbooks use course or protein. The tags support either,
   but not both at once.
 - **What about the rest?** Tags outside the chapter list keep working as filters
   — source, season and method are useful to filter by and useless as chapters.
-- **Where do the untagged go?** Three meals have no tags at all. A closing
-  chapter, or left out of browsing entirely.
-- **Does 4N come first?** Probably. Grouping by a vocabulary containing both
-  `burger` and `burgers` produces two chapters of one recipe each.
+- **Where do the untagged go?** Three meals have no tags. A closing chapter, or
+  out of browsing entirely.
+- **Tag management first.** Grouping by a vocabulary containing both `burger`
+  and `burgers` produces two chapters of one recipe each.
 
-## Waiting on evidence
+---
 
-- ~~**Teal, or red, for the wordmark.**~~ *Retired 2026-10-16: moot.* The
-  redesign replaced the whole palette — the marks and the wordmark are indigo
-  against a vermilion signal now, and teal is not in the app. If the indigo
-  wants revisiting it is the same two-line change, but there is no open question
-  waiting on a date.
-- **Whether the slot label and the word row read as tappable.** No affordance
-  was added on purpose; see "Start here". Note that this is the same class of
-  problem as 2.5A — reachability — and may be answered by that conversation
-  rather than on its own.
-- **Hide header on scroll** — re-ask after 1D.
+## Open questions
+
+### Where a one-off weighting lives
+
+*Blocks the occasion editor. A schema decision, so settle it before code.*
+
+`plan[date].occasions[slot]` currently holds an occasion id, a plain string. An
+unnamed weighting means either a union type there, a parallel `slotWeights` key,
+or an anonymous entry in `state.occasions` hidden from the offered list. This
+revises 2B.1's model.
+
+### Does Cook keep a weighting of its own
+
+*Blocks the occasion editor.*
+
+Cook is choosing but is not bound to a slot, so the transient `activeWeights`
+may still be right there. If so the two weight states survive, just honestly
+scoped — and they must stop silently disagreeing.
+
+**The two-copies finding**, established 2026-10-14 by reproduction:
+
+| | Reads | Persisted? |
+| --- | --- | --- |
+| **Bank** (Cook) | `fitScore(m, activeWeights)` — a transient global | no |
+| **Picker** (from Plan) | `fitScore(m, occasionWeights(slotOccasion(…)))` | yes, on the slot |
+
+With the sliders pushed hard to cheap-and-easy, the bank led with *Lentil soup,
+Tuscan bean soup, Thai curry*. Opening the picker for a dinner at that same
+moment gave *Beans & greens, Burgers, Caesar salad* — plain A–Z. **The picker
+never sees the sliders.** The coupling is one-way and partial: choosing a named
+occasion sets both; dragging sets only the bank's.
+
+The picker's is the real one — persisted, attached to a specific meal, and with
+tiers the bank lacks. Putting the sliders in the picker fixes *reachability*; it
+does not by itself resolve *duplication*.
+
+### Multi-user, and when
+
+*Formerly D1. Decided 2026-10-12: stay single-user for now.* Elizabeth's usage
+is sparse enough that separate spaces are fine in practice.
+
+The reason to still record who cooked is therefore not that it is needed today —
+it keeps the option open cheaply. Treat it as insurance, not as a step toward a
+shared kitchen, and do not let it pull other multi-user work along behind it.
+
+Data lives at `menuBoard/{uid}`, single-user by construction. A shared kitchen
+wants a container with a `members` array — SmartList's shape — and that is a
+migration touching every path. Cheaper to decide before there is a year of
+history.
+
+- **Stay single-user.** Separate spaces; a printed menu is the shared artefact.
+- **Record who cooked now, share later** — nearly free, preserves the option.
+- **Shared kitchen properly** *(a week)* — one repertoire, one plan, per-cook
+  ratings.
+
+*Recommendation unchanged: the middle one.*
+
+### Waiting on evidence
+
+- **Whether the word row reads as tappable.** The slot word got a dotted
+  underline in the redesign; the `+ breakfast · lunch · dinner` row still has
+  none. Same class of problem as reachability, and the same caution applies —
+  the alternative is decoration repeated twenty-one times a screen.
+- **Hide header on scroll** — re-ask once the sticky column header has been
+  lived with.
+
+---
+
+## Decided against
+
+Kept so they are not re-proposed.
+
+- **Filling the radar polygon with the mark hue.** *2026-10-16.* The mark ramp
+  encodes **virtue strength**, not magnitude — a cost of 1 is a dark cell and a
+  cost of 5 is a pale one, because cheap is the virtue. The radar plots
+  magnitude. One shape cannot carry both without the colour contradicting the
+  geometry. The radar stays ink-only.
+- **A greeting screen on every launch.** Two verb tabs answer "what do you want
+  to do?" permanently, for free, in a control already on screen. The idea
+  survives as the **first run**, under onboarding.
+- **A third tab for browsing.** Choosing and browsing are the same list under
+  two orderings, which is what the sort control delivers.
+- **Weights quantised to five steps.** Measuring said 0.1 is where the signal
+  stops; five steps would have cost two-thirds of the reachable
+  recommendations.
+- **Clearing the overloaded axis hues to ink.** Would have made the app *less*
+  colourful, which is the opposite of the direction wanted. They were given
+  meanings of their own instead.
+- **Tag colours.** Seventeen hues that reached one surface. Retired in the
+  redesign.
 
 ---
 
@@ -618,73 +430,115 @@ Open questions before building:
   rules pasted by hand. A known future cost, not a current one.
 - **GitHub flags the Firebase key as a secret.** It isn't. See `DESIGN.md` §8.
 
-See `DESIGN.md` §5 for what this app refuses to become: no auto-planner, no macro
-tracking, no servings calculator, no recipe manager, no duplicating SmartList.
+See `DESIGN.md` §5 for what this app refuses to become: no auto-planner, no
+macro tracking, no servings calculator, no recipe manager, no duplicating
+SmartList.
 
 ---
 
 ## Done
 
-### Batch 1 — shipped 2026-10-12, confirmed on the phone
+*Newest first.*
+
+### The first full day of use — fifteen fixes, 2026-10-16
+
+The redesign shipped on the 15th; this is what a day of carrying it around
+produced. Nothing here was a design decision reversed — they are the things only
+use finds.
+
+**Structure**
 
 | | |
 | --- | --- |
-| **1A.1** | Fourth axis renamed **Nourish → Health**; the labels spell TECH again |
-| **1A.2** | Plan window 7 days, not 10 |
-| **1A.3** | Large-text toggle in More — scales dish names, notes **and the uppercase labels**, and darkens the faintest ink |
-| **1B.1** | *Tried and reverted* — opening on yesterday was overkill once 1B.2 and 1B.3 existed |
-| **1B.2** | Day-at-a-time navigation: `« ‹ Today › »` |
-| **1B.3** | Unrated meals surface as a quiet line; the list rates **inline** with five stars per row, a *notes* link for the full sheet, and a **dismiss** that sticks |
-| **1C.1** | Create a meal from inside the picker; it lands in the slot you were filling |
-| **1C.2–3** | Slot-aware ordering — breakfast leads with breakfast, by tag then by how often it's been eaten there |
-| **1D.1** | Sign out moved to More; Sign in stays in the header until you've used it |
-| **1D.2** | Sync status shows only when something is wrong |
-| **1E.1** | Save moved into the sheet header, where the keyboard can't cover it |
-| **1E.2** | Remove from on deck — a regression from the phone rebuild — plus a working toggle in the detail sheet |
+| **Desktop is one column** | It had been a 1180px three-column spread. The `T E C H` header labels **a** column, so across three it labelled the last one, and days read across instead of down. One 680px column: a phone-first app on a desktop is a column, not a spread. |
+| **The column header sticks** | Fixed twice. The first attempt pinned it to `top:0` of the same scroller as the view head, which is also sticky at `top:0` and opaque — so it parked underneath and was never seen again. It now stops at the view head's measured height, which a `ResizeObserver` keeps current because that height changes with the viewport. A column header that scrolls away stops labelling anything. |
+| **The edit form reads T E C H** | It had been T H E C — offers grouped, then asks. But the marks read T E C H, the header says T E C H, and the app is called Food TECH. Four selects that do not line up with the four cells they fill is a small tax paid daily. The offers/asks labels now alternate, which is the point: the acronym is the order. |
 
-**Two lessons worth keeping:**
-
-- *Large text means the labels too.* The first attempt scaled dish names and
-  notes and left the uppercase labels alone, on the theory that scaling chrome
-  adds clutter. Wrong: those labels are the smallest, lightest, most
-  letterspaced text on screen and therefore the hardest to read.
-- *Quick actions belong in the list, not behind a sheet.* The first unrated list
-  opened the full rating sheet per meal. Five tappable stars on the row itself is
-  what makes capture frictionless — and capture is the precondition for Batch 3.
-
-### Batch 2B.2 — shipped 2026-10-13
-
-Weights stopped pretending to be absolute quantities.
+**Legibility**
 
 | | |
 | --- | --- |
-| **Kept** | The slider stays continuous at 0.1. Measuring said that is where the signal stops; coarsening it to five steps would have cost two-thirds of the reachable recommendations. |
-| **Dropped** | The `1.4x` readout — the actual false precision, a display claim rather than a storage one. |
-| **Added** | A share bar and key: *Tasty 70% · Easy 8% · Cheap 8% · Healthy 14%*. Celebration now says what it means at a glance. |
-| **Added** | Three landmarks on a shared scale beneath the aligned tracks — *ignore it · normal · this is the point*. |
-| **Changed** | The slider became **positional**: the bottom half of the travel runs 0→1, the top half 1→3, so **normal sits at dead centre**. A weight is a ratio — on the old linear track half the travel ran 1.5→3, where the shares barely move, while 0→1, which decides everything, was squeezed into a third. Narrowing the range to 0–2 instead would have centred the 1 but cost 833 of the 3,332 reachable top-10 orderings; this costs nothing. All 31 tenths still round-trip exactly and remain reachable by dragging. |
-| **Bug fixed** | `weightsAreEven()` tested each weight against **1**, so all-four-at-2 was called a custom weighting and showed a sort note for an ordering that was plain A–Z. It now tests whether the four are equal to *each other*, which is what fitScore can actually see. The share work surfaced this. |
+| **Picker rows had collapsed** | `.pk-name` and `.pk-sub` were both inline, so every picker sheet in the app ran its name and its hint together on one line — *"on deck, then duewhat you decided on, then what is overdue"*. Long-standing, and invisible until a screenshot showed it. |
+| **The detail swatches became marks** | They were four axis hues beside a list of values while Cook's marks were one ramp — two visual systems for one measurement. Each swatch is now **the mark itself** at that dish's strength: same five steps, larger, and labelled. |
+| **The standing explainer is gone** | *"What it asks: effort, cost…"* under every meal's readout. Useful once, noise on the hundredth reading. It is the seed of the onboarding item. |
+| **"best fit" stopped lying** | Its hint read *"ordered by the priorities below"* — but the panel appears only **after** you pick that sort, so at the moment you read the hint there was nothing below. Now "ordered by what matters most tonight". |
 
-*Also fixed in passing:* the scale landmarks were first positioned with
-`padding-left`, and absolutely positioned children resolve against the padding
-box — so they sat 78px left of the track they label. Margin, not padding.
+**Dialogs**
 
-### Fix — "never made" was only half true, 2026-10-16
+| | |
+| --- | --- |
+| **Two buttons that read as one** | 14px between *take off deck* and *edit* in the sheet footer. Now 26. |
+| **Cancel moved beside Save** | It had been on the opposite side of the title from the action it modifies. |
+| **The nutrition row lines up** | "Calories / serving" wrapped to two lines and pushed its input a line below the other three. The four labels are now `kcal · protein g · fat g · carbs g`, with *Per serving.* said once beneath. |
 
-Reported as the *never made* sort misbehaving: an alphabetical run containing
-both flagged and unflagged meals, then a second alphabetical run.
+**The meal picker, which the review then caught**
+
+| | |
+| --- | --- |
+| **It labels its columns** | It was the last list in the app showing the marks with nothing saying which column was which — *the ramp says how much, never which*. The bank's header works unchanged; it scrolls with the sheet rather than sticking, because a picker is short. |
+| **It had the same "never made" fault** | The flag was fixed in the bank rows and the detail sheet and missed here, where the same `dueInfo()` call was making the same claim. |
+| **A 10px hint sat 2px under a 17px name** | Two faces that different need a gap that says they are two lines, not one wrapping. Now 5px, in every picker sheet. |
+| **The column letters went up to ink-2** | 4.83:1, from 3.84. They are the key to the marks, and now that the header is sticky they are on screen the whole time; ink-3 is for metadata you can ignore, and these are not that. |
+
+**And one that was reported as a sort bug**
+
+*"Never made" was only half true.* The report was that the *never made* sort
+misbehaved: an alphabetical run containing both flagged and unflagged meals,
+then a second alphabetical run.
 
 **The sort was right; the flag was lying.** Both runs were correct — never-made
 first, each group alphabetical, the second run being everything already cooked.
-What was wrong is that the flag came from `dueInfo()`, which returns `null`
-for any meal without a frequency target. So a dish you had never cooked went
+What was wrong is that the flag came from `dueInfo()`, which returns `null` for
+any meal without a frequency target. So a dish you had never cooked went
 unmarked unless you had *also* told the app how often you meant to cook it.
 
 "Never made" now reads `lastMade()` directly, in the rows and in the detail
 sheet, and it is set in ink rather than the signal: **due** is an alert — you
 said you would cook this and have not — while **never made** is a fact about a
-dish you have not got to. Verified against the repertoire: no never-made row
+dish you have not got to yet. Verified against the repertoire: no never-made row
 unflagged, no flagged row that has actually been cooked.
+
+**Checked and found already correct:** the radar is ink-only; there was no
+colour there to unify. Filling its polygon with the mark hue was then considered
+and rejected — see "Decided against".
+
+### Four items the redesign closed without anyone striking them out
+
+*Found in the review of 2026-10-16.* Each was still sitting in a live section of
+this document, and each had in fact been finished on the 15th.
+
+- **2.5C — the colour cleanup.** The section said "still outstanding" and listed
+  fourteen overloaded sites. All fourteen were cleared in redesign step 1, and
+  **no CSS rule uses an axis hue any more**. The decision recorded there still
+  holds and is worth keeping: the fix was *not* "remove colour" — clearing those
+  sites to ink would have made the app less colourful, which is the opposite of
+  the direction wanted. Due, danger, today, active tab and sync were given
+  meanings of their own instead.
+- **4A — foreground the TECH motif.** Absorbed by the mark work and noted as
+  absorbed inside 2.5C, while the Batch 4 table went on listing it as unbuilt.
+- **4B — dark mode.** Shipped with redesign step 1, designed rather than
+  inverted, and still listed in Batch 4 as "a day".
+- **2.5D — is "Service" too literary?** Moot. It asked whether to keep a visual
+  direction that the redesign replaced outright. There is no question left: the
+  brief is *a natural philosopher makes dinner*, and `BRIEF.md` is the record.
+
+### The palette, re-audited 2026-10-16
+
+The 2026-10-15 audit is superseded — it still counted teal and seventeen tag
+hues, neither of which survived the redesign.
+
+| Group | Count | Where |
+| --- | --- | --- |
+| Neutrals | 9 | paper ×2, ink ×4, rule ×2, the dialog backdrop |
+| Mark ramp | 1 hue, 5 steps | the meal marks, the detail swatches, the wordmark |
+| Signal | 1 | vermilion: today, due, danger. Not an axis hue. |
+| Axis hues | 4 | **the Priorities panel only** — slider swatches and the share bar, where four quantities inside one bar have to be told apart |
+| Tag hues | 0 | retired |
+
+**Correction kept for the record.** This was once written up as "the app now has
+exactly one colour, and it means measurement". That was true of the meal list
+and false of the app. The habit it should break: auditing one surface and
+reporting it as the whole.
 
 ### Batch 2.5 step 3 — Cook, shipped 2026-10-15
 
@@ -774,8 +628,8 @@ The look changed; nothing moved. Implements `BRIEF.md` section 9.
 *Verified:* no element overflows and the page does not scroll sideways on a
 375px screen, in either theme and at both text sizes; both faces load.
 
-**Steps 2 and 3 remain:** Plan (rules between days, compression, the slot
-affordance) and Cook (two tabs, Deck folded in, search / filter / sort, density).
+*Written when steps 2 and 3 were still ahead; both shipped the same day and are
+recorded above.*
 
 ### Batch 2B.2a — the weight panel became reachable, shipped 2026-10-13
 
@@ -789,7 +643,24 @@ there was **no entry point at all** — six steps across two tabs at best.
 | **SORT** | A sibling to FILTER in the search row. Permanent, costs no vertical space, and sits where "how is this list organised" belongs. It also makes the weighting usable on its own — *"show me cheap and easy right now"* — without naming a night first. |
 | **Bug fixed** | `renderTonight` force-hid the panel whenever the weights were even, so dragging back to level slammed it shut mid-adjustment, and opening it from a clean state would not have survived the next render. Visibility now belongs to whoever opened it. |
 | **Panels** | Filter and Sort are mutually exclusive — both open at once pushes the meals off a phone screen. The filter count stays on its button, so a collapsed filter still reports itself. |
-| **Colour** | `#filterToggle.on` used the Health green, giving a TECH colour a non-TECH meaning. Both buttons now use ink and an underline. One fewer exception for 2.5 to resolve. |
+| **Colour** | `#filterToggle.on` used the Health green, giving a TECH colour a non-TECH meaning. Both buttons now use ink and an underline. One of the fourteen, done early; the redesign cleared the rest. |
+
+### Batch 2B.2 — shipped 2026-10-13
+
+Weights stopped pretending to be absolute quantities.
+
+| | |
+| --- | --- |
+| **Kept** | The slider stays continuous at 0.1. Measuring said that is where the signal stops; coarsening it to five steps would have cost two-thirds of the reachable recommendations. |
+| **Dropped** | The `1.4x` readout — the actual false precision, a display claim rather than a storage one. |
+| **Added** | A share bar and key: *Tasty 70% · Easy 8% · Cheap 8% · Healthy 14%*. Celebration now says what it means at a glance. |
+| **Added** | Three landmarks on a shared scale beneath the aligned tracks — *ignore it · normal · this is the point*. |
+| **Changed** | The slider became **positional**: the bottom half of the travel runs 0→1, the top half 1→3, so **normal sits at dead centre**. A weight is a ratio — on the old linear track half the travel ran 1.5→3, where the shares barely move, while 0→1, which decides everything, was squeezed into a third. Narrowing the range to 0–2 instead would have centred the 1 but cost 833 of the 3,332 reachable top-10 orderings; this costs nothing. All 31 tenths still round-trip exactly and remain reachable by dragging. |
+| **Bug fixed** | `weightsAreEven()` tested each weight against **1**, so all-four-at-2 was called a custom weighting and showed a sort note for an ordering that was plain A–Z. It now tests whether the four are equal to *each other*, which is what fitScore can actually see. The share work surfaced this. |
+
+*Also fixed in passing:* the scale landmarks were first positioned with
+`padding-left`, and absolutely positioned children resolve against the padding
+box — so they sat 78px left of the track they label. Margin, not padding.
 
 ### Batch 2B.1 — shipped 2026-10-13
 
@@ -839,11 +710,39 @@ feature. See `DESIGN.md` §2 for the argument.
 
 *Colour note:* the occasion mark is set in ink, not in a TECH colour. The old
 day dropdown used the Health green, which gave a TECH colour a non-TECH meaning.
-That erosion is one of the open questions in Batch 2.5 and this change does not
-add to it.
+That erosion was an open question at the time; the redesign closed it, and no
+CSS rule uses an axis hue any more.
+
+### Batch 1 — shipped 2026-10-12, confirmed on the phone
+
+| | |
+| --- | --- |
+| **1A.1** | Fourth axis renamed **Nourish → Health**; the labels spell TECH again |
+| **1A.2** | Plan window 7 days, not 10 |
+| **1A.3** | Large-text toggle in More — scales dish names, notes **and the uppercase labels**, and darkens the faintest ink |
+| **1B.1** | *Tried and reverted* — opening on yesterday was overkill once 1B.2 and 1B.3 existed |
+| **1B.2** | Day-at-a-time navigation: `« ‹ Today › »` |
+| **1B.3** | Unrated meals surface as a quiet line; the list rates **inline** with five stars per row, a *notes* link for the full sheet, and a **dismiss** that sticks |
+| **1C.1** | Create a meal from inside the picker; it lands in the slot you were filling |
+| **1C.2–3** | Slot-aware ordering — breakfast leads with breakfast, by tag then by how often it's been eaten there |
+| **1D.1** | Sign out moved to More; Sign in stays in the header until you've used it |
+| **1D.2** | Sync status shows only when something is wrong |
+| **1E.1** | Save moved into the sheet header, where the keyboard can't cover it |
+| **1E.2** | Remove from on deck — a regression from the phone rebuild — plus a working toggle in the detail sheet |
+
+**Two lessons worth keeping:**
+
+- *Large text means the labels too.* The first attempt scaled dish names and
+  notes and left the uppercase labels alone, on the theory that scaling chrome
+  adds clutter. Wrong: those labels are the smallest, lightest, most
+  letterspaced text on screen and therefore the hardest to read.
+- *Quick actions belong in the list, not behind a sheet.* The first unrated list
+  opened the full rating sheet per meal. Five tappable stars on the row itself is
+  what makes capture frictionless — and capture is the precondition for Batch 3.
 
 ### Earlier
 
 - Empty start for new users — no more inheriting one household's repertoire
 - Three documents: design guide, roadmap, beta-tester page
 - Mobile rebuild, cloud sync, GitHub Pages hosting
+
